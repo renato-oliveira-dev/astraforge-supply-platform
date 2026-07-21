@@ -6,8 +6,8 @@
 |---|---|
 | Project | Enterprise Order Platform |
 | Document | Project Vision |
-| Status | Draft |
-| Version | 0.1.0 |
+| Status | Approved |
+| Version | 1.0.0 |
 | Author | Renato Oliveira |
 
 ## 1. Purpose
