@@ -1,76 +1,121 @@
 # Enterprise Order Platform
 
-Enterprise-grade B2B order management platform built with Java 21, Spring Boot, Clean Architecture, Domain-Driven Design, and modern software engineering practices.
+Enterprise-grade B2B Order Management Platform built with **Java 21**, **Spring Boot**, **Clean Architecture**, **Domain-Driven Design (DDD)**, and modern software engineering practices.
+
+> A production-oriented backend project designed to demonstrate enterprise architecture, distributed systems, software quality, and modern Java development.
+
+---
 
 ## Project Status
 
-This project is currently in the architecture and planning phase.
+**Current Phase:** 🏗️ Architecture & Planning
 
-The initial focus is to define the system vision, business capabilities, architectural boundaries, domain model, and technical decisions before starting the implementation.
+The project follows an **Architecture First** approach.
 
-## Overview
+Before writing production code, the complete business domain, functional requirements, non-functional requirements, architectural decisions, and domain model are documented.
 
-Enterprise Order Platform is a fictional B2B platform designed to manage the complete lifecycle of enterprise orders.
+This mirrors the software engineering process adopted by many enterprise organizations.
 
-The platform represents a realistic business environment where corporate customers can create orders, products can be validated, inventory can be reserved, approvals can be processed, and business events can be published to other systems.
+---
 
-The project is designed as a professional engineering portfolio, demonstrating practices commonly used in large-scale, distributed, and business-critical applications.
+# Why This Project?
 
-## Main Goals
+Most portfolio projects demonstrate how to build CRUD applications.
 
-- Demonstrate enterprise backend engineering practices
-- Apply Java 21 and Spring Boot in a production-oriented project
-- Implement Clean Architecture and Domain-Driven Design
-- Model realistic order management workflows
-- Build reliable and maintainable REST APIs
-- Apply event-driven architecture where appropriate
-- Demonstrate automated testing and software quality practices
-- Document architectural decisions and trade-offs
-- Implement continuous integration and delivery practices
-- Design for security, observability, reliability, and scalability
+This project demonstrates how to design, document, and implement a production-grade enterprise backend system using modern engineering practices.
 
-## Planned Business Capabilities
+The objective is to showcase not only coding skills, but also:
 
-- Customer management
-- Product catalog
-- Order creation and maintenance
-- Order approval workflow
+- Software Architecture
+- Domain Modeling
+- Engineering Decision Making
+- Scalability
+- Maintainability
+- Reliability
+- Security
+- Observability
+
+---
+
+# Business Overview
+
+Enterprise Order Platform is a fictional B2B platform responsible for managing the complete lifecycle of enterprise orders.
+
+The platform models realistic business scenarios including:
+
+- Customer validation
+- Product validation
+- Pricing
 - Inventory reservation
-- Pricing and totals calculation
-- Order cancellation
-- Shipment management
-- Payment tracking
-- Business event publishing
-- Notifications
+- Approval workflows
+- Order lifecycle
+- Event publishing
 - Audit history
+- Notifications
+- External integrations
 
-## Planned Technology Stack
+Although fictional, every business rule is inspired by real enterprise systems.
 
-### Core
+---
+
+# Main Goals
+
+- Demonstrate enterprise backend engineering
+- Apply Java 21 and Spring Boot
+- Apply Domain-Driven Design
+- Implement Clean Architecture
+- Build scalable REST APIs
+- Apply Event-Driven Architecture
+- Implement production-quality testing
+- Document architectural decisions
+- Design resilient integrations
+- Build CI/CD pipelines
+- Demonstrate production-ready engineering practices
+
+---
+
+# Planned Business Capabilities
+
+- Customer Management
+- Product Catalog
+- Order Management
+- Approval Workflow
+- Pricing Engine
+- Inventory Reservation
+- Shipment Management
+- Payment Tracking
+- Notifications
+- Audit Trail
+- Event Publishing
+
+---
+
+# Technology Stack
+
+## Backend
 
 - Java 21
 - Spring Boot 3
 - Gradle
 
-### Data
+## Persistence
 
 - PostgreSQL
 - Redis
 - Flyway
 
-### Integration
+## Messaging
 
 - Apache Kafka
-- REST APIs
 - Transactional Outbox Pattern
 
-### Security
+## Security
 
 - Spring Security
-- JSON Web Token
-- Role-Based Access Control
+- JWT Authentication
+- Role-Based Access Control (RBAC)
 
-### Testing
+## Testing
 
 - JUnit 5
 - Mockito
@@ -79,43 +124,279 @@ The project is designed as a professional engineering portfolio, demonstrating p
 - JaCoCo
 - ArchUnit
 
-### Documentation and Quality
+## DevOps
 
-- OpenAPI
-- SonarQube or SonarCloud
-- Architecture Decision Records
-- GitHub Actions
 - Docker
 - Docker Compose
+- GitHub Actions
 
-## Architectural Direction
+## Documentation
 
-The application will initially be implemented as a modular monolith following Clean Architecture and Domain-Driven Design principles.
+- OpenAPI
+- ADR (Architecture Decision Records)
+- Markdown
+- Mermaid Diagrams
 
-The architecture will explicitly separate business rules from application orchestration and infrastructure concerns.
+## Code Quality
 
-```text
-Clients
-   |
-   v
-Inbound Adapters
-REST API
-   |
-   v
-Application Layer
-Use Cases and Ports
-   |
-   v
-Domain Layer
-Entities, Value Objects and Business Rules
-   |
-   v
-Outbound Ports
-   |
-   v
-Infrastructure Adapters
-   |
-   +-- PostgreSQL
-   +-- Redis
-   +-- Kafka
-   +-- External Services
+- SonarQube / SonarCloud
+- Spotless
+- Dependency Scanning
+
+---
+
+# Architectural Direction
+
+The project starts as a **Modular Monolith**.
+
+The architecture is intentionally designed to evolve into independently deployable microservices if business requirements demand it.
+
+```
+                        Clients
+                           │
+                           ▼
+                    REST Controllers
+                           │
+                           ▼
+                   Application Layer
+                 (Use Cases / Services)
+                           │
+                           ▼
+                     Domain Layer
+        (Entities • Aggregates • Value Objects)
+                           │
+               ┌───────────┴───────────┐
+               ▼                       ▼
+        Outbound Ports          Domain Events
+               │
+               ▼
+      Infrastructure Adapters
+      ├── PostgreSQL
+      ├── Redis
+      ├── Kafka
+      └── External APIs
+```
+
+### Architectural Principles
+
+- Dependency Inversion
+- SOLID
+- Domain-Driven Design
+- Clean Architecture
+- Hexagonal Architecture concepts
+- Explicit Business Rules
+- Event-Driven Integration
+
+The Domain Layer remains completely independent of Spring, databases, messaging frameworks, and infrastructure concerns.
+
+---
+
+# Documentation
+
+Project documentation is maintained under the `docs` directory.
+
+```
+docs
+├── adr
+├── architecture
+├── domain
+└── requirements
+```
+
+## Available Documentation
+
+- ✅ Project Vision
+- ✅ Functional Requirements
+- ✅ Non-Functional Requirements
+
+## Planned Documentation
+
+- Domain Overview
+- Ubiquitous Language
+- Bounded Contexts
+- Context Map
+- Domain Model
+- Event Catalog
+- API Design
+- Architecture Decision Records
+- Security Architecture
+- Testing Strategy
+- Deployment Guide
+- Local Development Guide
+
+---
+
+# Engineering Principles
+
+This project follows a set of engineering principles inspired by production enterprise systems.
+
+- Business Rules First
+- Architecture Before Frameworks
+- Explicit Domain Language
+- Immutable Database Migrations
+- High Testability
+- Idempotent Operations
+- Eventual Consistency
+- Secure by Design
+- Observable by Default
+- Low Coupling
+- High Cohesion
+- Continuous Quality
+
+---
+
+# Quality Targets
+
+| Metric | Target |
+|---------|---------|
+| Overall Coverage | ≥ 85% |
+| New Code Coverage | ≥ 90% |
+| Critical Domain Rules | 100% |
+| Blocker Issues | 0 |
+| Critical Issues | 0 |
+| Confirmed Vulnerabilities | 0 |
+| Code Duplication | < 3% |
+| Sonar Maintainability | A |
+| Sonar Reliability | A |
+| Sonar Security | A |
+
+---
+
+# Planned Repository Structure
+
+```
+enterprise-order-platform
+│
+├── docs
+│   ├── adr
+│   ├── architecture
+│   ├── domain
+│   └── requirements
+│
+├── src
+│   ├── main
+│   └── test
+│
+├── .github
+│   └── workflows
+│
+├── compose.yaml
+├── Dockerfile
+├── build.gradle
+├── settings.gradle
+├── gradlew
+├── gradlew.bat
+├── LICENSE
+└── README.md
+```
+
+---
+
+# Development Roadmap
+
+## Phase 1 — Architecture
+
+- [x] Vision
+- [x] Functional Requirements
+- [x] Non-Functional Requirements
+- [ ] Domain Model
+- [ ] Bounded Contexts
+- [ ] Context Map
+- [ ] Architecture Decisions
+
+---
+
+## Phase 2 — Foundation
+
+- [ ] Spring Boot Project
+- [ ] PostgreSQL
+- [ ] Flyway
+- [ ] Docker
+- [ ] Docker Compose
+- [ ] Gradle
+- [ ] CI Pipeline
+
+---
+
+## Phase 3 — Core Domain
+
+- [ ] Customers
+- [ ] Products
+- [ ] Orders
+- [ ] Pricing
+- [ ] Inventory
+- [ ] Audit
+
+---
+
+## Phase 4 — Enterprise Features
+
+- [ ] Approval Workflow
+- [ ] Domain Events
+- [ ] Transactional Outbox
+- [ ] Kafka Integration
+- [ ] Notifications
+
+---
+
+## Phase 5 — Reliability
+
+- [ ] Redis Cache
+- [ ] Retry Policies
+- [ ] Circuit Breakers
+- [ ] Structured Logging
+- [ ] Correlation IDs
+- [ ] Metrics
+- [ ] Distributed Tracing
+
+---
+
+## Phase 6 — Production Readiness
+
+- [ ] Performance Tests
+- [ ] Security Hardening
+- [ ] Deployment Guide
+- [ ] Cloud Architecture
+- [ ] Kubernetes Evaluation
+
+---
+
+# Design Philosophy
+
+The goal of this repository is not to demonstrate how to use Spring Boot.
+
+The goal is to demonstrate how experienced software engineers design systems that remain maintainable as complexity grows.
+
+Every architectural decision will be documented.
+
+Every business rule will be explicit.
+
+Every trade-off will be justified.
+
+---
+
+# Disclaimer
+
+This is a fictional project created exclusively for educational, architectural, and professional portfolio purposes.
+
+It contains **no proprietary code, business rules, documentation, credentials, data, or intellectual property** from any current or former employer or client.
+
+---
+
+# License
+
+Licensed under the **Apache License 2.0**.
+
+---
+
+# Author
+
+## Renato Oliveira
+
+Senior Software Engineer
+
+Backend Engineering • Java • Spring Boot • Distributed Systems • Clean Architecture • Domain-Driven Design • Software Modernization
+
+---
+
+⭐ If you're interested in enterprise backend engineering, feel free to follow the project's evolution.
