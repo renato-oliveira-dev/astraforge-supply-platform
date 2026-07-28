@@ -6,6 +6,9 @@ on:
       - "docs/**/*.md"
       - "README.md"
       - "scripts/validate_adr_governance.py"
+      - "scripts/validate_repository_hygiene.py"
+      - ".gitignore"
+      - ".gitattributes"
       - ".github/workflows/adr-governance.yml"
   push:
     branches:
@@ -15,6 +18,9 @@ on:
       - "docs/**/*.md"
       - "README.md"
       - "scripts/validate_adr_governance.py"
+      - "scripts/validate_repository_hygiene.py"
+      - ".gitignore"
+      - ".gitattributes"
       - ".github/workflows/adr-governance.yml"
   workflow_dispatch:
 
@@ -38,3 +44,6 @@ jobs:
 
       - name: Validate ADR governance and documentation links
         run: python scripts/validate_adr_governance.py --root . --first 1 --last 90
+
+      - name: Validate repository hygiene
+        run: python scripts/validate_repository_hygiene.py --root .
