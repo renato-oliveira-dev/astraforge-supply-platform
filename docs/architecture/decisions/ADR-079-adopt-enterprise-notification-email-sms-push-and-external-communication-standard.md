@@ -10,7 +10,7 @@
 | Date | 2026-07-26 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Notifications, Email, SMS, Push, Messaging, External Communication |
-| Related Work Items | SQS, Kafka, Transactional Outbox, Templates, i18n, Notifications Service |
+| Related Work Items | SQS, SQS, Transactional Outbox, Templates, i18n, Notifications Service |
 | Supersedes | None |
 | Superseded By | None |
 
@@ -122,7 +122,7 @@ The organization requires standards covering:
 - CC/BCC
 - asynchronous delivery
 - SQS
-- Kafka
+- SQS
 - Transactional Outbox
 - retry
 - idempotency
@@ -516,7 +516,7 @@ Notification consumers MUST be idempotent.
 
 # 28. At-Least-Once Delivery
 
-Kafka/SQS delivery MUST be assumed to be at least once unless stronger guarantees are explicitly established.
+SQS delivery MUST be assumed to be at least once unless stronger guarantees are explicitly established.
 
 ---
 
@@ -758,13 +758,13 @@ A controlled replay process MUST exist for recoverable DLQ messages.
 
 ---
 
-# 55. Kafka
+# 55. SQS
 
-Kafka MAY be used when notification triggering is based on reusable domain/integration events.
+SQS MAY be used when notification triggering is based on reusable domain/integration events.
 
 ---
 
-# 56. Kafka Consumer
+# 56. SQS Consumer
 
 Consumer offset handling MUST align with durable notification persistence.
 
@@ -2323,7 +2323,7 @@ This ADR will be validated through:
 
 - Java 21
 - Spring Boot
-- Spring Kafka
+- AWS SDK for Java 2.x SQS integration
 - AWS SQS
 - AWS SES or approved email provider
 - Transactional Outbox
@@ -2421,7 +2421,7 @@ This ADR extends and implements:
 
 - ADR-007: Adopt Transactional Outbox
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-013: Use Testcontainers for Integration Testing
 - ADR-034: Java 21 Concurrency and Parallelism Standards
 - ADR-037: Application Security and Secure Coding Standards
@@ -2430,7 +2430,7 @@ This ADR extends and implements:
 - ADR-053: Enterprise Testing Strategy and Quality Engineering Standard
 - ADR-054: Enterprise Performance Engineering and Capacity Standard
 - ADR-055: Enterprise Resilience Engineering Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-062: Enterprise Logging, Observability, OpenTelemetry and Production Diagnostics Standard
 - ADR-063: Enterprise Configuration Management, Secrets, Feature Flags and Runtime Parameter Governance Standard
 - ADR-067: Enterprise Error Handling, Exception Taxonomy, Problem Details and Failure Contract Standard
@@ -2447,8 +2447,8 @@ This ADR extends and implements:
 
 - AWS SQS Documentation
 - AWS SES Documentation
-- Apache Kafka Documentation
-- Spring Kafka Documentation
+- Amazon SQS Documentation
+- AWS SDK for Java 2.x SQS integration Documentation
 - Spring Boot Documentation
 - Resilience4j Documentation
 - OWASP Input Validation Cheat Sheet

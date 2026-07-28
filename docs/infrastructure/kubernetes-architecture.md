@@ -65,7 +65,7 @@ Microservices
 
 ↓
 
-Kafka
+Amazon SQS
 
 ↓
 

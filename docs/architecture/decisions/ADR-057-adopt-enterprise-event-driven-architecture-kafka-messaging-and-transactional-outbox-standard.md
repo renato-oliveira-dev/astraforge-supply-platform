@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-057 |
 | Title | Adopt Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Event-Driven Architecture, Apache Kafka, Transactional Outbox, Messaging Governance |
 | Related Work Items | Kafka, Events, Outbox, Idempotency, Retry, DLQ, Replay |
 | Supersedes | None |
-| Superseded By | None |
+| Superseded By | ADR-090 |
 
 ---
 

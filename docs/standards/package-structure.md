@@ -220,7 +220,7 @@ configuration
 
 ├── security
 ├── database
-├── kafka
+├── sqs
 ├── redis
 ├── web
 ├── observability

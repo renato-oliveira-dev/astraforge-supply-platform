@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-042 |
 | Title | Adopt Architecture Fitness Functions and Automated Governance Standards |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Architecture Fitness Functions, ArchUnit, CI/CD, Static Analysis, Automated Governance |
 | Related Work Items | Clean Architecture, ArchUnit, Flyway, Testing Standards, API Governance, Quality Gates |
 | Supersedes | None |
-| Superseded By | None |
+| Superseded By | ADR-051 |
 
 ---
 

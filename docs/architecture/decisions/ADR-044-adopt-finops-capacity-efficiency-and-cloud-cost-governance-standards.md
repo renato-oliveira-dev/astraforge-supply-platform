@@ -9,7 +9,7 @@
 | Status | Accepted |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
-| Technical Area | FinOps, Cloud Cost, Capacity Planning, Kubernetes, AWS, PostgreSQL, Kafka, Redis |
+| Technical Area | FinOps, Cloud Cost, Capacity Planning, Kubernetes, AWS, PostgreSQL, SQS, Redis |
 | Related Work Items | Cost Allocation, Rightsizing, Autoscaling, Capacity Planning, Cloud Governance |
 | Supersedes | None |
 | Superseded By | None |
@@ -64,7 +64,7 @@ Kubernetes
 
 PostgreSQL
 
-Kafka
+SQS
 
 Redis
 
@@ -103,7 +103,7 @@ The platform requires standards defining:
 - overprovisioning
 - underprovisioning
 - PostgreSQL efficiency
-- Kafka efficiency
+- SQS efficiency
 - Redis efficiency
 - storage lifecycle
 - network egress
@@ -539,7 +539,7 @@ Runaway autoscaling
 
 Abandoned database
 
-Kafka retention growth
+SQS retention growth
 
 High-cardinality metrics
 
@@ -884,7 +884,7 @@ Request Rate
 
 Queue Depth
 
-Kafka Consumer Lag
+SQS Queue Backlog/Oldest-Message Age
 ```
 
 ---
@@ -930,7 +930,7 @@ Before increasing replica count significantly, consider:
 ```text
 Database Connections
 
-Kafka Partitions
+FIFO MessageGroupIds
 
 External API Limits
 
@@ -1224,9 +1224,9 @@ Redis should not become an accidental expensive primary database without an expl
 
 ---
 
-# 114. Kafka Cost Governance
+# 114. SQS Cost Governance
 
-Kafka cost depends on:
+SQS cost depends on:
 
 - throughput
 - partitions
@@ -1270,7 +1270,7 @@ Under-partitioning may prevent required consumer parallelism.
 
 # 118. Retention
 
-Kafka retention should reflect business/replay requirements.
+SQS retention should reflect business/replay requirements.
 
 ---
 
@@ -1297,7 +1297,7 @@ Publishing redundant large events should be avoided.
 
 ---
 
-# 122. Consumer Lag
+# 122. Queue Backlog/Oldest-Message Age
 
 Consumer lag can become a capacity signal.
 
@@ -1305,7 +1305,7 @@ Consumer lag can become a capacity signal.
 
 # 123. Lag-Based Scaling
 
-Kafka consumers may scale based on lag where partition count and processing semantics permit.
+SQS consumers may scale based on queue backlog and oldest-message age while respecting downstream capacity and FIFO MessageGroupId concurrency.
 
 ---
 
@@ -2108,9 +2108,9 @@ A production service is not considered fully cost-governed until:
 
 [ ] Redis memory/TTL reviewed
 
-[ ] Kafka partitions reviewed
+[ ] FIFO MessageGroupIds reviewed
 
-[ ] Kafka retention reviewed
+[ ] SQS retention reviewed
 
 [ ] Logging volume reviewed
 
@@ -2154,8 +2154,8 @@ The following are prohibited or strongly discouraged:
 - scaling applications without considering database connections
 - permanently increasing database size before investigating inefficient SQL
 - unbounded Redis caches
-- Kafka retention without business justification
-- excessive Kafka partitions without throughput/parallelism justification
+- SQS retention without business justification
+- excessive FIFO MessageGroupIds without throughput/parallelism justification
 - permanent DEBUG logging in production
 - high-cardinality metrics using business identifiers
 - unlimited telemetry retention
@@ -2258,7 +2258,7 @@ The following rules are mandatory:
 14. Database connection pools must be evaluated across all replicas.
 15. Query/index optimization should precede unnecessary permanent DB scaling.
 16. Redis caches require bounded memory behavior.
-17. Kafka partition and retention decisions require workload justification.
+17. FIFO MessageGroupId and retention decisions require workload justification.
 18. Production DEBUG logging must not remain enabled without explicit reason.
 19. High-cardinality observability dimensions must be controlled.
 20. Telemetry retention requires explicit operational value.
@@ -2289,7 +2289,7 @@ This ADR will be validated through:
 - autoscaling metrics
 - PostgreSQL metrics
 - Redis memory metrics
-- Kafka metrics
+- SQS metrics
 - telemetry-volume reports
 - storage lifecycle reports
 - idle-resource detection
@@ -2312,7 +2312,7 @@ The decision is successful when:
 - Kubernetes reservations approximate real workload needs
 - autoscaling does not overwhelm downstream systems
 - database growth is understood
-- Redis/Kafka resources have intentional sizing
+- Redis/SQS resources have intentional sizing
 - observability cost remains proportional to diagnostic value
 - non-production waste decreases
 - ephemeral resources disappear automatically
@@ -2371,7 +2371,7 @@ This ADR is related to:
 
 - ADR-004: Use Spring Boot
 - ADR-005: Use PostgreSQL as the Primary Database
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-010: Use Redis for Distributed Caching
 - ADR-014: Adopt Distributed Observability
 - ADR-016: Adopt Resilience4j for Application Resilience
@@ -2394,7 +2394,7 @@ This ADR is related to:
 - Kubernetes Resource Management
 - Kubernetes Horizontal Pod Autoscaling
 - PostgreSQL Documentation
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - Redis Documentation
 - Google SRE
 - DORA

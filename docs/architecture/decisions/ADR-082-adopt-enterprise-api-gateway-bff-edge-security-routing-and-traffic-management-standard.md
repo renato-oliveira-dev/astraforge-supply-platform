@@ -11,8 +11,12 @@
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | API Gateway, BFF, Edge Security, Routing, Traffic Management |
 | Related Work Items | OAuth2, JWT, Keycloak, Kubernetes, Ingress, WAF, Rate Limiting |
-| Supersedes | None |
+| Supersedes | ADR-073 |
 | Superseded By | None |
+
+---
+
+> **Consolidation:** This ADR supersedes ADR-073 and is the canonical decision for API Gateway, BFF, edge security, routing, traffic management and rate-limiting governance.
 
 ---
 

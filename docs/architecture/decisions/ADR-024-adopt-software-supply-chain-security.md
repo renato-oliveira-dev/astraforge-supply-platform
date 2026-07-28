@@ -28,7 +28,7 @@ The platform includes:
 - Gradle Wrapper
 - PostgreSQL
 - Flyway
-- Apache Kafka
+- Amazon SQS
 - Docker/OCI containers
 - Kubernetes
 - CI/CD
@@ -2599,9 +2599,9 @@ Database drivers must be included in dependency vulnerability governance.
 
 ---
 
-# 234. Kafka Client
+# 234. SQS Client
 
-Kafka client libraries must be included in dependency vulnerability governance.
+AWS SQS client libraries must be included in dependency vulnerability governance.
 
 ---
 
@@ -3363,7 +3363,7 @@ This ADR is related to:
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-006: Use Flyway for Database Schema Evolution
 - ADR-007: Adopt the Transactional Outbox Pattern
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-013: Use Testcontainers for Integration Testing
 - ADR-014: Adopt OpenTelemetry for Distributed Observability
 - ADR-015: Deploy Workloads on Kubernetes

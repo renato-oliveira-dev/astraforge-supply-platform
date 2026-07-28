@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-059 |
 | Title | Adopt Enterprise Redis Caching, Distributed Cache and Data Consistency Standard |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Redis, Caching, Distributed Systems, Performance, Resilience |
 | Related Work Items | Redis, ResilientCache, Cache-Aside, TTL, Invalidation, Fallback Cache |
-| Supersedes | None |
-| Superseded By | None |
+| Supersedes | ADR-032 |
+| Superseded By | ADR-080 |
 
 ---
 

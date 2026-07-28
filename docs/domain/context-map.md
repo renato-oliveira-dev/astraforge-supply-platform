@@ -1576,7 +1576,7 @@ Possible controls include:
 
 - Aggregate version
 - Sequence number
-- Partition key based on Aggregate ID
+- FIFO MessageGroupId or aggregate sequence based on Aggregate ID
 - Expected current state
 - Optimistic locking
 - Stale event rejection
@@ -1660,7 +1660,7 @@ Synchronous contracts must define:
 Asynchronous contracts must define:
 
 - Producer identity
-- Topic or queue permissions
+- Queue permissions and IAM policy
 - Message encryption requirements
 - Sensitive-data classification
 - Consumer authorization
@@ -1818,7 +1818,7 @@ A bounded context must not access another context's persistence package.
 ```
 
 ```text
-Domain packages must not depend on Spring, JPA, Kafka, or REST.
+Domain packages must not depend on Spring, JPA, Amazon SQS/AWS SDK, or REST.
 ```
 
 ```text
@@ -1893,13 +1893,13 @@ The initial implementation may map relationships as follows:
 | Product lookup | REST client |
 | Pricing calculation | Internal module call or REST-style port |
 | Approval evaluation | Internal module contract |
-| Approval workflow | Kafka or internal event bus |
-| Inventory Reservation | Kafka |
-| Fulfillment initiation | Kafka |
-| Payment outcomes | Kafka or webhook adapter |
-| Notification requests | Kafka |
-| Audit facts | Transactional Outbox and Kafka |
-| External Order events | Transactional Outbox and Kafka |
+| Approval workflow | Amazon SQS or an approved internal event bus |
+| Inventory Reservation | Amazon SQS |
+| Fulfillment initiation | Amazon SQS |
+| Payment outcomes | Amazon SQS or webhook adapter |
+| Notification requests | Amazon SQS |
+| Audit facts | Transactional Outbox and Amazon SQS |
+| External Order events | Transactional Outbox and Amazon SQS |
 
 An internal module call must still use an explicit context contract.
 
@@ -1914,7 +1914,7 @@ During the modular-monolith phase:
 - Contexts share one deployable application.
 - Contexts may share one PostgreSQL instance.
 - Contexts may communicate through in-process ports.
-- Asynchronous flows may use Kafka.
+- Asynchronous flows use Amazon SQS when queue-based messaging is appropriate under ADR-090.
 - Context-owned schemas and repositories remain isolated.
 - Public contracts remain explicit.
 - Architecture tests protect dependencies.

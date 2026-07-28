@@ -291,7 +291,7 @@ Transactions should include:
 Transactions must avoid:
 
 - HTTP calls
-- Kafka publication
+- SQS publication
 - user interaction
 - long-running processing
 - report generation

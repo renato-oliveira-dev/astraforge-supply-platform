@@ -1188,9 +1188,9 @@ Compatibility
 
 ---
 
-# 127. Kafka Contract
+# 127. SQS Contract
 
-Kafka event contracts SHOULD validate:
+SQS message/event contracts SHOULD validate:
 
 ```text
 Schema
@@ -1239,7 +1239,7 @@ PostgreSQL
 
 Redis
 
-Kafka
+SQS
 ```
 
 integration testing.
@@ -1544,7 +1544,7 @@ Rollback capability depends on database compatibility.
 
 # 170. Event Compatibility
 
-Rollback capability also depends on Kafka/event compatibility.
+Rollback capability also depends on SQS/event compatibility.
 
 ---
 
@@ -2135,7 +2135,7 @@ Examples:
 
 [ ] OpenAPI compatibility passes
 
-[ ] Kafka schema compatibility passes
+[ ] SQS schema compatibility passes
 
 [ ] Container scan passes
 
@@ -2211,7 +2211,7 @@ The following are prohibited or strongly discouraged:
 - manually uploading unverified production binaries
 - modifying applied Flyway migrations
 - using `flyway repair` to legitimize altered migration history
-- breaking REST/Kafka contracts without migration strategy
+- breaking REST/SQS contracts without migration strategy
 - rebuilding an artifact for production
 - production deployment without traceable commit/artifact
 - rollback requiring artifact rebuild
@@ -2324,7 +2324,7 @@ The following rules are mandatory:
 28. Previously applied Flyway migrations must never be modified.
 29. Database corrections must use new migrations with new versions.
 30. PostgreSQL-specific migration behavior should be tested with PostgreSQL.
-31. REST and Kafka contract compatibility should be automated.
+31. REST and SQS contract compatibility should be automated.
 32. Infrastructure-sensitive integration tests should use representative infrastructure.
 33. Quality/security gates must have explicit blocking semantics.
 34. Gate exceptions must be explicit, owned, auditable and time-bounded.
@@ -2364,7 +2364,7 @@ This ADR will be validated through:
 - Flyway
 - PostgreSQL
 - Redis
-- Kafka
+- SQS
 - OpenAPI validation
 - OCI container scanning
 - artifact registries
@@ -2459,7 +2459,7 @@ This ADR extends and implements:
 - ADR-054: Enterprise Performance Engineering and Capacity Standard
 - ADR-055: Enterprise Resilience Engineering Standard
 - ADR-056: Enterprise REST API and Integration Contract Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-058: Enterprise PostgreSQL Persistence, Transaction Management and Database Engineering Standard
 - ADR-059: Enterprise Redis Caching, Distributed Cache and Data Consistency Standard
 - ADR-060: Enterprise AWS Cloud, Kubernetes, Container and Runtime Deployment Standard

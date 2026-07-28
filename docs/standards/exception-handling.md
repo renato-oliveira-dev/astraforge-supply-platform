@@ -1723,10 +1723,8 @@ Processing behavior must be explicit for each category.
 
 Retryable message failures may result in:
 
-- broker redelivery
-- delayed retry
-- retry topic
-- scheduled reprocessing
+- SQS redelivery
+- controlled delayed retry/reprocessing
 - visibility timeout extension
 
 Examples:
@@ -1819,15 +1817,15 @@ Poison-message handling should include:
 
 ---
 
-# 70. Kafka Listener Exceptions
+# 70. SQS Consumer Exceptions
 
-Kafka listener methods should not contain complex exception logic.
+SQS consumer/listener methods should not contain complex exception logic.
 
 Delegate classification to:
 
 - error handlers
 - recoverers
-- retry-topic policies
+- SQS redrive/retry policies
 - dead-letter publishers
 
 Application exceptions should be translated into listener-processing outcomes at the adapter boundary.

@@ -26,7 +26,7 @@ The application architecture already establishes standards for:
 - Spring Boot
 - PostgreSQL
 - Flyway
-- Apache Kafka
+- Amazon SQS
 - Redis
 - Kubernetes
 - Resilience4j
@@ -1022,7 +1022,7 @@ Ingress Controller / API Gateway
 
 Egress:
 PostgreSQL
-Kafka
+SQS
 Customers Service
 Products Service
 OpenTelemetry Collector
@@ -1045,9 +1045,9 @@ Only workloads requiring database access should be able to reach database endpoi
 
 ---
 
-# 85. Kafka Network Access
+# 85. SQS Network Access
 
-Only authorized producers/consumers should have network access to Kafka endpoints in addition to Kafka-level authentication and ACLs.
+Only authorized producers/consumers should have network access to SQS endpoints in addition to IAM authorization.
 
 ---
 
@@ -1058,7 +1058,7 @@ NetworkPolicy does not replace:
 - OAuth
 - JWT
 - mTLS where required
-- Kafka ACL
+- SQS IAM policy
 - database credentials
 - application authorization
 
@@ -1451,9 +1451,9 @@ A pod cannot wait indefinitely.
 
 ---
 
-# 125. Kafka Consumer Shutdown
+# 125. SQS Consumer Shutdown
 
-Kafka consumers must stop polling and close cleanly during termination.
+SQS consumers must stop polling and close cleanly during termination.
 
 ---
 
@@ -1664,7 +1664,7 @@ For some workloads, business or application metrics may be better scaling signal
 
 Examples:
 
-- Kafka consumer lag
+- SQS queue backlog/oldest-message age
 - request concurrency
 - queue depth
 
@@ -2922,7 +2922,7 @@ This ADR is related to:
 - ADR-004: Use Spring Boot
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-006: Use Flyway for Database Schema Evolution
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-013: Use Testcontainers for Integration Testing
 - ADR-014: Adopt OpenTelemetry for Distributed Observability
 - ADR-015: Deploy Workloads on Kubernetes

@@ -89,7 +89,7 @@ The solution must:
 - support retries
 - support timeouts
 - support duplicate delivery
-- integrate with Kafka
+- integrate with SQS
 - integrate with Transactional Outbox
 - support idempotent processing
 - expose workflow state
@@ -113,7 +113,7 @@ The primary decision drivers are:
 5. explicit workflow state
 6. operational observability
 7. idempotency
-8. compatibility with Kafka
+8. compatibility with SQS
 9. compatibility with Transactional Outbox
 10. support for compensation
 11. support for timeouts
@@ -132,7 +132,7 @@ The primary decision drivers are:
 The decision must consider:
 
 - PostgreSQL is the authoritative store for each bounded context
-- Kafka is the asynchronous integration-event broker
+- SQS is the asynchronous integration-event broker
 - Transactional Outbox is used for reliable event publication
 - message delivery is at least once
 - consumers must be idempotent
@@ -141,7 +141,7 @@ The decision must consider:
 - external services may be temporarily unavailable
 - compensation may fail
 - not every business action is technically reversible
-- event ordering is partition-specific
+- event ordering is scoped to the FIFO MessageGroupId when FIFO is used
 - public event contracts must be versioned
 - domain code must remain infrastructure-independent
 - operational teams require metrics, alerts and runbooks
@@ -169,7 +169,7 @@ A coordinator could attempt to commit multiple transactional resources atomicall
 - tight infrastructure coupling
 - difficult failure recovery
 - long-held locks
-- limited compatibility with Kafka and independent databases
+- limited compatibility with SQS and independent databases
 - operational complexity
 - weak support for long-running workflows
 
@@ -267,7 +267,7 @@ The platform could adopt the Saga pattern and use orchestration for complex work
 - supports compensation
 - supports eventual consistency
 - supports long-running workflows
-- compatible with Kafka and Transactional Outbox
+- compatible with SQS and Transactional Outbox
 - avoids distributed transactions
 - allows incremental adoption
 - supports operational visibility
@@ -483,7 +483,7 @@ A process manager is a stateful application component that:
 - issues commands
 - reacts to results
 
-It belongs to the Application layer conceptually, with persistence and Kafka adapters in Infrastructure.
+It belongs to the Application layer conceptually, with persistence and SQS adapters in Infrastructure.
 
 ---
 
@@ -1293,7 +1293,7 @@ Different participants may require different policies.
 
 Potential retry layers include:
 
-- Kafka producer retry
+- SQS producer retry
 - outbox dispatcher retry
 - consumer retry
 - saga command retry
@@ -1625,7 +1625,7 @@ Sensitive data must be minimized.
 
 # 64. Message Ordering
 
-Kafka ordering is partition-specific.
+SQS ordering is scoped to the FIFO MessageGroupId when FIFO is used.
 
 Saga messages should use a stable key such as:
 
@@ -2142,7 +2142,7 @@ A scheduled detector should identify and expose these cases.
 Application health should distinguish:
 
 - orchestrator process liveness
-- Kafka connectivity
+- SQS connectivity
 - database connectivity
 - timeout processor activity
 - outbox backlog
@@ -2160,7 +2160,7 @@ Saga messages and state must follow least privilege.
 
 Security requirements include:
 
-- authenticated Kafka clients
+- authenticated SQS clients
 - topic-level authorization
 - encrypted transport
 - protected operational APIs
@@ -2192,7 +2192,7 @@ Identifiers are preferred when full data is unnecessary.
 
 Business cancellation or recovery commands must validate authorization.
 
-An internal event is not automatically trusted merely because it arrived through Kafka.
+An internal event is not automatically trusted merely because it arrived through SQS.
 
 Consumer identity, topic ownership and contract validity still matter.
 
@@ -2264,7 +2264,7 @@ Multiple orchestrator instances may run concurrently.
 
 Concurrency safety must use:
 
-- Kafka consumer-group partitioning
+- SQS bounded SQS consumer concurrency
 - optimistic locking
 - idempotency
 - database row locking where appropriate
@@ -2279,7 +2279,7 @@ A single-instance assumption is prohibited unless enforced and documented.
 Saga processing concurrency must remain aligned with:
 
 - database connection pool
-- Kafka partitions
+- FIFO MessageGroupIds
 - participant capacity
 - outbox dispatcher throughput
 - timeout processor throughput
@@ -2296,7 +2296,7 @@ They do not remove limits imposed by:
 
 - database connections
 - external APIs
-- Kafka partitions
+- FIFO MessageGroupIds
 - rate limits
 - memory
 - downstream throughput
@@ -2311,7 +2311,7 @@ The orchestrator must shut down gracefully.
 
 Shutdown should:
 
-- stop accepting new Kafka records
+- stop accepting new SQS records
 - complete bounded active transactions
 - commit safe offsets
 - stop timeout claims
@@ -2352,7 +2352,7 @@ Concerns include:
 - duplicate command emission
 - global ordering
 - database write authority
-- Kafka replication
+- SQS replication
 - regional failover
 - clock behavior
 - external provider affinity
@@ -2399,7 +2399,7 @@ Unit tests should validate:
 - terminal-state behavior
 - late-message behavior
 
-Pure workflow logic should not require Spring or Kafka.
+Pure workflow logic should not require Spring or SQS.
 
 ---
 
@@ -2437,9 +2437,9 @@ H2 must not substitute for PostgreSQL-specific behavior.
 
 ---
 
-# 107. Kafka Integration Tests
+# 107. SQS Integration Tests
 
-Kafka integration tests should validate:
+SQS integration tests should validate:
 
 - command publication
 - response consumption
@@ -2493,13 +2493,13 @@ Failure injection should cover:
 - orchestrator crash after state update
 - orchestrator crash before command publication
 - participant crash after local commit
-- duplicate Kafka delivery
+- duplicate SQS delivery
 - delayed response
 - lost response
 - timeout race
 - compensation failure
 - database outage
-- Kafka outage
+- SQS outage
 - optimistic-lock conflict
 
 ---
@@ -2581,10 +2581,10 @@ Commands and events must have compatibility tests covering:
 
 Architecture tests must enforce:
 
-- Domain does not depend on Kafka
+- Domain does not depend on SQS
 - Domain does not depend on saga persistence adapters
 - listeners invoke Application services
-- orchestrator business rules do not live in Kafka listeners
+- orchestrator business rules do not live in SQS listeners
 - JPA entities are not public event contracts
 - participants do not access other bounded contexts' repositories
 - direct broker publication does not replace the outbox
@@ -2756,7 +2756,7 @@ The following are prohibited:
 - direct updates to another bounded context's database
 - hiding complex workflows in uncontrolled choreography
 - implementing domain rules inside the orchestrator
-- implementing workflow logic inside Kafka listeners
+- implementing workflow logic inside SQS listeners
 - assuming exactly-once delivery
 - omitting participant idempotency
 - generating new command IDs on retry
@@ -2796,7 +2796,7 @@ The decision provides:
 - auditability
 - testable state transitions
 - support for long-running processes
-- compatibility with Kafka
+- compatibility with SQS
 - compatibility with Transactional Outbox
 - horizontal scalability
 - controlled manual intervention
@@ -2836,7 +2836,7 @@ The decision also means:
 - workflow ownership must be assigned explicitly
 - clients may need status polling
 - operational teams must understand saga state
-- message ordering remains partition-specific
+- message ordering remains scoped to the FIFO MessageGroupId when FIFO is used
 - duplicate and late messages remain normal distributed-system behavior
 
 ---
@@ -2861,7 +2861,7 @@ The decision also means:
 | Nested retries create storms | Medium | Medium | Coordinate retry layers and use bounded backoff |
 | Saga table grows indefinitely | Medium | Medium | Define retention and archival |
 | Sensitive workflow data is exposed | High | Low | Minimize payload and restrict operational access |
-| One orchestrator instance becomes bottleneck | High | Low | Use Kafka partitioning and horizontal scaling |
+| One orchestrator instance becomes bottleneck | High | Low | Use SQS queue/FIFO MessageGroupId distribution and horizontal scaling |
 | Rolling deployment breaks old sagas | High | Medium | Persist saga-definition version |
 | Unknown saga messages are discarded | High | Low | Dead-letter and alert |
 | Direct database intervention damages history | High | Low | Use controlled recovery APIs and audit trail |
@@ -2919,7 +2919,7 @@ The decision will be validated through:
 - out-of-order-message tests
 - concurrent-transition tests
 - PostgreSQL Testcontainers
-- Kafka integration tests
+- SQS integration tests
 - end-to-end saga tests
 - failure injection
 - restart recovery tests
@@ -2948,7 +2948,7 @@ The decision is successful when:
 - manual recovery is controlled and auditable
 - in-flight sagas survive rolling deployments
 - participant autonomy is preserved
-- Kafka-specific code remains outside the Domain layer
+- SQS-specific code remains outside the Domain layer
 - workflow duration remains within defined SLOs
 - distributed failures can be diagnosed through saga correlation
 
@@ -3002,7 +3002,7 @@ This ADR is related to:
 - ADR-006: Use Flyway for Database Migrations
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-011: Adopt OpenAPI-First API Design
 - ADR-013: Use Testcontainers for Integration Testing
 - ADR-014: Use OpenTelemetry for Distributed Tracing
@@ -3018,9 +3018,9 @@ This ADR is related to:
 - Microservices Patterns
 - Enterprise Integration Patterns
 - Domain-Driven Design
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - Transactional Outbox Pattern
-- Spring for Apache Kafka Documentation
+- Spring for Amazon SQS Documentation
 - PostgreSQL Documentation
 - Enterprise Order Platform Messaging Architecture
 - Enterprise Order Platform Domain Events
@@ -3028,7 +3028,7 @@ This ADR is related to:
 - Enterprise Order Platform Resilience Guide
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 
 ---
 

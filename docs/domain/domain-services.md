@@ -49,7 +49,7 @@ A Domain Service is **not**:
 - a Repository
 - a REST Controller
 - an Infrastructure Adapter
-- a Kafka Producer
+- an SQS producer/client
 - a JPA Service
 
 ---
@@ -431,7 +431,7 @@ Never with
 
 - HTTP
 
-- Kafka
+- Amazon SQS
 
 - SQL
 
@@ -520,7 +520,7 @@ Repository
 
 ↓
 
-Kafka
+Amazon SQS
 
 ↓
 

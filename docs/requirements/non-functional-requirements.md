@@ -724,7 +724,7 @@ The platform should support distributed tracing for synchronous and asynchronous
 #### Acceptance Criteria
 
 - Trace context must propagate through HTTP calls.
-- Trace context should propagate through Kafka messages.
+- Trace context should propagate through SQS message attributes/envelopes.
 - Trace sampling must be configurable.
 - Sensitive request or response content must not be captured.
 - Trace failures must not affect business operations.

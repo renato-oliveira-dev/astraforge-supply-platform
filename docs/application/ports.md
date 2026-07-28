@@ -271,11 +271,12 @@ publish(
 );
 ```
 
-Implementation decides whether to use:
+Implementation decides how to fulfill the port using the approved messaging architecture. For reliable state-plus-event publication the normal implementation is:
 
-- Outbox
-- Kafka
-- RabbitMQ
+- Transactional Outbox
+- Amazon SQS infrastructure adapter
+
+Another broker requires an explicit accepted ADR.
 
 ---
 
@@ -356,7 +357,7 @@ REST
 
 ↓
 
-Kafka
+Amazon SQS
 
 ↓
 

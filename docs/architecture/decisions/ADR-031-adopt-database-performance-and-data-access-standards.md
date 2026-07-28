@@ -251,7 +251,7 @@ They must not become:
 
 - business orchestration services
 - HTTP clients
-- Kafka publishers
+- SQS publishers
 - generic utility containers
 
 ---
@@ -263,7 +263,7 @@ JPA entities represent persistence models.
 They must not automatically become:
 
 - API contracts
-- Kafka contracts
+- SQS contracts
 - external DTOs
 
 ---
@@ -327,7 +327,7 @@ Examples include:
 ```text
 HTTP
 
-Kafka
+SQS
 
 S3
 
@@ -445,7 +445,7 @@ Asynchronous External Processing
 
 # 19. Transactional Outbox
 
-Kafka publication requiring atomic consistency with database state follows ADR-010 and ADR-030.
+SQS publication requiring atomic consistency with database state follows ADR-010 and ADR-030.
 
 ---
 
@@ -2614,7 +2614,7 @@ The following are prohibited or strongly discouraged:
 - exposing JPA entities as API/event contracts
 - large transaction boundaries
 - remote HTTP calls inside transactions without explicit justification
-- Kafka publication as an unsafe dual write
+- SQS publication as an unsafe dual write
 - transaction around user think time
 - indiscriminate `REQUIRES_NEW`
 - arbitrarily oversized Hikari pools
@@ -2945,7 +2945,7 @@ This ADR is related to:
 - ADR-027: Adopt Production Incident Management and Operational Readiness Standards
 - ADR-028: Adopt Disaster Recovery and Business Continuity Standards
 - ADR-029: Adopt Data Protection, Privacy and Retention Standards
-- ADR-030: Adopt Kafka Event Governance and Schema Evolution Standards
+- ADR-030: Adopt SQS Event Governance and Schema Evolution Standards
 - ADR-032: Adopt Distributed Caching and Cache Consistency Standards
 - ADR-034: Adopt Concurrency and Parallelism Standards
 
@@ -2965,7 +2965,7 @@ This ADR is related to:
 - ADR-006: Use Flyway for Database Schema Evolution
 - ADR-010: Adopt Transactional Outbox Pattern
 - ADR-029: Adopt Data Protection, Privacy and Retention Standards
-- ADR-030: Adopt Kafka Event Governance and Schema Evolution Standards
+- ADR-030: Adopt SQS Event Governance and Schema Evolution Standards
 
 ---
 

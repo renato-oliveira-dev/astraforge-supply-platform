@@ -29,7 +29,7 @@ Examples include:
 - Notification Service
 - Payment Gateway
 - Identity Provider
-- Kafka
+- SQS
 - Redis
 - External APIs
 
@@ -429,9 +429,9 @@ Bulkhead is recommended for expensive dependencies.
 
 ---
 
-# 25. Kafka Consumers
+# 25. SQS Consumers
 
-Kafka retries must distinguish:
+SQS retries must distinguish:
 
 - infrastructure failures
 - poison messages
@@ -532,7 +532,7 @@ Examples:
 - dependency outage
 - packet loss
 - DNS failure
-- Kafka unavailability
+- SQS unavailability
 
 ---
 
@@ -661,7 +661,7 @@ The decision is successful when:
 
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
 - ADR-014: Adopt OpenTelemetry for Distributed Observability
 - ADR-015: Deploy Workloads on Kubernetes

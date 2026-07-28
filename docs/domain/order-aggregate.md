@@ -2014,7 +2014,7 @@ The transaction must not wait for:
 - Inventory Reservation completion
 - Fulfillment completion
 - Payment confirmation
-- Kafka publication acknowledgement outside the Outbox mechanism
+- SQS publication acknowledgement outside the Outbox mechanism
 - Long-running external processing
 
 External reads required before the transaction should be coordinated carefully to avoid stale decisions.
@@ -2149,7 +2149,7 @@ Rules:
 The Order aggregate must not be serialized directly as:
 
 - REST Response
-- Kafka event payload
+- SQS integration-event payload
 - Audit payload
 - Cache contract
 - External API contract
@@ -2414,7 +2414,7 @@ The following rules apply to the Order aggregate:
 
 - The Domain Layer must not depend on Spring.
 - The Domain Layer must not depend on JPA.
-- The Domain Layer must not depend on Kafka.
+- The Domain Layer must not depend on Amazon SQS or the AWS SDK.
 - The Domain Layer must not depend on REST.
 - The Order aggregate must not depend on another bounded context.
 - The Order aggregate must not call external services.

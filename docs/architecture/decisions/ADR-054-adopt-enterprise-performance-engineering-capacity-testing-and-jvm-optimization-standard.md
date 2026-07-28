@@ -9,7 +9,7 @@
 | Status | Accepted |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
-| Technical Area | Performance, JVM, Capacity, PostgreSQL, Kafka, Redis, Java 21 |
+| Technical Area | Performance, JVM, Capacity, PostgreSQL, SQS, Redis, Java 21 |
 | Related Work Items | Performance Engineering, Virtual Threads, Database Optimization, Capacity Planning |
 | Supersedes | None |
 | Superseded By | None |
@@ -39,7 +39,7 @@ N+1 Queries
 
 Slow SQL
 
-Kafka Consumer Lag
+SQS Queue Backlog/Oldest-Message Age
 
 Redis Saturation
 
@@ -74,7 +74,7 @@ The organization requires standards covering:
 - Virtual Threads
 - connection pools
 - PostgreSQL
-- Kafka
+- SQS
 - Redis
 - external integrations
 - JMH
@@ -1145,13 +1145,13 @@ Parallelism MUST be bounded.
 
 ---
 
-# 109. Kafka Performance
+# 109. SQS Performance
 
-Kafka performance requires producer and consumer analysis.
+SQS performance requires producer and consumer analysis.
 
 ---
 
-# 110. Kafka Producer Metrics
+# 110. SQS Producer Metrics
 
 Monitor:
 
@@ -1177,12 +1177,12 @@ Producer batching MAY improve throughput at the cost of additional latency.
 
 ---
 
-# 112. Kafka Consumer Metrics
+# 112. SQS Consumer Metrics
 
 Monitor:
 
 ```text
-Consumer Lag
+Queue Backlog/Oldest-Message Age
 
 Records Consumed
 
@@ -1197,7 +1197,7 @@ Errors
 
 ---
 
-# 113. Consumer Lag
+# 113. Queue Backlog/Oldest-Message Age
 
 Lag is a key capacity signal.
 
@@ -1217,7 +1217,7 @@ for a sustained period.
 
 ---
 
-# 115. Kafka Parallelism
+# 115. SQS Parallelism
 
 Consumer scalability is constrained by partitioning.
 
@@ -1630,7 +1630,7 @@ CPU near sustained capacity
 
 Connection pool pending growth
 
-Kafka lag growth
+SQS queue backlog/oldest-message age growth
 
 Queue growth
 
@@ -1682,7 +1682,7 @@ Latency
 
 Queue Depth
 
-Kafka Lag
+SQS Queue Backlog/Oldest-Message Age
 
 Concurrency
 
@@ -1840,7 +1840,7 @@ Connection Pools
 
 Database Metrics
 
-Kafka Lag
+SQS Queue Backlog/Oldest-Message Age
 
 Redis Metrics
 ```
@@ -2123,7 +2123,7 @@ The following SHOULD be automated where practical:
 
 [ ] Critical SQL regressions are detected
 
-[ ] Kafka lag remains within recovery objective
+[ ] SQS queue backlog/oldest-message age remains within recovery objective
 
 [ ] Memory remains below safe envelope
 
@@ -2151,7 +2151,7 @@ Memory Headroom      PASS
 
 DB Pool Saturation   PASS
 
-Kafka Lag            WARNING
+SQS Queue Backlog/Oldest-Message Age            WARNING
 
 Redis Hit Ratio      PASS
 
@@ -2187,7 +2187,7 @@ A material performance-sensitive change SHOULD evaluate:
 
 [ ] Does connection-pool demand increase?
 
-[ ] Does Kafka processing time change?
+[ ] Does SQS processing time change?
 
 [ ] Does cache behavior change?
 
@@ -2217,7 +2217,7 @@ A critical service is not considered performance-compliant when applicable condi
 
 [ ] HTTP pool repeatedly exhausted
 
-[ ] Uncontrolled Kafka lag growth
+[ ] Uncontrolled SQS queue backlog/oldest-message age growth
 
 [ ] Memory exceeds safe container envelope
 
@@ -2252,7 +2252,7 @@ The following are prohibited or strongly discouraged:
 - retry storms
 - cache without explicit consistency semantics
 - cache growth without bounds
-- assuming more Kafka consumers always increase throughput
+- assuming more SQS consumers always increase throughput
 - performance tests using unrealistic tiny datasets
 - treating unit-test timing as a benchmark
 - JVM microbenchmarks without JMH
@@ -2276,7 +2276,7 @@ The decision provides:
 - better database efficiency
 - controlled connection pools
 - reduced N+1 behavior
-- improved Kafka capacity management
+- improved SQS capacity management
 - measurable Redis effectiveness
 - early performance regression detection
 - evidence-based optimization
@@ -2324,7 +2324,7 @@ The decision also means:
 | JVM over-tuning | High | Medium | Prefer defaults |
 | DB over-connection | High | Medium | Pool/database metrics |
 | Excessive concurrency | Critical | Medium | Explicit bounds |
-| Kafka backlog | High | Medium | Lag monitoring |
+| SQS backlog | High | Medium | Lag monitoring |
 | Memory exhaustion | Critical | Medium | Memory envelope |
 | Performance CI instability | Medium | Medium | Statistical tolerance |
 | Misleading averages | High | High | p95/p99 |
@@ -2355,7 +2355,7 @@ The following rules are mandatory:
 17. Retry policies must avoid load amplification.
 18. Batch APIs should be preferred over N+1 remote calls where available.
 19. Parallel remote calls must have explicit concurrency limits.
-20. Kafka consumer lag must be monitored.
+20. SQS queue backlog/oldest-message age must be monitored.
 21. Critical consumers must have understood backlog-recovery capacity.
 22. Redis caching must have measurable effectiveness and bounded memory behavior.
 23. Load tests must use documented workload models.
@@ -2380,7 +2380,7 @@ This ADR will be validated through:
 - Native Memory Tracking where required
 - PostgreSQL EXPLAIN / EXPLAIN ANALYZE
 - connection-pool metrics
-- Kafka metrics
+- SQS metrics
 - Redis metrics
 - JMH
 - k6
@@ -2403,7 +2403,7 @@ The decision is successful when:
 - database pool exhaustion decreases
 - HTTP pool exhaustion decreases
 - N+1 regressions decrease
-- Kafka lag is predictable and recoverable
+- SQS queue backlog/oldest-message age is predictable and recoverable
 - memory behavior remains within the defined envelope
 - performance regressions are detected before production
 - optimizations are supported by measurements
@@ -2454,7 +2454,7 @@ Rejected because JVM optimization requires proper benchmark methodology.
 
 This ADR extends and implements:
 
-- ADR-009: Apache Kafka Integration Events
+- ADR-009: Amazon SQS Integration Events
 - ADR-010: Redis Distributed Caching
 - ADR-016: Application Resilience
 - ADR-031: Database Performance and Data Access Standards
@@ -2478,7 +2478,7 @@ This ADR extends and implements:
 - Java Native Memory Tracking
 - JMH
 - PostgreSQL Documentation
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - Redis Documentation
 - Little's Law
 - k6
@@ -2619,7 +2619,7 @@ Prefer:
 
 when supported by semantics and contracts.
 
-For Kafka:
+For SQS:
 
 ```text
 EVENT ARRIVAL RATE

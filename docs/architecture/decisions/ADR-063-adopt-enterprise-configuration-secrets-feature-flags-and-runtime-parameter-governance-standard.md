@@ -45,7 +45,7 @@ Application
     |
     +--> Redis Configuration
     |
-    +--> Kafka Configuration
+    +--> SQS Configuration
     |
     +--> SQS Configuration
     |
@@ -206,7 +206,7 @@ Database Host
 
 Redis Host
 
-Kafka Bootstrap Servers
+SQS Bootstrap Servers
 
 External API Base URL
 
@@ -2299,7 +2299,7 @@ This ADR extends and implements:
 - ADR-054: Enterprise Performance Engineering and Capacity Standard
 - ADR-055: Enterprise Resilience Engineering Standard
 - ADR-056: Enterprise REST API and Integration Contract Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-058: Enterprise PostgreSQL Persistence, Transaction Management and Database Engineering Standard
 - ADR-059: Enterprise Redis Caching, Distributed Cache and Data Consistency Standard
 - ADR-060: Enterprise AWS Cloud, Kubernetes, Container and Runtime Deployment Standard

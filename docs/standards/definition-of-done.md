@@ -437,7 +437,7 @@ For messaging changes, verify:
 - payload is minimal
 - schema compatibility is preserved
 - correlation context is propagated
-- partition key is correct
+- FIFO MessageGroupId/ordering key is correct when FIFO ordering is required
 - ordering assumptions are documented
 - consumer is idempotent
 - retry policy is bounded
@@ -810,10 +810,8 @@ Mockito-based tests must verify:
 Integration tests must be included when behavior depends on:
 
 - PostgreSQL
-- Kafka
-- RabbitMQ
 - Redis
-- SQS-compatible infrastructure
+- SQS-compatible infrastructure such as LocalStack
 - HTTP serialization
 - security configuration
 - transaction behavior
@@ -872,7 +870,7 @@ Messaging tests should verify:
 - deserialization
 - envelope metadata
 - schema version
-- partition key
+- FIFO MessageGroupId / ordering metadata when applicable
 - duplicate handling
 - retry classification
 - dead-letter routing

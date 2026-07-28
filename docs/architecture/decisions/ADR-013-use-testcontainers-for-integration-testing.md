@@ -23,7 +23,7 @@ The Enterprise Order Platform depends on infrastructure components that provide 
 Examples include:
 
 - PostgreSQL
-- Kafka
+- SQS
 - Redis
 - Object Storage
 - Authentication providers
@@ -57,7 +57,7 @@ The platform requires an integration testing strategy that:
 - isolates tests
 - minimizes environment drift
 - supports PostgreSQL
-- supports Kafka
+- supports SQS
 - supports Redis
 - avoids shared environments
 - remains deterministic
@@ -106,7 +106,7 @@ Disadvantages:
 Examples:
 
 - H2
-- Embedded Kafka
+- Embedded SQS
 - Fake Redis
 
 Advantages:
@@ -186,7 +186,7 @@ Testcontainers provides:
 Testcontainers should be used for:
 
 - PostgreSQL
-- Kafka
+- SQS
 - Redis
 - LocalStack (when applicable)
 - MinIO (when applicable)
@@ -258,9 +258,9 @@ H2 is not considered a production-equivalent replacement.
 
 ---
 
-# 11. Kafka
+# 11. SQS
 
-Kafka integration tests validate:
+SQS integration tests validate:
 
 - publication
 - consumption
@@ -414,7 +414,7 @@ Failed tests should expose:
 - container logs
 - application logs
 - SQL errors
-- Kafka logs
+- SQS logs
 
 ---
 
@@ -424,7 +424,7 @@ Test infrastructure must never contain:
 
 - production credentials
 - production databases
-- production Kafka clusters
+- production SQS queues
 - production Redis instances
 
 ---
@@ -496,7 +496,7 @@ Mandatory rules:
 
 1. Infrastructure integration tests use Testcontainers.
 2. PostgreSQL replaces H2.
-3. Kafka integration uses real brokers.
+3. SQS integration uses representative queue infrastructure.
 4. Redis integration uses real Redis.
 5. Containers use dynamic ports.
 6. Tests remain isolated.
@@ -512,7 +512,7 @@ Mandatory rules:
 Validation includes:
 
 - PostgreSQL tests
-- Kafka tests
+- SQS tests
 - Redis tests
 - migration validation
 - startup validation
@@ -538,7 +538,7 @@ The decision is successful when:
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-006: Use Flyway for Database Migrations
 - ADR-007: Adopt the Transactional Outbox Pattern
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-010: Use Redis for Distributed Caching
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
 
@@ -549,7 +549,7 @@ The decision is successful when:
 - Testcontainers Documentation
 - Spring Boot Testcontainers Documentation
 - PostgreSQL Documentation
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - Redis Documentation
 - Enterprise Order Platform Testing Standards
 

@@ -392,7 +392,7 @@ Methods include:
 
 # 18. Event-Driven Invalidation
 
-Future versions may invalidate cache through Kafka events.
+Future versions may invalidate cache through SQS messages/events.
 
 Example:
 
@@ -669,7 +669,7 @@ The decision is successful when:
 - ADR-004: Use Spring Boot
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-007: Adopt the Transactional Outbox Pattern
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-015: Deploy Workloads on Kubernetes
 
 ---

@@ -1670,7 +1670,7 @@ Use:
 ```text
 REST
 
-Kafka
+SQS
 
 Approved Data Integration
 ```
@@ -2763,7 +2763,7 @@ This ADR extends and implements:
 - ADR-054: Enterprise Performance Engineering and Capacity Standard
 - ADR-055: Enterprise Resilience Engineering Standard
 - ADR-056: Enterprise REST API and Integration Contract Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 
 ---
 

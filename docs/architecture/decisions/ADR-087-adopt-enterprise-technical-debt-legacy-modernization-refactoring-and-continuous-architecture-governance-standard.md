@@ -11,8 +11,12 @@
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Architecture, Modernization, Refactoring, Technical Debt, Java |
 | Related Work Items | Java 21, Spring Boot, SonarQube, SAST, JaCoCo, Microservices, Legacy Modernization |
-| Supersedes | None |
+| Supersedes | ADR-047, ADR-069 |
 | Superseded By | None |
+
+---
+
+> **Consolidation:** The technical-debt, refactoring and legacy-modernization portions of ADR-069 are superseded by this ADR. Code-review governance formerly covered by ADR-069 is consolidated by ADR-086.
 
 ---
 

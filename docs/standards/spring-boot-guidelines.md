@@ -571,7 +571,7 @@ Transactions should remain:
 Do not keep a database transaction open while calling:
 
 - external REST APIs
-- Kafka
+- Amazon SQS
 - email services
 - object storage
 
@@ -1001,7 +1001,7 @@ When internal and external representations differ, use explicit mapping.
 
 # 52. Messaging
 
-Kafka listeners belong in infrastructure adapters.
+SQS consumers/listeners belong in infrastructure adapters.
 
 Listeners should:
 
@@ -1017,7 +1017,7 @@ Business logic must not remain inside listener methods.
 
 # 53. Event Publication
 
-Business transactions should not publish directly to Kafka.
+Business transactions should not publish directly to SQS; use Transactional Outbox when state and event publication must be reliable.
 
 Use the Transactional Outbox Pattern.
 
@@ -1040,7 +1040,7 @@ Outbox dispatcher
 
 ↓
 
-Kafka
+Amazon SQS
 ```
 
 ---
@@ -1142,7 +1142,7 @@ Track:
 - throughput
 - JVM behavior
 - database pool
-- Kafka consumers
+- SQS consumers
 - external integrations
 - business operations
 
@@ -1202,8 +1202,8 @@ Instrumentation should cover:
 
 - inbound HTTP
 - outbound HTTP
-- Kafka publication
-- Kafka consumption
+- SQS publication
+- SQS consumption
 - database access
 - scheduled processing
 
@@ -1502,7 +1502,7 @@ H2 must not be considered equivalent to PostgreSQL for:
 Use Testcontainers for realistic integration tests involving:
 
 - PostgreSQL
-- Kafka
+- Amazon SQS
 - Redis
 - external infrastructure emulators
 

@@ -27,7 +27,7 @@ Spring Boot
 
 PostgreSQL
 
-Kafka
+SQS
 
 Redis
 
@@ -77,7 +77,7 @@ The organization requires standards defining:
 - service tests
 - controller tests
 - HTTP client tests
-- Kafka tests
+- SQS tests
 - Redis tests
 - PostgreSQL tests
 - Testcontainers
@@ -617,7 +617,7 @@ Flyway
 
 Redis
 
-Kafka
+SQS
 
 HTTP serialization
 
@@ -899,9 +899,9 @@ Long retry backoffs SHOULD be overridden with short test configuration rather th
 
 ---
 
-# 86. Kafka Integration Tests
+# 86. SQS Integration Tests
 
-Kafka integrations require tests at multiple levels.
+SQS integrations require tests at multiple levels.
 
 ---
 
@@ -917,17 +917,17 @@ Producer logic MAY be unit tested around:
 
 # 88. Consumer Unit Test
 
-Consumer business processing SHOULD be unit tested without Kafka when possible.
+Consumer business processing SHOULD be unit tested without SQS when possible.
 
 ---
 
-# 89. Kafka Infrastructure Test
+# 89. SQS Infrastructure Test
 
 Integration tests SHOULD validate actual producer/consumer configuration where important.
 
 ---
 
-# 90. Kafka Test Scope
+# 90. SQS Test Scope
 
 Validate:
 
@@ -1065,7 +1065,7 @@ Contract tooling SHOULD detect breaking changes before deployment.
 
 # 104. Event Contracts
 
-Kafka events SHOULD have compatibility tests where schemas are shared.
+SQS messages/events SHOULD have compatibility tests where schemas are shared.
 
 ---
 
@@ -1498,7 +1498,7 @@ A query performing well on 10 rows does not prove behavior on millions of rows.
 
 ---
 
-# 156. Kafka Performance
+# 156. SQS Performance
 
 Consumer throughput SHOULD be validated against expected traffic and partitioning.
 
@@ -2038,7 +2038,7 @@ A service SHOULD satisfy applicable:
 
 [ ] HTTP client tests for integrations
 
-[ ] Kafka tests where messaging exists
+[ ] SQS tests where messaging exists
 
 [ ] Redis tests where cache semantics matter
 
@@ -2136,7 +2136,7 @@ The decision provides:
 - faster developer feedback
 - realistic database validation
 - safer API evolution
-- safer Kafka integration
+- safer SQS integration
 - better concurrency testing
 - improved refactoring confidence
 - reduced flaky tests
@@ -2214,7 +2214,7 @@ The following rules are mandatory:
 16. Repository custom query behavior should receive integration testing.
 17. Controllers should receive focused HTTP-layer testing.
 18. External HTTP clients should receive protocol/error-mapping tests.
-19. Kafka processing should test serialization, idempotency and failure behavior.
+19. SQS processing should test serialization, idempotency and failure behavior.
 20. Redis tests should validate cache semantics where material.
 21. Shared API/event contracts should receive compatibility validation.
 22. E2E tests should focus on critical business journeys.
@@ -2243,7 +2243,7 @@ This ADR will be validated through:
 - Mockito
 - Testcontainers
 - PostgreSQL
-- Kafka test infrastructure
+- SQS test infrastructure
 - Redis test infrastructure
 - WireMock
 - MockWebServer
@@ -2318,7 +2318,7 @@ Rejected because it unnecessarily slows feedback and obscures test boundaries.
 This ADR extends and implements:
 
 - ADR-006: Use Flyway for Database Migrations
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-010: Use Redis for Distributed Caching
 - ADR-031: Database Performance and Data Access Standards
 - ADR-034: Java 21 Concurrency and Parallelism Standards
@@ -2351,7 +2351,7 @@ This ADR extends and implements:
 - Google Testing Blog
 - Martin Fowler — Test Pyramid
 - PostgreSQL Documentation
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - Redis Documentation
 
 ---

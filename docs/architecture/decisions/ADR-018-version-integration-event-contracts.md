@@ -10,7 +10,7 @@
 | Date | 2026-07-23 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Messaging, Event Contracts and Evolution |
-| Related Work Items | Kafka Integration, Event-Driven Architecture |
+| Related Work Items | SQS Integration, Event-Driven Architecture |
 | Supersedes | None |
 | Superseded By | None |
 
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform is an event-driven system built around Apache Kafka.
+The Enterprise Order Platform is an event-driven system built around Amazon SQS.
 
 Business events are exchanged between independent services such as:
 
@@ -49,7 +49,7 @@ The platform requires a strategy that:
 - enables schema validation
 - supports replay
 - allows gradual migration
-- integrates with Kafka
+- integrates with SQS
 - remains technology independent
 
 ---
@@ -424,7 +424,7 @@ The decision is successful when:
 
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
 - ADR-017: Adopt Optimistic Locking for Concurrent Aggregate Updates
 
@@ -432,7 +432,7 @@ The decision is successful when:
 
 # 30. References
 
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - AsyncAPI Specification
 - JSON Schema Specification
 - Apache Avro Specification

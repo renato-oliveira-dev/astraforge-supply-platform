@@ -339,7 +339,7 @@ The initial design assumes:
 - Users are authenticated through JWT
 - PostgreSQL is the system of record
 - Redis is optional infrastructure for caching and distributed controls
-- Kafka supports asynchronous integration
+- Amazon SQS supports asynchronous integration
 - External systems may be temporarily unavailable
 - Business operations require traceability
 - The initial deployment is a modular monolith

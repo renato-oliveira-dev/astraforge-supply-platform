@@ -191,7 +191,7 @@ persistence-guidelines.md
 
 ## Event Design
 
-Kafka
+Amazon SQS
 
 Events
 

@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-032 |
 | Title | Adopt Distributed Caching and Cache Consistency Standards |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Redis, Caffeine, Spring Cache, Distributed Caching, Resilience |
 | Related Work Items | Redis, Cache-Aside, L1/L2 Cache, TTL, Invalidation, Resilience |
 | Supersedes | None |
-| Superseded By | None |
+| Superseded By | ADR-059 |
 
 ---
 

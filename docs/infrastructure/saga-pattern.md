@@ -645,18 +645,18 @@ The Enterprise Order Platform uses:
 Next document
 
 ```
-docs/infrastructure/kafka-architecture.md
+docs/infrastructure/sqs-architecture.md
 ```
 
 It will define:
 
-- Topic topology
+- Standard versus FIFO queue selection
+- Queue naming and ownership
 - Producer configuration
 - Consumer configuration
-- Partition strategy
-- Retry Topics
+- MessageGroupId strategy
+- Visibility timeout and redelivery
 - Dead Letter Queue
-- Schema Registry
 - Consumer scaling
-- Offset management
-- Performance tuning
+- IAM and security
+- Performance and backlog monitoring

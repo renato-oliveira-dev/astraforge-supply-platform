@@ -63,7 +63,7 @@ The selected model must:
 - preserve business consistency
 - avoid distributed transactions
 - remain operationally practical
-- support Kafka
+- support SQS
 - support Transactional Outbox
 - define consumer responsibilities
 
@@ -123,7 +123,7 @@ Advantages:
 
 - reliable
 - operationally proven
-- compatible with Kafka
+- compatible with SQS
 - compatible with Transactional Outbox
 - resilient to crashes
 - supports retries
@@ -214,7 +214,7 @@ The platform does **not** guarantee:
 Duplicate delivery may occur when:
 
 ```text
-Kafka acknowledges publication
+SQS acknowledges publication
 
 ↓
 
@@ -320,8 +320,8 @@ The producer does not assume consumer success.
 
 Ordering is guaranteed only when:
 
-- the same aggregate identifier is used as the Kafka key
-- Kafka partition ordering is preserved
+- the same aggregate identifier is used as the FIFO MessageGroupId
+- FIFO MessageGroupId ordering is preserved
 
 Ordering is **not** guaranteed across unrelated aggregates.
 
@@ -374,7 +374,7 @@ The decision provides:
 - crash recovery
 - retry capability
 - operational simplicity
-- compatibility with Kafka
+- compatibility with SQS
 - compatibility with Transactional Outbox
 - resilient architecture
 
@@ -455,7 +455,7 @@ The decision is successful when:
 - ADR-005 — Use PostgreSQL as the Primary Database
 - ADR-006 — Use Flyway for Database Migrations
 - ADR-007 — Adopt Transactional Outbox
-- ADR-009 — Use Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 
 ---
 
@@ -463,7 +463,7 @@ The decision is successful when:
 
 - Enterprise Integration Patterns
 - Microservices Patterns — Chris Richardson
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - Transactional Outbox Pattern
 - Enterprise Order Platform Messaging Guidelines
 

@@ -262,7 +262,7 @@ Integration Event
 Outbox Record
 ```
 
-No Kafka publishing occurs here.
+No direct SQS/AWS SDK publishing occurs here; integration is performed through an outbound port or the Transactional Outbox.
 
 ---
 
@@ -426,7 +426,7 @@ Application Layer may depend on:
 Application Layer must not depend on:
 
 - Controllers
-- Kafka
+- Amazon SQS
 - Database
 - JPA implementation
 - REST clients

@@ -106,7 +106,7 @@ Although fictional, every business rule is inspired by real enterprise systems.
 
 ## Messaging
 
-- Apache Kafka
+- Amazon SQS
 - Transactional Outbox Pattern
 
 ## Security
@@ -173,7 +173,7 @@ The architecture is intentionally designed to evolve into independently deployab
       Infrastructure Adapters
       ├── PostgreSQL
       ├── Redis
-      ├── Kafka
+      ├── Amazon SQS
       └── External APIs
 ```
 
@@ -334,7 +334,7 @@ enterprise-order-platform
 - [ ] Approval Workflow
 - [ ] Domain Events
 - [ ] Transactional Outbox
-- [ ] Kafka Integration
+- [ ] Amazon SQS Integration
 - [ ] Notifications
 
 ---

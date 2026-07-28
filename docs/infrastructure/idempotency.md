@@ -194,7 +194,7 @@ Columns
 | Column | Description |
 |---------|-------------|
 | event_id | Unique event identifier |
-| consumer_name | Consumer group |
+| consumer_name | Logical consumer / queue processing identity |
 | processed_at | Processing timestamp |
 | aggregate_id | Aggregate identifier |
 | aggregate_version | Version |
@@ -210,7 +210,7 @@ The following combination must be unique:
 (event_id, consumer_name)
 ```
 
-This allows different consumer groups to process the same event independently.
+This allows different logical consumers or consumer-owned queues to process the same event independently.
 
 ---
 
@@ -297,7 +297,7 @@ Replay is always supported.
 Example:
 
 ```
-Replay Topic
+Controlled Replay / Redrive Source
 
 ↓
 

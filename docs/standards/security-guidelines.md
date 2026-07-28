@@ -136,7 +136,7 @@ API Gateway → Backend Service
 
 Service → Database
 
-Service → Kafka
+Service → Amazon SQS
 
 Service → External Provider
 
@@ -819,7 +819,7 @@ Applicable locations include:
 - PostgreSQL volumes
 - object storage
 - backups
-- Kafka storage
+- SQS message storage
 - secret stores
 - persistent queues
 
@@ -1351,18 +1351,18 @@ Consumers must validate:
 
 ---
 
-# 77. Topic and Queue Authorization
+# 77. Queue Authorization
 
 A service should only have permissions needed for its responsibilities.
 
 Examples:
 
 ```text
-order-service → publish orders.order-events
+order-service → send prod-orders-workflow-events
 
-inventory-service → consume orders.order-events
+workflow-service → consume prod-orders-workflow-events
 
-inventory-service → publish inventory.reservation-events
+notification-service → consume prod-notifications-order-events
 ```
 
 Administrative broker permissions must not be granted to application workloads.
@@ -2385,7 +2385,7 @@ Development, test, staging and production must use separate:
 - identities
 - data
 - databases
-- topics and queues
+- queues and dead-letter queues
 - secret scopes
 - access controls
 

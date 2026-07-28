@@ -916,7 +916,7 @@ Correlation context SHOULD propagate through:
 ```text
 HTTP Calls
 
-Kafka Events
+SQS Events
 
 Async Processing
 

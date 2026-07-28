@@ -96,7 +96,7 @@ The organization requires standards covering:
 - dependency health
 - database health
 - Redis health
-- Kafka health
+- SQS health
 - external API health
 - Kubernetes probes
 - graceful shutdown
@@ -106,7 +106,7 @@ The organization requires standards covering:
 - terminationGracePeriodSeconds
 - connection draining
 - message consumers
-- Kafka listeners
+- SQS listeners
 - SQS workers
 - Outbox dispatchers
 - schedulers
@@ -259,9 +259,9 @@ Redis unavailability SHOULD NOT ordinarily make liveness fail.
 
 ---
 
-# 17. Kafka in Liveness
+# 17. SQS in Liveness
 
-Kafka broker unavailability SHOULD NOT ordinarily make liveness fail.
+SQS service unavailability SHOULD NOT ordinarily make liveness fail.
 
 ---
 
@@ -996,13 +996,13 @@ Kubernetes CronJobs SHOULD prefer job lifecycle semantics rather than embedding 
 
 ---
 
-# 106. Kafka Consumer
+# 106. SQS Consumer
 
-Kafka consumers require explicit shutdown semantics.
+SQS consumers require explicit shutdown semantics.
 
 ---
 
-# 107. Kafka Listener Stop
+# 107. SQS Listener Stop
 
 On shutdown, listeners SHOULD stop polling new records before existing processing is abandoned.
 
@@ -1034,7 +1034,7 @@ Consumers MUST remain idempotent.
 
 ---
 
-# 112. Kafka Rebalance
+# 112. SQS In-Flight Message Redelivery
 
 Consumer shutdown may cause partition rebalance.
 
@@ -1042,7 +1042,7 @@ Consumer shutdown may cause partition rebalance.
 
 # 113. Rebalance Awareness
 
-Long processing and shutdown behavior MUST account for Kafka poll/rebalance settings.
+Long processing and shutdown behavior MUST account for SQS long-polling, visibility-timeout and in-flight message settings.
 
 ---
 
@@ -1474,7 +1474,7 @@ Database UP
 
 Redis DOWN
 
-Kafka UP
+SQS UP
 
 Notification DOWN
 ```
@@ -1804,7 +1804,7 @@ Deployment pipelines SHOULD verify that new replicas become ready and serve a ba
 
 [ ] Are Outbox workers recoverable?
 
-[ ] Are Kafka offsets safe?
+[ ] Are SQS acknowledgement/delete and visibility-timeout semantics safe?
 
 [ ] Are SQS messages safe for redelivery?
 
@@ -1898,7 +1898,7 @@ A service is not considered compliant when applicable conditions include:
 
 [ ] termination grace period is shorter than normal drain time
 
-[ ] Kafka consumer commits before durable business completion without explicit semantics
+[ ] SQS consumer commits before durable business completion without explicit semantics
 
 [ ] SQS message is deleted before successful processing
 
@@ -1933,7 +1933,7 @@ The following are prohibited or strongly discouraged:
 - immediate process exit on SIGTERM
 - arbitrary long `preStop` sleeps
 - too-short termination grace periods
-- Kafka listener shutdown without offset/delivery analysis
+- SQS consumer shutdown without acknowledgement, visibility-timeout and redelivery analysis
 - deleting SQS messages before business completion
 - message handlers without duplicate safety
 - in-memory-only recovery state for long workflows
@@ -2029,7 +2029,7 @@ The following rules are mandatory:
 12. `terminationGracePeriodSeconds` must reflect real shutdown needs.
 13. `preStop` should be used only when it solves a defined draining/propagation requirement.
 14. Custom executors must stop accepting tasks and terminate within bounded time.
-15. Kafka/SQS consumers must stop intake before termination.
+15. SQS consumers must stop intake before termination.
 16. Message completion/offset/delete semantics must preserve at-least-once correctness.
 17. Outbox workers must recover safely from process termination.
 18. Schedulers must stop launching new work during shutdown.
@@ -2058,7 +2058,7 @@ This ADR will be validated through:
 - PodDisruptionBudgets
 - PostgreSQL
 - Flyway
-- Kafka
+- SQS
 - SQS
 - Transactional Outbox
 - Virtual Threads
@@ -2141,7 +2141,7 @@ This ADR extends and implements:
 
 - ADR-007: Adopt Transactional Outbox
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-013: Use Testcontainers for Integration Testing
 - ADR-014: Adopt OpenTelemetry for Distributed Observability
 - ADR-016: Application Resilience
@@ -2150,7 +2150,7 @@ This ADR extends and implements:
 - ADR-050: Enterprise Architecture Baseline
 - ADR-053: Enterprise Testing Strategy and Quality Engineering Standard
 - ADR-055: Enterprise Resilience Engineering Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-060: Enterprise AWS Cloud, Kubernetes, Container and Runtime Deployment Standard
 - ADR-062: Enterprise Logging, Observability, OpenTelemetry and Production Diagnostics Standard
 - ADR-063: Enterprise Configuration Management, Secrets, Feature Flags and Runtime Parameter Governance Standard
@@ -2170,8 +2170,8 @@ This ADR extends and implements:
 - Kubernetes PodDisruptionBudget Documentation
 - Spring Boot Actuator Documentation
 - Spring Boot Graceful Shutdown Documentation
-- Spring for Apache Kafka Documentation
-- Apache Kafka Consumer Documentation
+- Spring for Amazon SQS Documentation
+- Amazon SQS Consumer Documentation
 - AWS SQS Documentation
 - Java ExecutorService Documentation
 - PostgreSQL Documentation
@@ -2294,7 +2294,7 @@ CLOSE CLIENTS / POOLS
 EXIT
 ```
 
-Kafka shutdown becomes:
+SQS shutdown becomes:
 
 ```text
 STOP POLLING

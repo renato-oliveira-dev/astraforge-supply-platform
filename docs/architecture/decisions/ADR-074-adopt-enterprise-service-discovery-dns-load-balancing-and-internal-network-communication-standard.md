@@ -1036,9 +1036,9 @@ Redis should only be reachable by authorized workloads.
 
 ---
 
-# 108. Kafka Network Policy
+# 108. SQS Network/IAM Policy
 
-Kafka connectivity SHOULD be limited to services requiring broker access.
+SQS connectivity SHOULD be limited to services requiring broker access.
 
 ---
 
@@ -2213,7 +2213,7 @@ EXPLICIT COMMUNICATION
      |
      +--> orders -> customers
      +--> orders -> postgres
-     +--> orders -> kafka
+     +--> orders -> sqs
 ```
 
 Service mesh adoption becomes:

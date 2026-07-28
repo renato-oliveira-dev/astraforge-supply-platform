@@ -23,7 +23,7 @@ The Enterprise Order Platform is a distributed system composed of multiple indep
 The platform includes:
 
 - synchronous HTTP APIs
-- Apache Kafka producers and consumers
+- Amazon SQS producers and consumers
 - Transactional Outbox dispatchers
 - Saga workflows
 - scheduled jobs
@@ -40,7 +40,7 @@ A single business operation may generate diagnostic information across multiple:
 - pods
 - threads
 - virtual threads
-- Kafka partitions
+- FIFO MessageGroupIds
 - scheduled executions
 - retries
 - external dependencies
@@ -80,7 +80,7 @@ The platform requires a logging architecture that:
 - correlates logs across distributed operations
 - integrates with OpenTelemetry
 - propagates trace and business correlation identifiers
-- supports HTTP and Kafka workloads
+- supports HTTP and SQS workloads
 - works with Java 21 and Spring Boot
 - works with virtual threads and asynchronous execution
 - protects personal and confidential data
@@ -129,7 +129,7 @@ The decision must consider:
 - application logs are collected from standard output
 - trace sampling may omit some traces
 - log volume can be significantly larger than metric or trace volume
-- Kafka processing may continue long after the original HTTP request
+- SQS processing may continue long after the original HTTP request
 - message delivery is at least once
 - retries may generate repeated diagnostic information
 - asynchronous execution may lose thread-local context
@@ -727,7 +727,7 @@ The platform may use a business or request correlation identifier in addition to
 The `correlationId` should:
 
 - remain stable across a logical workflow
-- be propagated through HTTP and Kafka
+- be propagated through HTTP and SQS
 - be distinct from trace ID
 - be safe to expose operationally
 - have one defined meaning
@@ -865,9 +865,9 @@ Prohibited headers include:
 
 ---
 
-# 37. Kafka Correlation
+# 37. SQS Correlation
 
-Kafka producer and consumer logs should include approved messaging fields.
+SQS producer and consumer logs should include approved messaging fields.
 
 Examples:
 
@@ -885,22 +885,22 @@ Examples:
 
 ---
 
-# 38. Kafka Topic
+# 38. SQS Topic
 
-The Kafka topic may be logged because it has bounded cardinality.
+The SQS queue may be logged because it has bounded cardinality.
 
 Partition and offset may be logged for diagnostics, but must not become metric labels.
 
 ---
 
-# 39. Kafka Producer Logging
+# 39. SQS Producer Logging
 
 A successful producer log may contain:
 
 ```json
 {
   "message": "Integration event published",
-  "operation": "kafka.publish",
+  "operation": "sqs.publish",
   "eventType": "ORDER_APPROVED",
   "eventVersion": 2,
   "topic": "orders.events",
@@ -913,14 +913,14 @@ Do not log the full event payload.
 
 ---
 
-# 40. Kafka Consumer Logging
+# 40. SQS Consumer Logging
 
 A consumer summary may contain:
 
 ```json
 {
   "message": "Integration event processed",
-  "operation": "kafka.consume",
+  "operation": "sqs.consume",
   "eventType": "ORDER_APPROVED",
   "topic": "orders.events",
   "consumerGroup": "inventory-service",
@@ -1115,7 +1115,7 @@ Examples:
 - application started
 - order approved
 - outbox batch completed
-- Kafka event processed
+- SQS message/event processed
 - circuit breaker changed state
 - scheduled job completed
 - deployment version loaded
@@ -1199,7 +1199,7 @@ Exceptions should be logged at the boundary that has enough context to classify 
 Examples of appropriate boundaries:
 
 - HTTP exception handler
-- Kafka listener error handler
+- SQS listener error handler
 - scheduled job coordinator
 - outbox dispatcher boundary
 - message dead-letter handler
@@ -1578,7 +1578,7 @@ Example:
 
 # 77. Payload Logging
 
-Full HTTP, Kafka, database or external-service payload logging is prohibited by default.
+Full HTTP, SQS, database or external-service payload logging is prohibited by default.
 
 Payloads may contain:
 
@@ -2411,7 +2411,7 @@ Noisy framework packages should use controlled levels.
 Examples include:
 
 - Hibernate SQL logging
-- Kafka protocol internals
+- SQS protocol internals
 - Netty internals
 - Spring security debug logging
 - connection-pool internals
@@ -2550,7 +2550,7 @@ Unexpected growth may indicate:
 - exception loop
 - duplicate boundary logging
 - debug level enabled
-- poisoned Kafka message
+- poisoned SQS message
 - health-check logging
 
 ---
@@ -2582,7 +2582,7 @@ Examples:
 - repeated dependency timeout
 - circuit-open rejection
 - identical invalid external response
-- duplicate Kafka message
+- duplicate SQS message
 - health-check failure storm
 
 Sampling must preserve:
@@ -2888,7 +2888,7 @@ Integration tests should validate:
 - active OpenTelemetry context
 - MDC propagation
 - HTTP filter behavior
-- Kafka listener correlation
+- SQS listener correlation
 - virtual-thread propagation
 - JSON encoder output
 - exception-handler logging
@@ -2937,14 +2937,14 @@ Outbound operation
 Same trace ID
 ```
 
-For Kafka:
+For SQS:
 
 ```text
 Producer context
 
 ↓
 
-Kafka headers
+SQS headers
 
 ↓
 
@@ -3354,7 +3354,7 @@ The following are prohibited:
 - direct log-backend SDK usage
 - full request-body logging
 - full response-body logging
-- full Kafka payload logging
+- full SQS payload logging
 - logging passwords
 - logging tokens
 - logging cookies
@@ -3406,7 +3406,7 @@ The decision provides:
 - better dashboard reliability
 - better alert reliability
 - OpenTelemetry trace integration
-- Kafka and Saga correlation
+- SQS and Saga correlation
 - improved Kubernetes operations
 - reduced message-text parsing
 - clearer error classification
@@ -3528,7 +3528,7 @@ The decision will be validated through:
 - logging schema tests
 - trace-correlation tests
 - HTTP correlation tests
-- Kafka correlation tests
+- SQS correlation tests
 - Saga correlation tests
 - MDC cleanup tests
 - virtual-thread propagation tests
@@ -3555,7 +3555,7 @@ The decision is successful when:
 - every production application emits valid structured JSON
 - logs can be searched through stable fields
 - logs correlate with OpenTelemetry traces
-- HTTP and Kafka operations preserve correlation
+- HTTP and SQS operations preserve correlation
 - long-running Sagas can be investigated across traces
 - sensitive values are absent from logs
 - log injection is prevented
@@ -3618,7 +3618,7 @@ This ADR is related to:
 - ADR-004: Use Spring Boot
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
 - ADR-013: Use Testcontainers for Integration Testing
 - ADR-014: Adopt OpenTelemetry for Distributed Observability
@@ -3712,7 +3712,7 @@ The platform requires correlation across:
 ```text
 HTTP requests
 
-Kafka events
+SQS messages/events
 
 Transactional Outbox
 

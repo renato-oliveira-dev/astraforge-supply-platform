@@ -10,8 +10,8 @@
 | Date | 2026-07-26 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Data Privacy, PII, LGPD, Auditability, Retention, Secure Data Handling |
-| Related Work Items | Java 21, Spring Boot 3, PostgreSQL, Redis, Kafka, SQS, AWS, Observability |
-| Supersedes | None |
+| Related Work Items | Java 21, Spring Boot 3, PostgreSQL, Redis, SQS, SQS, AWS, Observability |
+| Supersedes | ADR-046 |
 | Superseded By | None |
 
 ---
@@ -76,7 +76,7 @@ Application Logs
 
 Stack Traces
 
-Kafka Events
+SQS Events
 
 SQS Messages
 
@@ -151,7 +151,7 @@ The organization requires standards covering:
 - metrics
 - PostgreSQL
 - Redis
-- Kafka
+- SQS
 - SQS
 - REST APIs
 - audit trails
@@ -424,7 +424,7 @@ Events MUST NOT become copies of entire database entities merely for convenience
 
 # 23. Event Contract
 
-A Kafka/SQS event SHOULD contain the minimum information required by legitimate consumers.
+A SQS event SHOULD contain the minimum information required by legitimate consumers.
 
 ---
 
@@ -960,37 +960,37 @@ Deletion/anonymization workflows MUST consider cached copies.
 
 ---
 
-# 90. Kafka
+# 90. SQS
 
-Kafka topics MUST be classified according to the sensitivity of their payloads.
+SQS queues MUST be classified according to the sensitivity of their payloads.
 
 ---
 
-# 91. Kafka PII
+# 91. SQS PII
 
 Personal data SHOULD be minimized in event payloads.
 
 ---
 
-# 92. Kafka Retention
+# 92. SQS Retention
 
 Topic retention MUST align with data-retention requirements.
 
 ---
 
-# 93. Infinite Kafka Retention
+# 93. Infinite SQS Retention
 
 Infinite event retention MUST NOT be assumed safe for personal data.
 
 ---
 
-# 94. Kafka Access
+# 94. SQS Access
 
 Topic ACLs MUST follow least privilege.
 
 ---
 
-# 95. Kafka Encryption
+# 95. SQS Encryption
 
 Broker transport/storage controls MUST comply with infrastructure security standards.
 
@@ -1911,7 +1911,7 @@ ORDER SERVICE
      |
      +--> POSTGRESQL
      |
-     +--> KAFKA
+     +--> SQS
      |
      +--> NOTIFICATION
      |
@@ -2398,9 +2398,9 @@ Cache keys/values MUST follow privacy logging rules.
 
 ---
 
-# 267. Kafka Debug Logging
+# 267. SQS Debug Logging
 
-Kafka producer/consumer debug logging MUST NOT expose full sensitive event payloads.
+SQS producer/consumer debug logging MUST NOT expose full sensitive event payloads.
 
 ---
 
@@ -2427,7 +2427,7 @@ Every material feature SHOULD evaluate:
 
 [ ] Which services receive it?
 
-[ ] Is it placed in Kafka/SQS?
+[ ] Is it placed in SQS?
 
 [ ] Is it cached?
 
@@ -2559,7 +2559,7 @@ A service is not considered compliant when applicable conditions include:
 
 [ ] Real customer data exists in source-controlled tests
 
-[ ] Kafka/SQS payload contains unnecessary personal data
+[ ] SQS payload contains unnecessary personal data
 
 [ ] Redis stores personal data indefinitely without justification
 
@@ -2601,7 +2601,7 @@ The following are prohibited or strongly discouraged:
 - caching sensitive data indefinitely
 - storing PII directly in cache keys
 - assuming Redis is not a data store
-- assuming Kafka history is harmless
+- assuming SQS history is harmless
 - ignoring DLQs during privacy analysis
 - treating soft delete as real deletion
 - retaining data forever by default
@@ -2628,7 +2628,7 @@ The decision provides:
 - safer logs and observability
 - controlled data retention
 - stronger auditability
-- safer Redis/Kafka/SQS usage
+- safer Redis/SQS usage
 - better deletion workflows
 - reduced non-production exposure
 - improved incident investigation
@@ -2706,8 +2706,8 @@ The following rules are mandatory:
 13. Sensitive persistent stores must use approved encryption controls.
 14. Redis data must have appropriate retention/TTL.
 15. Sensitive values should not appear directly in Redis keys.
-16. Kafka/SQS payloads must contain only necessary information.
-17. Kafka, SQS and DLQ retention must be included in privacy governance.
+16. SQS payloads must contain only necessary information.
+17. SQS, SQS and DLQ retention must be included in privacy governance.
 18. Audit records must be distinct from ordinary diagnostic logs.
 19. Audit records must avoid unnecessary sensitive payload duplication.
 20. Data categories must have explicit retention policies.
@@ -2742,7 +2742,7 @@ This ADR will be validated through:
 - Spring Boot Security
 - PostgreSQL
 - Redis
-- Kafka
+- SQS
 - AWS SQS
 - AWS KMS
 - approved secret-management systems
@@ -2768,7 +2768,7 @@ The decision is successful when:
 - sensitive values no longer appear in logs
 - observability uses correlation rather than PII
 - legitimate business values remain unchanged by security controls
-- Kafka/SQS events contain minimal personal data
+- SQS events contain minimal personal data
 - Redis retention is bounded
 - DLQs are included in retention policies
 - non-production environments use synthetic or approved masked data
@@ -2830,7 +2830,7 @@ This ADR extends and implements:
 - ADR-052: Java 21 / Spring Boot Enterprise Coding Standard
 - ADR-053: Enterprise Testing Strategy and Quality Engineering Standard
 - ADR-056: Enterprise REST API and Integration Contract Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-058: Enterprise PostgreSQL Persistence, Transaction Management and Database Engineering Standard
 - ADR-059: Enterprise Redis Caching, Distributed Cache and Data Consistency Standard
 - ADR-060: Enterprise AWS Cloud, Kubernetes, Container and Runtime Deployment Standard
@@ -2861,7 +2861,7 @@ This ADR extends and implements:
 - ISO/IEC 27701
 - PostgreSQL Documentation
 - Redis Security Documentation
-- Apache Kafka Security Documentation
+- Amazon SQS Security Documentation
 - AWS Security Documentation
 
 ---
@@ -3192,7 +3192,7 @@ are private.
 Do not assume Redis
 is temporary and harmless.
 
-Do not assume Kafka
+Do not assume SQS
 will forget.
 
 Do not ignore DLQs.

@@ -1582,7 +1582,7 @@ This ADR is related to:
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-007: Adopt Transactional Outbox
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-016: Use Problem Details for API Errors
 - ADR-017: Use Optimistic Locking for Aggregate Concurrency
 

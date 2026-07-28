@@ -52,7 +52,7 @@ API / SERVICE A
  |
  +--> SERVICE C
  |
- +--> KAFKA / SQS
+ +--> SQS
  |
  v
 PROTECTED RESOURCE
@@ -1259,7 +1259,7 @@ or service identity SHOULD be used.
 
 # 137. Messaging
 
-Kafka/SQS processing requires explicit identity and authorization semantics.
+SQS processing requires explicit identity and authorization semantics.
 
 ---
 
@@ -1289,7 +1289,7 @@ Consumers MUST NOT assume every message is trusted merely because it arrived fro
 
 # 142. Broker Authorization
 
-Kafka/SQS access MUST use least-privilege service identities.
+SQS access MUST use least-privilege service identities.
 
 ---
 
@@ -1928,7 +1928,7 @@ Examples:
 
 [ ] No bearer token logging
 
-[ ] No refresh token in Kafka/SQS payloads
+[ ] No refresh token in SQS payloads
 
 [ ] No production access keys in source
 
@@ -2011,7 +2011,7 @@ The following are prohibited or strongly discouraged:
 - obtaining a new client-credentials token on every request
 - token refresh stampedes
 - logging JWTs
-- storing JWTs in Kafka/SQS/Outbox payloads
+- storing JWTs in SQS/Outbox payloads
 - long-lived static AWS access keys in applications
 - global mutable current-user state
 - losing SecurityContext in custom asynchronous execution
@@ -2248,7 +2248,7 @@ This ADR extends and implements:
 - ADR-053: Enterprise Testing Strategy and Quality Engineering Standard
 - ADR-055: Enterprise Resilience Engineering Standard
 - ADR-056: Enterprise REST API and Integration Contract Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-060: Enterprise AWS Cloud, Kubernetes, Container and Runtime Deployment Standard
 - ADR-061: Enterprise CI/CD, DevSecOps, Software Supply Chain and Release Engineering Standard
 - ADR-062: Enterprise Logging, Observability, OpenTelemetry and Production Diagnostics Standard
@@ -2475,7 +2475,7 @@ BUSINESS EVENT
 NO REUSABLE BEARER TOKEN
     |
     v
-KAFKA / SQS
+SQS
 ```
 
 The complete security equation is:

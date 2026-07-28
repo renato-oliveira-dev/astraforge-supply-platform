@@ -23,7 +23,7 @@ The Enterprise Order Platform is a distributed business platform composed of ind
 The architecture includes:
 
 - synchronous REST APIs
-- Apache Kafka producers and consumers
+- Amazon SQS producers and consumers
 - Transactional Outbox
 - Saga workflows
 - PostgreSQL
@@ -45,7 +45,7 @@ Is CPU usage high?
 
 Is PostgreSQL available?
 
-Is Kafka reachable?
+Is SQS reachable?
 ```
 
 These questions are operationally useful but do not answer the most important reliability question:
@@ -82,7 +82,7 @@ The platform requires a standardized reliability model that:
 - defines error budgets
 - measures user-visible behavior
 - supports synchronous APIs
-- supports asynchronous Kafka processing
+- supports asynchronous SQS processing
 - supports long-running Saga workflows
 - distinguishes availability from latency
 - supports dependency-aware diagnosis
@@ -144,7 +144,7 @@ Requests completed below 500 ms / successful requests
 ```
 
 ```text
-Kafka events processed within 30 seconds / valid events received
+SQS messages/events processed within 30 seconds / valid events received
 ```
 
 ---
@@ -251,7 +251,7 @@ SLOs should be defined for:
 
 - critical APIs
 - critical business operations
-- Kafka processing
+- SQS processing
 - Saga completion
 - scheduled critical workloads
 - data freshness where relevant
@@ -516,9 +516,9 @@ Data-loss tolerance must be defined explicitly.
 
 ---
 
-# 25. Kafka Processing SLI
+# 25. SQS Processing SLI
 
-Kafka-based services require asynchronous SLIs.
+SQS-based services require asynchronous SLIs.
 
 Example:
 
@@ -534,7 +534,7 @@ This combines:
 
 ---
 
-# 26. Kafka Processing Delay
+# 26. SQS Processing Delay
 
 Processing delay should measure:
 
@@ -546,14 +546,14 @@ event availability time
 
 This captures:
 
-- consumer lag
+- queue backlog/oldest-message age
 - retry delay
 - processing duration
 - temporary consumer outage
 
 ---
 
-# 27. Kafka Consumer Lag
+# 27. SQS Queue Backlog/Oldest-Message Age
 
 Consumer lag is an important operational metric but is not necessarily the SLI itself.
 
@@ -707,7 +707,7 @@ complete before 06:00.
 A service may depend on:
 
 - PostgreSQL
-- Kafka
+- SQS
 - Redis
 - internal services
 - external providers
@@ -1107,7 +1107,7 @@ Appropriate examples:
 
 - rapid error-budget consumption
 - critical checkout failure
-- major Kafka processing outage
+- major SQS processing outage
 - Saga terminal failure growth
 - critical data-processing deadline at risk
 
@@ -1192,7 +1192,7 @@ Examples:
 - CPU throttling
 - connection-pool exhaustion
 - executor queue saturation
-- Kafka consumer backlog
+- SQS consumer backlog
 - database connection wait
 - bulkhead rejection
 - rate-limit rejection
@@ -1910,7 +1910,7 @@ Engineering dashboards should include diagnostic signals such as:
 - JVM
 - garbage collection
 - database pool
-- Kafka lag
+- SQS queue backlog/oldest-message age
 - circuit-breaker state
 - retry rate
 - dependency latency
@@ -2620,7 +2620,7 @@ Repeated manual recovery should be measured and reduced.
 
 Examples:
 
-- manually replaying Kafka messages
+- manually replaying SQS messages
 - manually restarting consumers
 - manually correcting Saga state
 - manually republishing outbox records
@@ -2650,7 +2650,7 @@ Tests should validate:
 - normalized routes
 - metric labels
 - histogram boundaries
-- Kafka processing metrics
+- SQS processing metrics
 - Saga completion metrics
 - outbox publication metrics
 - duplicate-event behavior
@@ -2672,7 +2672,7 @@ HTTP 500 → bad
 
 HTTP 400 validation → excluded
 
-duplicate Kafka event → good/neutral according to policy
+duplicate SQS message/event → good/neutral according to policy
 ```
 
 ---
@@ -2685,7 +2685,7 @@ Examples:
 
 - successful HTTP request increments good-event counter
 - failed dependency increments bad-event counter
-- Kafka event records processing duration
+- SQS message/event records processing duration
 - Saga completion records terminal state
 - outbox publication records delay
 
@@ -2751,7 +2751,7 @@ Examples:
 - dependency latency
 - dependency HTTP 500
 - database slowdown
-- Kafka unavailability
+- SQS unavailability
 - Redis outage
 - pod termination
 - packet loss
@@ -2814,7 +2814,7 @@ The following are prohibited:
 - excluding dependency failures from user-facing SLOs
 - counting invalid client requests as server failures without defined semantics
 - counting every internal retry as a user-visible failure
-- using Kafka record lag alone as the asynchronous SLI
+- using SQS backlog/oldest-message age alone as the asynchronous SLI
 - defining SLOs without owners
 - defining SLOs without runbooks
 - paging on every infrastructure threshold
@@ -2908,7 +2908,7 @@ The decision also means:
 | SLO query changes historical meaning | Medium | Medium | Version-control and review |
 | Error budget blocks reliability fixes | High | Low | Allow reliability-improving releases |
 | Teams manipulate targets | High | Low | Architecture and business governance |
-| Kafka lag misrepresents delay | Medium | Medium | Measure event processing time |
+| SQS queue backlog/oldest-message age misrepresents delay | Medium | Medium | Measure event processing time |
 | Retry hides dependency instability | Medium | High | Monitor retries separately |
 | Synthetic checks differ from users | Medium | Medium | Combine synthetic and real traffic |
 | Error budget excuses data loss | High | Low | Separate durability and integrity objectives |
@@ -2938,7 +2938,7 @@ The following rules are mandatory:
 12. Structured logs and traces support diagnosis.
 13. High-cardinality metric labels are prohibited.
 14. HTTP routes must be normalized.
-15. Kafka SLIs should measure processing time rather than record lag alone.
+15. SQS SLIs should measure processing time rather than record lag alone.
 16. Transactional Outbox publication delay must be measurable.
 17. Critical Sagas must define completion objectives.
 18. Dependency failures remain part of user-visible reliability when they cause user failure.
@@ -2968,7 +2968,7 @@ The following targets represent an initial baseline and must be validated agains
 | Order creation | Availability | 99.9% | Rolling 30 days |
 | Checkout | Availability | 99.9% | Rolling 30 days |
 | Checkout | Latency < 2 s | 99.0% | Rolling 30 days |
-| Kafka critical-event processing | Processed < 30 s | 99.9% | Rolling 30 days |
+| SQS critical-event processing | Processed < 30 s | 99.9% | Rolling 30 days |
 | Transactional Outbox | Published < 60 s | 99.99% | Rolling 30 days |
 | Critical Saga | Terminal state < 2 min | 99.5% | Rolling 30 days |
 
@@ -3006,7 +3006,7 @@ latency:
 
 ---
 
-# 179. Example Kafka SLO
+# 179. Example SQS SLO
 
 ```yaml
 service: orders-service
@@ -3096,7 +3096,7 @@ The decision will be validated through:
 - synthetic metric tests
 - OpenTelemetry validation
 - HTTP integration tests
-- Kafka integration tests
+- SQS integration tests
 - Saga integration tests
 - Transactional Outbox tests
 - failure injection
@@ -3119,7 +3119,7 @@ The decision is successful when:
 - critical user journeys are represented
 - availability is measured from user outcomes
 - latency is measured through meaningful thresholds
-- Kafka processing delay is measurable
+- SQS processing delay is measurable
 - critical Saga completion is measurable
 - outbox publication delay is measurable
 - error budgets are visible
@@ -3166,7 +3166,7 @@ Rejected because it produces alert fatigue and does not account for service obje
 
 ---
 
-## 184.6 Kafka Lag as the Only Messaging SLI
+## 184.6 SQS Queue Backlog/Oldest-Message Age as the Only Messaging SLI
 
 Rejected because record count does not directly represent event-processing delay or user impact.
 
@@ -3195,7 +3195,7 @@ This ADR is related to:
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
 - ADR-013: Use Testcontainers for Integration Testing
 - ADR-014: Adopt OpenTelemetry for Distributed Observability
@@ -3218,7 +3218,7 @@ This ADR is related to:
 - OpenTelemetry Specification
 - Prometheus Documentation
 - Kubernetes Documentation
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - Resilience4j Documentation
 - Enterprise Order Platform Observability Architecture
 - Enterprise Order Platform Reliability Guidelines
@@ -3277,7 +3277,7 @@ Correctness
 
 Freshness
 
-Kafka Processing Delay
+SQS Processing Delay
 
 Outbox Publication Delay
 
@@ -3300,7 +3300,7 @@ CPU Low
 
 Memory Healthy
 
-Kafka Connected
+SQS Connected
 ```
 
 as proof that the business capability is reliable.

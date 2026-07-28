@@ -10,7 +10,7 @@
 | Date | 2026-07-26 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Error Handling, Exceptions, REST, Problem Details, Integration Failures |
-| Related Work Items | Spring Boot, RFC 9457, WebClient, RestClient, Kafka, SQS, Resilience4j |
+| Related Work Items | Spring Boot, RFC 9457, WebClient, RestClient, SQS, SQS, Resilience4j |
 | Supersedes | None |
 | Superseded By | None |
 
@@ -37,7 +37,7 @@ REMOTE HTTP SERVICE
 
 REDIS
 
-KAFKA
+SQS
 
 SQS
 
@@ -125,7 +125,7 @@ The organization requires standards covering:
 - timeout
 - Circuit Breaker
 - retryability
-- Kafka errors
+- SQS errors
 - SQS errors
 - DLQ
 - correlation IDs
@@ -1312,13 +1312,13 @@ catch (RemoteException ex) {
 
 ---
 
-# 113. Kafka
+# 113. SQS
 
-Kafka consumer failures MUST use explicit failure classification.
+SQS consumer failures MUST use explicit failure classification.
 
 ---
 
-# 114. Kafka Categories
+# 114. SQS Categories
 
 Typical categories:
 
@@ -1621,7 +1621,7 @@ Failure handling MUST preserve correlation context across:
 ```text
 HTTP
 
-Kafka
+SQS
 
 SQS
 
@@ -2195,9 +2195,9 @@ Failure classification tests SHOULD verify which failures are eligible/ineligibl
 
 ---
 
-# 208. Kafka Tests
+# 208. SQS Tests
 
-Kafka consumer tests SHOULD verify:
+SQS consumer tests SHOULD verify:
 
 ```text
 Retryable failure
@@ -2518,7 +2518,7 @@ The following rules are mandatory:
 19. Retry eligibility must derive from explicit failure classification and ADR-055 policy.
 20. Circuit Breaker OPEN must be distinguishable from an attempted remote call failure.
 21. Fallback must not silently hide semantically relevant failures.
-22. Kafka/SQS failures must distinguish retryable and permanent conditions.
+22. SQS failures must distinguish retryable and permanent conditions.
 23. Poison messages must not retry forever.
 24. DLQ failure metadata must remain safe and bounded.
 25. Unexpected exceptions should normally be logged once at the responsible boundary.
@@ -2548,7 +2548,7 @@ This ADR will be validated through:
 - Spring WebClient
 - Spring RestClient
 - Resilience4j
-- Spring Kafka
+- AWS SDK for Java 2.x SQS integration
 - AWS SQS integrations
 - OpenAPI
 - JUnit 5
@@ -2578,7 +2578,7 @@ The decision is successful when:
 - duplicate error logging decreases
 - sensitive values no longer appear in failure responses/logs
 - legitimate business text remains uncorrupted
-- Kafka/SQS poison failures move predictably to DLQ
+- SQS poison failures move predictably to DLQ
 - OpenAPI accurately documents expected failures
 - production incidents are easier to correlate and diagnose
 
@@ -2645,7 +2645,7 @@ This ADR extends and implements:
 - ADR-053: Enterprise Testing Strategy and Quality Engineering Standard
 - ADR-055: Enterprise Resilience Engineering, Fault Tolerance and Graceful Degradation Standard
 - ADR-056: Enterprise REST API Design, Versioning, Error Handling and Integration Contract Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-058: Enterprise PostgreSQL Persistence, Transaction Management and Database Engineering Standard
 - ADR-059: Enterprise Redis Caching, Distributed Cache and Data Consistency Standard
 - ADR-060: Enterprise AWS Cloud, Kubernetes, Container and Runtime Deployment Standard
@@ -2669,7 +2669,7 @@ This ADR extends and implements:
 - Spring WebClient Documentation
 - Spring RestClient Documentation
 - Resilience4j Documentation
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - AWS SQS Documentation
 - OpenAPI Specification
 - OWASP Error Handling Cheat Sheet

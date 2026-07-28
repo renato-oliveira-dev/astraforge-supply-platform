@@ -175,7 +175,7 @@ The Domain layer must never depend on:
 - Spring
 - JPA
 - REST
-- Kafka
+- Amazon SQS
 - SQL
 - HTTP
 
@@ -344,7 +344,7 @@ Avoid business decisions inside:
 - controllers
 - repositories
 - REST clients
-- Kafka listeners
+- SQS consumers/listeners
 
 ---
 
@@ -391,7 +391,7 @@ Transactions should:
 
 - remain short
 - avoid HTTP calls
-- avoid Kafka publishing
+- avoid direct SQS publishing from business/domain code
 - avoid long-running work
 
 ---

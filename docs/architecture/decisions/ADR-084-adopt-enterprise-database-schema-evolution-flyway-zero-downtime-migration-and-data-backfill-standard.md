@@ -11,8 +11,12 @@
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | PostgreSQL, Flyway, Schema Evolution, Database Deployment |
 | Related Work Items | Flyway, PostgreSQL, Kubernetes, CI/CD, Zero-Downtime Deployment |
-| Supersedes | None |
+| Supersedes | ADR-076 |
 | Superseded By | None |
+
+---
+
+> **Consolidation:** This ADR supersedes ADR-076 and is the canonical decision for schema evolution, Flyway, zero-downtime migration, expand/contract execution and data backfill.
 
 ---
 

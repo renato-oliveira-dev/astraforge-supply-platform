@@ -16,6 +16,10 @@
 
 ---
 
+> **Scope relationship:** ADR-065 is the umbrella baseline for DDD, service boundaries, Clean Architecture and modularization. ADR-088 specializes domain modeling and business-rule governance; ADR-089 specializes Hexagonal Architecture, Ports & Adapters and enforceable module boundaries. These decisions are complementary, not competing.
+
+---
+
 # 1. Context
 
 Enterprise systems naturally increase in structural complexity.
@@ -647,7 +651,7 @@ HTTP
 
 Database
 
-Kafka
+SQS
 
 SQS
 
@@ -669,7 +673,7 @@ WebClient
 
 RestClient
 
-KafkaTemplate
+SQSTemplate
 
 SqsClient
 
@@ -754,7 +758,7 @@ Examples:
 ```text
 REST Controller
 
-Kafka Consumer
+SQS Consumer
 
 SQS Listener
 
@@ -772,7 +776,7 @@ JPA Repository Adapter
 
 REST Client
 
-Kafka Producer
+SQS Producer
 
 SQS Producer
 
@@ -2181,7 +2185,7 @@ Examples:
 
 [ ] Domain does not depend on WebClient
 
-[ ] Domain does not depend on Kafka/SQS APIs
+[ ] Domain does not depend on SQS APIs
 
 [ ] Controllers do not access repositories directly
 
@@ -2252,7 +2256,7 @@ The following are prohibited or strongly discouraged:
 - architecture driven purely by line count
 - hiding constructor dependencies inside wrappers
 - domain depending directly on WebClient
-- domain depending directly on Redis/Kafka/SQS
+- domain depending directly on Redis/SQS
 - repositories accessed directly by controllers
 - JPA entities exposed as API contracts
 - shared JPA entities between microservices
@@ -2407,7 +2411,7 @@ This ADR will be validated through:
 - PostgreSQL
 - Testcontainers
 - REST contract tests
-- Kafka/SQS contract tests
+- SQS contract tests
 - architecture review
 
 ---
@@ -2492,7 +2496,7 @@ This ADR extends and implements:
 - ADR-054: Enterprise Performance Engineering and Capacity Standard
 - ADR-055: Enterprise Resilience Engineering Standard
 - ADR-056: Enterprise REST API and Integration Contract Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-058: Enterprise PostgreSQL Persistence, Transaction Management and Database Engineering Standard
 - ADR-059: Enterprise Redis Caching, Distributed Cache and Data Consistency Standard
 - ADR-060: Enterprise AWS Cloud, Kubernetes, Container and Runtime Deployment Standard

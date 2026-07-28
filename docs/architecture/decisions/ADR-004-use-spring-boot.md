@@ -99,7 +99,7 @@ The decision must consider:
 - Domain-Driven Design defines business modeling
 - PostgreSQL is the primary transactional database
 - Flyway manages database migrations
-- Kafka may be used for integration events
+- SQS may be used for integration events
 - Redis may be used for caching
 - REST is the primary synchronous interface
 - production workloads run in containers
@@ -129,7 +129,7 @@ Spring Boot provides an opinionated application platform built on the Spring eco
 - Spring Data integration
 - transaction management
 - validation integration
-- Kafka integration
+- SQS integration
 - Redis integration
 - health and operational endpoints
 - strong testing ecosystem
@@ -323,7 +323,7 @@ Interface
 
 Infrastructure
     Spring Data
-    Kafka integration
+    SQS integration
     Redis integration
     HTTP clients
     Configuration
@@ -382,7 +382,7 @@ The Application layer must not depend on:
 - JPA entities
 - REST request classes
 - HTTP response types
-- Kafka records
+- SQS records
 - Redis templates
 - servlet APIs
 - framework-specific external-client responses
@@ -429,7 +429,7 @@ The Infrastructure layer contains concrete Spring integrations such as:
 
 - Spring Data repositories
 - JPA adapters
-- Kafka producers and consumers
+- SQS producers and consumers
 - Redis adapters
 - HTTP clients
 - security configuration
@@ -808,7 +808,7 @@ Examples of duplicate layers include:
 
 - HTTP-client retry
 - Resilience4j retry
-- Kafka retry
+- SQS retry/redrive
 - application retry
 - infrastructure retry
 
@@ -959,9 +959,9 @@ Migration failure must prevent application startup where schema compatibility is
 
 # 35. Messaging Integration
 
-Spring for Apache Kafka may be used in Infrastructure.
+Spring for Amazon SQS may be used in Infrastructure.
 
-Kafka listeners and producers must remain isolated from domain models.
+SQS listeners and producers must remain isolated from domain models.
 
 Consumers must define:
 
@@ -1176,7 +1176,7 @@ Metrics should cover:
 - error rate
 - database pool usage
 - external-client latency
-- Kafka processing
+- SQS processing
 - cache behavior
 - outbox backlog
 - retry activity
@@ -1866,7 +1866,7 @@ This ADR is related to:
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-006: Use Flyway for Database Migrations
 - ADR-007: Adopt Transactional Outbox
-- ADR-009: Use Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-010: Use Redis for Distributed Caching
 - ADR-011: Use OAuth 2.0 and OpenID Connect
 - ADR-013: Use Testcontainers for Integration Testing
@@ -1882,7 +1882,7 @@ This ADR is related to:
 - Spring Framework reference documentation
 - Spring Security reference documentation
 - Spring Data documentation
-- Spring for Apache Kafka documentation
+- Spring for Amazon SQS documentation
 - Spring Boot Actuator documentation
 - Micrometer documentation
 - Enterprise Order Platform Spring Boot guidelines

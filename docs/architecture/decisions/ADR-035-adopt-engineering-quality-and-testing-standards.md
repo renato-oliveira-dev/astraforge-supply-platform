@@ -25,7 +25,7 @@ The Enterprise Order Platform contains business-critical services implemented pr
 - Gradle
 - PostgreSQL
 - Redis
-- Kafka
+- SQS
 - REST integrations
 - AWS integrations
 - Virtual Threads
@@ -652,7 +652,7 @@ Examples:
 
 - JPA + PostgreSQL
 - Redis
-- Kafka
+- SQS
 - HTTP serialization
 - Spring Security
 - Flyway
@@ -701,9 +701,9 @@ Use Redis Testcontainers when validating:
 
 ---
 
-# 60. Kafka Test
+# 60. SQS Test
 
-Kafka integration testing should validate critical:
+SQS integration testing should validate critical:
 
 - serialization
 - topic interaction
@@ -1930,7 +1930,7 @@ Enums exposed through APIs/events require compatibility tests.
 
 ---
 
-# 206. Kafka Event Tests
+# 206. SQS Event Tests
 
 Event tests should validate:
 
@@ -2322,7 +2322,7 @@ A service/release is not production ready until:
 
 [ ] Security behavior tested
 
-[ ] Kafka/event contracts verified where applicable
+[ ] SQS/event contracts verified where applicable
 
 [ ] Cache behavior verified where applicable
 
@@ -2453,13 +2453,13 @@ This ADR is related to:
 - ADR-001: Adopt Clean Architecture
 - ADR-004: Use Spring Boot
 - ADR-005: Use PostgreSQL as the Primary Database
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-014: Adopt OpenTelemetry for Distributed Observability
 - ADR-016: Adopt Resilience4j for Application Resilience
 - ADR-019: Adopt Structured Logging
 - ADR-026: Adopt Platform Configuration and Secret Management Standards
 - ADR-029: Adopt Data Protection, Privacy and Retention Standards
-- ADR-030: Adopt Kafka Event Governance and Schema Evolution Standards
+- ADR-030: Adopt SQS Event Governance and Schema Evolution Standards
 - ADR-031: Adopt Database Performance and Data Access Standards
 - ADR-032: Adopt Distributed Caching and Cache Consistency Standards
 - ADR-033: Adopt API Gateway and Edge Architecture Standards
@@ -2480,7 +2480,7 @@ This ADR is related to:
 - Spring Boot Testing Documentation
 - Spring Security Testing Documentation
 - PostgreSQL Documentation
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - ArchUnit Documentation
 
 ---

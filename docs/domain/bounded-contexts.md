@@ -230,7 +230,7 @@ Order Management does not own:
 - Authentication credentials
 - User account management
 - Complete audit storage
-- Kafka or messaging infrastructure details
+- SQS/AWS SDK or messaging infrastructure details
 
 ### 6.6 Primary Actors
 
@@ -1533,7 +1533,7 @@ A local transaction should not include:
 - Remote Payment processing
 - Notification delivery
 - Shipment execution
-- Kafka broker availability
+- SQS service availability
 - External identity-provider modification
 
 Distributed transactions across bounded contexts will not be used as the default consistency mechanism.
@@ -1578,7 +1578,7 @@ It may depend only on stable ports or public contracts.
 
 - Domain code depending on Spring
 - Domain code depending on JPA
-- Domain code depending on Kafka
+- Domain code depending on Amazon SQS/AWS SDK
 - Controllers depending directly on repositories
 - One context depending on another context's persistence package
 - One context instantiating another context's aggregate
@@ -1627,7 +1627,7 @@ Examples:
 - Inventory unavailability must result in an explicit Order state.
 - Approval service unavailability must not corrupt Order state.
 - Customer or Product validation failure must produce a stable application error.
-- Kafka publication failure must not roll back an already committed Order when the Outbox Pattern is used.
+- SQS publication failure must not roll back an already committed Order when the Outbox Pattern is used.
 - Payment provider failure must not expose provider-specific errors directly to Order Management.
 
 Failures must be translated into context-specific outcomes.
@@ -1726,7 +1726,7 @@ Planned controls include:
 Example architectural rule:
 
 ```text
-Order domain must not depend on Spring, JPA, Kafka, REST, or another bounded context.
+Order domain must not depend on Spring, JPA, Amazon SQS/AWS SDK, REST, or another bounded context.
 ```
 
 ---

@@ -10,7 +10,7 @@
 | Date | 2026-07-26 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Scheduling, Batch Processing, Distributed Workloads, Job Coordination |
-| Related Work Items | Spring Batch, Kubernetes CronJob, Quartz, ShedLock, PostgreSQL, Kafka, SQS |
+| Related Work Items | Spring Batch, Kubernetes CronJob, Quartz, ShedLock, PostgreSQL, SQS, SQS |
 | Supersedes | None |
 | Superseded By | None |
 
@@ -1313,7 +1313,7 @@ HTTP API
 
 S3
 
-Kafka
+SQS
 
 Other Finite Dependencies
 ```
@@ -2079,7 +2079,7 @@ Critical jobs SHOULD have end-to-end batch integration tests against representat
 
 # 210. Testcontainers
 
-PostgreSQL, Kafka, Redis and other infrastructure-sensitive batch tests SHOULD use Testcontainers where applicable.
+PostgreSQL, SQS, Redis and other infrastructure-sensitive batch tests SHOULD use Testcontainers where applicable.
 
 ---
 
@@ -2469,7 +2469,7 @@ This ADR will be validated through:
 - ShedLock where appropriate
 - PostgreSQL
 - Flyway
-- Kafka
+- SQS
 - SQS
 - Testcontainers
 - JUnit 5
@@ -2580,7 +2580,7 @@ This ADR extends and implements:
 - Java 21 Documentation
 - PostgreSQL Documentation
 - Spring Data Documentation
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - AWS SQS Documentation
 - Google Site Reliability Engineering
 - Enterprise Integration Patterns

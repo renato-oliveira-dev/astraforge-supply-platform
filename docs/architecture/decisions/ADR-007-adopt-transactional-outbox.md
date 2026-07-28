@@ -35,11 +35,11 @@ Examples include:
 A typical operation may require both:
 
 1. persisting an aggregate change in PostgreSQL
-2. publishing an integration event to Kafka
+2. publishing an integration event to SQS
 
 These operations involve different transactional resources.
 
-PostgreSQL and Kafka do not participate in one shared local ACID transaction.
+PostgreSQL and SQS do not participate in one shared local ACID transaction.
 
 Without an explicit consistency mechanism, failures may produce inconsistent outcomes.
 
@@ -50,7 +50,7 @@ Order transaction commits
 
 ↓
 
-Kafka publication fails
+SQS publication fails
 
 ↓
 
@@ -60,7 +60,7 @@ The order exists, but downstream systems are never notified
 The opposite ordering also creates risk:
 
 ```text
-Kafka event is published
+SQS message/event is published
 
 ↓
 
@@ -91,7 +91,7 @@ The solution must:
 - expose operational metrics
 - support controlled retention
 - integrate with PostgreSQL
-- integrate with Kafka
+- integrate with SQS
 - remain compatible with Clean Architecture
 - remain compatible with Domain-Driven Design
 - maintain clear transaction boundaries
@@ -114,7 +114,7 @@ The primary decision drivers are:
 8. idempotent processing
 9. auditability
 10. compatibility with PostgreSQL
-11. compatibility with Kafka
+11. compatibility with SQS
 12. support for eventual consistency
 13. bounded-context autonomy
 14. deployment resilience
@@ -129,12 +129,12 @@ The decision must consider:
 
 - PostgreSQL is the primary transactional database
 - Flyway manages schema evolution
-- Kafka is used for integration events
+- SQS is used for integration events
 - Java 21 is the runtime baseline
 - Spring Boot is the application framework
 - multiple application replicas may run concurrently
 - aggregate persistence and outbox persistence must share one database transaction
-- Kafka publication may fail independently
+- SQS publication may fail independently
 - consumers must tolerate duplicate delivery
 - migration history is immutable
 - public event contracts must remain versioned
@@ -158,7 +158,7 @@ Save order
 
 Commit transaction
 
-Publish Kafka event
+Publish SQS message/event
 ```
 
 ### Advantages
@@ -187,7 +187,7 @@ The application could publish the event before committing the transaction.
 Example:
 
 ```text
-Publish Kafka event
+Publish SQS message/event
 
 Commit database transaction
 ```
@@ -210,7 +210,7 @@ Commit database transaction
 
 ## 5.3 Option C: Distributed Transaction
 
-The platform could use a distributed transaction coordinator across PostgreSQL and Kafka.
+The platform could use a distributed transaction coordinator across PostgreSQL and SQS.
 
 ### Advantages
 
@@ -225,7 +225,7 @@ The platform could use a distributed transaction coordinator across PostgreSQL a
 - increased latency
 - difficult failure recovery
 - tight coupling between infrastructure components
-- limited Kafka transaction coordination with arbitrary database transactions
+- limited SQS transaction coordination with arbitrary database transactions
 - significant implementation and operational cost
 
 ---
@@ -234,7 +234,7 @@ The platform could use a distributed transaction coordinator across PostgreSQL a
 
 The application could persist the aggregate and an outbox record in the same PostgreSQL transaction.
 
-A separate dispatcher would publish pending records to Kafka.
+A separate dispatcher would publish pending records to SQS.
 
 ### Advantages
 
@@ -268,7 +268,7 @@ A CDC platform could read database transaction logs and publish changes.
 Examples include:
 
 - Debezium
-- Kafka Connect
+- SQS Connect
 - managed database change streams
 
 ### Advantages
@@ -322,7 +322,7 @@ For every business operation that requires an integration event:
 2. the integration event is mapped to an outbox record
 3. both are committed in the same PostgreSQL transaction
 4. an asynchronous dispatcher retrieves pending records
-5. the dispatcher publishes them to Kafka
+5. the dispatcher publishes them to SQS
 6. successful records are marked as sent
 7. failed records remain available for retry
 
@@ -349,7 +349,7 @@ Publication intent
 Once the transaction commits, the platform can recover publication even if:
 
 - the process crashes
-- Kafka is unavailable
+- SQS is unavailable
 - the network fails
 - the application restarts
 - the dispatcher is temporarily disabled
@@ -392,7 +392,7 @@ Outbox Dispatcher
 
 ↓
 
-Kafka
+SQS
 
 ↓
 
@@ -401,7 +401,7 @@ Consumer
 
 The synchronous business transaction ends after PostgreSQL commits.
 
-Kafka publication occurs asynchronously.
+SQS publication occurs asynchronously.
 
 ---
 
@@ -544,7 +544,7 @@ orders.lifecycle.v1
 
 The destination may represent:
 
-- Kafka topic
+- SQS queue
 - logical channel
 - routing identifier
 
@@ -781,7 +781,7 @@ The outbox dispatcher is responsible for:
 
 - selecting eligible records
 - claiming work safely
-- publishing to Kafka
+- publishing to SQS
 - recording success
 - recording failure
 - calculating retry time
@@ -839,7 +839,7 @@ outbox:
 
 The selected value must consider:
 
-- Kafka throughput
+- SQS throughput
 - transaction duration
 - database load
 - memory use
@@ -884,7 +884,7 @@ Possible approaches include:
 
 The platform should prefer a horizontally scalable database-locking strategy.
 
-Duplicate publication must still be tolerated because a crash can occur after Kafka accepts a message but before the outbox row is marked as sent.
+Duplicate publication must still be tolerated because a crash can occur after SQS accepts a message but before the outbox row is marked as sent.
 
 ---
 
@@ -907,7 +907,7 @@ The selected implementation must document its crash semantics.
 
 # 31. Publication Success
 
-An event may be marked `SENT` only after Kafka acknowledges successful publication according to the configured producer semantics.
+An event may be marked `SENT` only after SQS acknowledges successful publication according to the configured producer semantics.
 
 On success, update:
 
@@ -994,7 +994,7 @@ The system must not retry terminally failed events forever without visibility.
 
 Examples of retryable failures may include:
 
-- Kafka temporarily unavailable
+- SQS temporarily unavailable
 - network timeout
 - transient broker error
 - temporary authentication infrastructure failure
@@ -1027,7 +1027,7 @@ The platform explicitly accepts at-least-once publication.
 Duplicate publication may occur when:
 
 ```text
-Kafka accepts the event
+SQS accepts the event
 
 ↓
 
@@ -1038,7 +1038,7 @@ Dispatcher crashes before marking the row as SENT
 The event is retried after restart
 ```
 
-Exactly-once business processing must not be assumed from Kafka producer configuration alone.
+Exactly-once business processing must not be assumed from SQS producer configuration alone.
 
 Consumer idempotency is mandatory.
 
@@ -1067,7 +1067,7 @@ Global event ordering is not guaranteed.
 
 Where per-aggregate ordering is required:
 
-- use the aggregate ID as the Kafka message key
+- use the aggregate ID as the SQS message key
 - preserve event creation order where practical
 - include aggregate version or sequence
 - consumers must detect stale events
@@ -1100,9 +1100,9 @@ Aggregate version semantics must be documented.
 
 ---
 
-# 41. Kafka Message Key
+# 41. SQS Message Key
 
-The recommended Kafka message key is the aggregate identifier.
+The recommended SQS message key is the aggregate identifier.
 
 Example:
 
@@ -1116,9 +1116,9 @@ The dispatcher must not use a random key when aggregate ordering matters.
 
 ---
 
-# 42. Kafka Headers
+# 42. SQS Headers
 
-Kafka headers may include:
+SQS headers may include:
 
 - event ID
 - event type
@@ -1278,7 +1278,7 @@ If the business transaction rolls back:
 
 - aggregate changes must not persist
 - outbox events must not persist
-- no Kafka event should be published
+- no SQS message/event should be published
 
 This is the central consistency guarantee of the pattern.
 
@@ -1292,7 +1292,7 @@ Latency depends on:
 
 - polling interval
 - dispatcher backlog
-- Kafka availability
+- SQS availability
 - retry timing
 - batch size
 - database load
@@ -1500,7 +1500,7 @@ Multiple dispatcher instances may run concurrently.
 Scaling must account for:
 
 - database claim strategy
-- Kafka producer concurrency
+- SQS producer concurrency
 - connection-pool size
 - batch size
 - poll frequency
@@ -1519,7 +1519,7 @@ Polling should back off when:
 
 - no records are available
 - the database is degraded
-- Kafka is unavailable
+- SQS is unavailable
 - shutdown has begun
 
 ---
@@ -1534,7 +1534,7 @@ Outbox publication must not starve request processing of database connections.
 
 ---
 
-# 65. Kafka Producer Configuration
+# 65. SQS Producer Configuration
 
 Producer configuration must define:
 
@@ -1549,7 +1549,7 @@ Producer configuration must define:
 - security
 - serialization
 
-Kafka producer idempotence may reduce duplicate broker writes during producer retries, but it does not remove the need for consumer idempotency.
+SQS FIFO deduplication may reduce duplicate queue writes within its deduplication window, but it does not remove the need for consumer idempotency.
 
 ---
 
@@ -1561,7 +1561,7 @@ Large payloads increase:
 
 - database storage
 - transaction cost
-- Kafka latency
+- SQS latency
 - network usage
 - retry cost
 - consumer memory use
@@ -1676,7 +1676,7 @@ Alerts should cover:
 - pending backlog grows continuously
 - failed event count increases
 - dispatcher stops publishing
-- Kafka publication error rate increases
+- SQS publication error rate increases
 - database claim query becomes slow
 - cleanup stops functioning
 - outbox table growth exceeds capacity threshold
@@ -1695,7 +1695,7 @@ Dispatcher health may expose:
 - oldest pending event age
 - recent failure rate
 
-The application liveness check must not fail solely because Kafka is temporarily unavailable.
+The application liveness check must not fail solely because SQS is temporarily unavailable.
 
 Readiness behavior depends on whether the service can safely accept new work while publication is delayed.
 
@@ -1708,7 +1708,7 @@ On shutdown, the dispatcher must:
 - stop claiming new records
 - complete or cancel current bounded publications
 - persist final status updates where safe
-- close Kafka producer resources
+- close SQS producer resources
 - stop executors
 - respect platform termination deadlines
 
@@ -1777,7 +1777,7 @@ The worker must use the same event and schema contracts.
 
 # 79. Application Availability During Broker Failure
 
-The platform may continue accepting business transactions during temporary Kafka unavailability when:
+The platform may continue accepting business transactions during temporary SQS unavailability when:
 
 - PostgreSQL remains available
 - outbox capacity is sufficient
@@ -1903,7 +1903,7 @@ Unit tests should validate:
 - validation
 - event-envelope creation
 
-Unit tests must not require Spring or Kafka where pure logic is under test.
+Unit tests must not require Spring or SQS where pure logic is under test.
 
 ---
 
@@ -1925,9 +1925,9 @@ H2 must not replace PostgreSQL for these tests.
 
 ---
 
-# 88. Kafka Integration Tests
+# 88. SQS Integration Tests
 
-Kafka integration tests should validate:
+SQS integration tests should validate:
 
 - publication
 - message key
@@ -1938,7 +1938,7 @@ Kafka integration tests should validate:
 - destination mapping
 - consumer duplicate handling
 
-Tests may use Kafka-compatible Testcontainers infrastructure.
+Tests may use SQS-compatible Testcontainers infrastructure.
 
 ---
 
@@ -1967,7 +1967,7 @@ Tests should simulate important crash windows.
 Examples:
 
 - after claim and before publication
-- after Kafka acknowledgement and before `SENT` update
+- after SQS acknowledgement and before `SENT` update
 - during status update
 - during shutdown
 
@@ -2010,13 +2010,13 @@ Contract tests should validate:
 
 Architecture tests should enforce:
 
-- Domain does not depend on Kafka
+- Domain does not depend on SQS
 - Domain does not depend on outbox persistence
-- Kafka classes remain in Infrastructure
+- SQS classes remain in Infrastructure
 - outbox adapters implement inner-layer ports
 - integration-event DTOs do not replace domain models
-- controllers do not publish directly to Kafka
-- application use cases do not depend on Kafka producer types
+- controllers do not publish directly to SQS
+- application use cases do not depend on SQS producer types
 
 ---
 
@@ -2034,7 +2034,7 @@ No aggregate change
 No outbox event
 ```
 
-## Kafka Failure After Commit
+## SQS Failure After Commit
 
 Result:
 
@@ -2046,7 +2046,7 @@ Outbox remains pending
 Retry later
 ```
 
-## Crash After Kafka Acknowledgement
+## Crash After SQS Acknowledgement
 
 Result:
 
@@ -2077,7 +2077,7 @@ The platform must maintain an operational runbook covering:
 - checking backlog
 - identifying oldest pending events
 - inspecting failed events
-- validating Kafka availability
+- validating SQS availability
 - replaying events
 - disabling the dispatcher
 - enabling the dispatcher
@@ -2131,7 +2131,7 @@ Concerns include:
 - database write ownership
 - duplicate dispatch
 - aggregate ordering
-- Kafka destination topology
+- SQS destination topology
 - clock consistency
 - regional failover
 - event ID uniqueness
@@ -2144,8 +2144,8 @@ The initial platform assumes one authoritative transactional database region per
 
 The following are prohibited:
 
-- publishing directly to Kafka inside domain objects
-- assuming database and Kafka operations are one atomic transaction
+- publishing directly to SQS inside domain objects
+- assuming database and SQS operations are one atomic transaction
 - deleting outbox rows immediately after publication without retention policy
 - changing the event ID on retry
 - rebuilding payloads from current mutable aggregate state
@@ -2209,14 +2209,14 @@ These costs are accepted because reliable event publication is essential to plat
 
 The decision also means:
 
-- Kafka publication becomes asynchronous
+- SQS publication becomes asynchronous
 - consumers must be idempotent
 - database commit does not imply immediate downstream processing
 - event contracts become versioned public artifacts
 - outbox retention becomes an operational responsibility
 - replay becomes possible but must be controlled
 - database availability remains required for business transaction acceptance
-- Kafka outages may increase database backlog
+- SQS outages may increase database backlog
 
 ---
 
@@ -2231,9 +2231,9 @@ The decision also means:
 | Event contract breaks consumers | High | Medium | Version contracts and use compatibility tests |
 | Poison event retries forever | High | Medium | Limit attempts and mark terminal failure |
 | Event payload exposes sensitive data | High | Low | Minimize payload and apply security review |
-| Kafka accepts event before status update fails | High | Medium | Accept duplicate and use idempotent consumers |
+| SQS accepts event before status update fails | High | Medium | Accept duplicate and use idempotent consumers |
 | Dispatcher overloads database | High | Medium | Bound polling, concurrency and connections |
-| Dispatcher overloads Kafka | Medium | Medium | Configure producer and batch limits |
+| Dispatcher overloads SQS | Medium | Medium | Configure producer and batch limits |
 | Incorrect ordering affects projections | High | Medium | Use aggregate key and version checks |
 | Manual replay causes duplicate side effects | High | Low | Use controlled replay and idempotency validation |
 | Cleanup blocks production workload | Medium | Medium | Delete incrementally with indexes |
@@ -2248,9 +2248,9 @@ The decision also means:
 The following rules are mandatory:
 
 1. Business state and outbox records must persist in the same PostgreSQL transaction.
-2. Direct Kafka publication must not replace the outbox for transactional business events.
+2. Direct SQS publication must not replace the outbox for transactional business events.
 3. Domain events and integration events must remain separate.
-4. The Domain layer must remain Kafka-independent.
+4. The Domain layer must remain SQS-independent.
 5. Every event must have a stable unique event ID.
 6. Event payloads must remain immutable after creation.
 7. Integration-event contracts must be versioned.
@@ -2261,7 +2261,7 @@ The following rules are mandatory:
 12. Retries must be bounded and delayed.
 13. Terminal failures must remain visible.
 14. Consumers must be idempotent.
-15. Per-aggregate ordering must use an appropriate Kafka key when required.
+15. Per-aggregate ordering must use an appropriate FIFO MessageGroupId when required.
 16. Outbox metrics and alerts are mandatory.
 17. Sent-event retention must be defined.
 18. Cleanup must be incremental.
@@ -2283,7 +2283,7 @@ The decision will be validated through:
 - Flyway migration tests
 - outbox repository integration tests
 - concurrent dispatcher tests
-- Kafka publication tests
+- SQS publication tests
 - consumer idempotency tests
 - event-contract tests
 - retry-policy tests
@@ -2303,7 +2303,7 @@ The decision will be validated through:
 The decision is successful when:
 
 - aggregate changes and outbox records commit atomically
-- no committed business event is permanently lost during temporary Kafka failure
+- no committed business event is permanently lost during temporary SQS failure
 - dispatch resumes after application restart
 - duplicate events do not cause duplicate business side effects
 - multiple dispatcher instances operate safely
@@ -2312,7 +2312,7 @@ The decision is successful when:
 - event contracts remain backward compatible
 - outbox-table growth remains controlled
 - cleanup does not degrade transactional workloads
-- Domain code remains independent from Kafka
+- Domain code remains independent from SQS
 - production incidents can be traced using event IDs
 - replay can be performed safely
 - schema evolution remains backward compatible
@@ -2365,7 +2365,7 @@ This ADR is related to:
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-006: Use Flyway for Database Migrations
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-013: Use Testcontainers for Integration Testing
 - ADR-014: Use OpenTelemetry for Distributed Tracing
 - ADR-015: Deploy Workloads on Kubernetes
@@ -2379,8 +2379,8 @@ This ADR is related to:
 - Microservices Patterns
 - PostgreSQL Documentation
 - PostgreSQL Row-Level Locking Documentation
-- Apache Kafka Producer Documentation
-- Spring for Apache Kafka Documentation
+- Amazon SQS Producer Documentation
+- Spring for Amazon SQS Documentation
 - Flyway Documentation
 - Testcontainers PostgreSQL Documentation
 - Enterprise Order Platform Messaging Architecture
@@ -2414,7 +2414,7 @@ Aggregate state
 Integration-event publication intent
 ```
 
-A separate dispatcher will publish pending events to Kafka and persist the publication result.
+A separate dispatcher will publish pending events to SQS and persist the publication result.
 
 The platform accepts:
 

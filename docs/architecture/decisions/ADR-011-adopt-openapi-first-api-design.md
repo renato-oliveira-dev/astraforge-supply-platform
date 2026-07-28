@@ -555,7 +555,7 @@ The decision is successful when:
 
 - ADR-001: Adopt Clean Architecture
 - ADR-004: Use Spring Boot
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-013: Use Testcontainers for Integration Testing
 
 ---

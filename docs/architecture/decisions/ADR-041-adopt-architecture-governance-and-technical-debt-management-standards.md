@@ -26,7 +26,7 @@ The platform has established architectural standards covering areas such as:
 - REST APIs
 - PostgreSQL
 - Flyway
-- Kafka
+- SQS
 - Redis
 - security
 - resilience
@@ -1915,7 +1915,7 @@ Applicable steps include:
 
 [ ] Scheduled jobs disabled
 
-[ ] Kafka consumers/producers reviewed
+[ ] SQS consumers/producers reviewed
 
 [ ] Secrets revoked
 
@@ -2329,10 +2329,10 @@ This ADR is related to all architecture decisions in the platform and specifical
 - ADR-001: Adopt Clean Architecture
 - ADR-004: Use Spring Boot
 - ADR-005: Use PostgreSQL as the Primary Database
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-016: Adopt Resilience4j for Application Resilience
 - ADR-026: Adopt Platform Configuration and Secret Management Standards
-- ADR-030: Adopt Kafka Event Governance and Schema Evolution Standards
+- ADR-030: Adopt SQS Event Governance and Schema Evolution Standards
 - ADR-031: Adopt Database Performance and Data Access Standards
 - ADR-034: Adopt Java 21 Concurrency and Parallelism Standards
 - ADR-035: Adopt Engineering Quality and Testing Standards

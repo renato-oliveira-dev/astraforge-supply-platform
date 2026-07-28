@@ -11,7 +11,7 @@
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Reliability, SRE, Incident Response, SLO, Disaster Recovery, Operational Readiness |
 | Related Work Items | Observability, Alerting, On-Call, Runbooks, Backup, Restore, Capacity, DR |
-| Supersedes | None |
+| Supersedes | ADR-027 |
 | Superseded By | None |
 
 ---
@@ -47,7 +47,7 @@ Dependency Outages
 
 Database Incidents
 
-Kafka Backlogs
+SQS Backlogs
 
 Redis Failures
 
@@ -298,7 +298,7 @@ Thread/Executor Saturation
 
 Database Pool Usage
 
-Kafka Lag
+SQS Queue Backlog/Oldest-Message Age
 
 Cache Hit Ratio
 ```
@@ -344,7 +344,7 @@ p95 Request Latency
 
 Order Processing Success Ratio
 
-Kafka Processing Delay
+SQS Processing Delay
 ```
 
 ---
@@ -477,7 +477,7 @@ Unexpected Exception
 
 Dependency Timeout
 
-Kafka Processing Failure
+SQS Processing Failure
 ```
 
 ---
@@ -1180,7 +1180,7 @@ Database Connections
 
 HTTP Connections
 
-Kafka Consumers
+SQS Consumers
 
 Queue Depth
 
@@ -1307,9 +1307,9 @@ Systems processing asynchronous workloads require backpressure or bounded consum
 
 ---
 
-# 111. Kafka Lag
+# 111. SQS Queue Backlog/Oldest-Message Age
 
-Kafka consumer lag is an important operational signal.
+SQS queue backlog/oldest-message age is an important operational signal.
 
 ---
 
@@ -1774,7 +1774,7 @@ Shutdown behavior must fit orchestration termination/grace periods.
 
 ---
 
-# 161. Kafka Shutdown
+# 161. SQS Shutdown
 
 Consumers should stop consumption and commit/handle work according to delivery semantics.
 
@@ -1898,7 +1898,7 @@ Example:
 Orders
   |
   +--> PostgreSQL
-  +--> Kafka
+  +--> SQS
   +--> Customers
   +--> Products
   +--> Workflow
@@ -2128,7 +2128,7 @@ A service is not production ready until:
 
 [ ] HTTP pools sized
 
-[ ] Kafka capacity reviewed
+[ ] SQS capacity reviewed
 
 [ ] Load testing completed where required
 
@@ -2192,7 +2192,7 @@ For a major incident, responders should quickly establish:
 
 [ ] Database status
 
-[ ] Kafka lag
+[ ] SQS queue backlog/oldest-message age
 
 [ ] Resource saturation
 
@@ -2230,7 +2230,7 @@ The following are prohibited or strongly discouraged:
 - fake-success fallbacks
 - treating virtual threads as infinite downstream capacity
 - unbounded asynchronous processing
-- ignoring continuously growing Kafka lag
+- ignoring continuously growing SQS queue backlog/oldest-message age
 - poison messages blocking processing indefinitely
 - assuming backup success proves restore capability
 - undefined RTO/RPO for critical services
@@ -2308,7 +2308,7 @@ The decision also means:
 | Dependency outage | High | High | Timeout/CB/degradation |
 | Retry storm | Critical | Medium | Bounded retries |
 | Capacity exhaustion | Critical | Medium | Saturation monitoring |
-| Kafka backlog | High | Medium | Lag monitoring/scaling |
+| SQS backlog | High | Medium | Lag monitoring/scaling |
 | Database saturation | Critical | Medium | Pool/capacity management |
 | Failed recovery | Critical | Low | Restore/DR testing |
 | Data loss | Critical | Low | Backup + RPO |
@@ -2347,7 +2347,7 @@ The following rules are mandatory:
 22. Virtual threads do not remove downstream capacity limits.
 23. Capacity planning must consider peak traffic and growth.
 24. Critical high-volume paths require representative performance testing.
-25. Kafka lag must be monitored according to business processing requirements.
+25. SQS queue backlog/oldest-message age must be monitored according to business processing requirements.
 26. Poison messages must not create infinite processing loops.
 27. Cache failure must have defined semantics.
 28. Production data requires an approved backup strategy.
@@ -2403,7 +2403,7 @@ The decision is successful when:
 - dependency failures remain isolated where possible
 - services degrade predictably
 - capacity limits are understood before production saturation
-- Kafka backlog is detected before business SLA violation
+- SQS backlog is detected before business SLA violation
 - backup restoration is proven
 - RTO/RPO can be demonstrated
 - major incidents generate actionable improvements
@@ -2470,12 +2470,12 @@ This ADR is related to:
 - ADR-001: Adopt Clean Architecture
 - ADR-004: Use Spring Boot
 - ADR-005: Use PostgreSQL as the Primary Database
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-016: Adopt Resilience4j for Application Resilience
 - ADR-019: Adopt Structured Logging
 - ADR-020: Define Service-Level Objectives
 - ADR-026: Adopt Platform Configuration and Secret Management Standards
-- ADR-030: Adopt Kafka Event Governance and Schema Evolution Standards
+- ADR-030: Adopt SQS Event Governance and Schema Evolution Standards
 - ADR-031: Adopt Database Performance and Data Access Standards
 - ADR-032: Adopt Distributed Caching and Cache Consistency Standards
 - ADR-033: Adopt API Gateway and Edge Architecture Standards
@@ -2497,7 +2497,7 @@ This ADR is related to:
 - OWASP
 - Spring Boot Actuator
 - Kubernetes Health Probes
-- Apache Kafka Operations
+- Amazon SQS Operations
 - PostgreSQL Operations
 - AWS Well-Architected Framework
 - OpenTelemetry

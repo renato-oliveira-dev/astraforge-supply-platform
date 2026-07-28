@@ -26,7 +26,7 @@ The platform includes:
 - Spring Boot
 - REST APIs
 - OpenAPI
-- Apache Kafka
+- Amazon SQS
 - PostgreSQL
 - Transactional Outbox
 - Saga workflows
@@ -3404,7 +3404,7 @@ This ADR is related to:
 - ADR-003: Use Java 21
 - ADR-004: Use Spring Boot
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
 - ADR-013: Use Testcontainers for Integration Testing
 - ADR-014: Adopt OpenTelemetry for Distributed Observability

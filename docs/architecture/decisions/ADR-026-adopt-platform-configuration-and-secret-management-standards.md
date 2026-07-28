@@ -23,7 +23,7 @@ The Enterprise Order Platform consists of distributed Java 21 and Spring Boot se
 Application behavior depends on configuration such as:
 
 - database endpoints
-- Kafka brokers
+- SQS endpoints
 - Redis endpoints
 - downstream service URLs
 - connection-pool settings
@@ -259,7 +259,7 @@ Examples:
 ```text
 HTTP timeout
 
-Kafka topic
+SQS queue
 
 service URL
 
@@ -796,9 +796,9 @@ The application runtime database user should not automatically receive schema-ad
 
 ---
 
-# 57. Kafka Credentials
+# 57. SQS Credentials
 
-Kafka credentials and ACLs must follow least privilege.
+SQS IAM permissions must follow least privilege.
 
 ---
 
@@ -1433,9 +1433,9 @@ Environment database endpoints must be explicit and independently protected.
 
 ---
 
-# 129. Kafka Separation
+# 129. SQS Separation
 
-Kafka environments/topics must be configured to prevent accidental cross-environment event publication.
+SQS environments/topics must be configured to prevent accidental cross-environment event publication.
 
 ---
 
@@ -2189,9 +2189,9 @@ Configuration write access is therefore a security boundary.
 
 ---
 
-# 218. Kafka Topic Configuration
+# 218. SQS Topic Configuration
 
-Incorrect Kafka topic configuration may cause cross-domain or cross-environment data exposure.
+Incorrect SQS queue configuration may cause cross-domain or cross-environment data exposure.
 
 ---
 
@@ -2925,7 +2925,7 @@ This ADR is related to:
 - ADR-004: Use Spring Boot
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-006: Use Flyway for Database Schema Evolution
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-014: Adopt OpenTelemetry for Distributed Observability
 - ADR-015: Deploy Workloads on Kubernetes
 - ADR-016: Adopt Resilience4j for Application Resilience

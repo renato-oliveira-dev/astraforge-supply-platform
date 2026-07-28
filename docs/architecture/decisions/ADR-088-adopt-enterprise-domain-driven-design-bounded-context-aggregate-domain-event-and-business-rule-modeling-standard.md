@@ -16,6 +16,10 @@
 
 ---
 
+> **Scope relationship:** This ADR specializes the domain-modeling portion of ADR-065. Architecture dependency direction, Ports & Adapters and module-boundary enforcement are specialized by ADR-089.
+
+---
+
 # 1. Context
 
 Enterprise systems are not primarily collections of:
@@ -3194,7 +3198,7 @@ This ADR will be validated through:
 - PostgreSQL
 - Flyway
 - OpenAPI
-- SQS/Kafka where applicable
+- SQS/SQS where applicable
 - Transactional Outbox
 - contract tests
 - architecture fitness functions

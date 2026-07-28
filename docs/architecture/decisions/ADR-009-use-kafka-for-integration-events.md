@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-009 |
 | Title | Use Apache Kafka for Integration Events |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-23 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Event-Driven Architecture |
 | Related Work Items | Asynchronous bounded-context integration |
 | Supersedes | None |
-| Superseded By | None |
+| Superseded By | ADR-090 |
 
 ---
 

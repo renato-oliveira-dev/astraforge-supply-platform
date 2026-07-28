@@ -113,8 +113,8 @@ Examples include:
 - adopting Domain-Driven Design
 - selecting PostgreSQL
 - adopting Transactional Outbox
-- using Kafka for integration events
-- using RabbitMQ for work queues
+- using Amazon SQS for integration events
+- using Amazon SQS for work queues
 - adopting Redis for distributed caching
 - using OAuth 2.0 and OpenID Connect
 - selecting Keycloak as identity provider
@@ -155,7 +155,7 @@ Each ADR should address one primary decision.
 Avoid combining unrelated decisions such as:
 
 ```text
-Adopt Kafka, migrate to PostgreSQL and deploy on Kubernetes
+Adopt Amazon SQS, migrate to PostgreSQL and deploy on Kubernetes
 ```
 
 These should normally be separate ADRs because they have different:
@@ -505,7 +505,7 @@ Examples:
 - Spring Boot
 - PostgreSQL
 - Kubernetes
-- existing Kafka infrastructure
+- existing messaging infrastructure
 - organizational security policy
 - regulatory requirements
 - restricted deployment windows
@@ -674,7 +674,7 @@ Document assumptions that affect the decision.
 
 Examples:
 
-- Kafka remains available as a managed platform service
+- Amazon SQS remains available as a managed platform service
 - PostgreSQL remains the system of record
 - consumers tolerate at-least-once delivery
 - workloads run on Kubernetes
@@ -1637,7 +1637,7 @@ ADR-007: Adopt Transactional Outbox
 
 ADR-008: Assume At-Least-Once Message Delivery
 
-ADR-009: Use Kafka for Integration Events
+ADR-090: Adopt Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 
 ADR-010: Use Redis for Distributed Caching
 

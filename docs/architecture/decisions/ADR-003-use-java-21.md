@@ -98,7 +98,7 @@ The decision must consider:
 - Spring Boot is the primary application framework
 - Gradle is used for build automation
 - PostgreSQL is the primary transactional database
-- Kafka and Redis may be used
+- SQS and Redis may be used
 - production workloads run in containers
 - CI/CD must use the same Java major version as production
 - code quality is enforced through SonarQube and static analysis
@@ -1177,7 +1177,7 @@ This includes:
 - Spring Framework
 - Hibernate
 - PostgreSQL driver
-- Kafka client
+- SQS client
 - Redis client
 - Testcontainers
 - SonarQube scanner

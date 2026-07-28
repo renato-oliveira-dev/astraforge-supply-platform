@@ -10,7 +10,7 @@
 | Date | 2026-07-26 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Search, OpenSearch, Elasticsearch, Indexing, CQRS, Read Models |
-| Related Work Items | OpenSearch, Kafka, Outbox, PostgreSQL, Search APIs |
+| Related Work Items | OpenSearch, SQS, Outbox, PostgreSQL, Search APIs |
 | Supersedes | None |
 | Superseded By | None |
 
@@ -2564,7 +2564,7 @@ This ADR will be validated through:
 - Elasticsearch-compatible concepts where applicable
 - PostgreSQL
 - Transactional Outbox
-- Kafka/SQS where applicable
+- SQS where applicable
 - CDC where applicable
 - Flyway
 - Testcontainers
@@ -2652,7 +2652,7 @@ This ADR extends and implements:
 
 - ADR-007: Adopt Transactional Outbox
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-013: Use Testcontainers for Integration Testing
 - ADR-034: Java 21 Concurrency and Parallelism Standards
 - ADR-037: Application Security and Secure Coding Standards
@@ -2661,7 +2661,7 @@ This ADR extends and implements:
 - ADR-053: Enterprise Testing Strategy and Quality Engineering Standard
 - ADR-054: Enterprise Performance Engineering and Capacity Standard
 - ADR-055: Enterprise Resilience Engineering Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-058: Enterprise PostgreSQL Persistence, Transaction Management and Database Engineering Standard
 - ADR-060: Enterprise AWS Cloud, Kubernetes, Container and Runtime Deployment Standard
 - ADR-062: Enterprise Logging, Observability, OpenTelemetry and Production Diagnostics Standard
@@ -2681,7 +2681,7 @@ This ADR extends and implements:
 - Elasticsearch Documentation
 - Apache Lucene Documentation
 - PostgreSQL Documentation
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - AWS OpenSearch Service Documentation
 - Spring Boot Documentation
 - Testcontainers Documentation

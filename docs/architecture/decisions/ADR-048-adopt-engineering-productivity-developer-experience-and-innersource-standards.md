@@ -33,7 +33,7 @@ Configure Database
 
 Configure Flyway
 
-Configure Kafka
+Configure SQS
 
 Configure Redis
 
@@ -310,7 +310,7 @@ Database
 
 Flyway
 
-Kafka
+SQS
 
 Redis
 
@@ -448,7 +448,7 @@ A service template must not contain every possible platform capability enabled b
 Capabilities such as:
 
 ```text
-Kafka
+SQS
 
 Redis
 
@@ -500,7 +500,7 @@ Owning Team
 
 Database Required?
 
-Kafka Required?
+SQS Required?
 
 Redis Required?
 
@@ -716,7 +716,7 @@ PostgreSQL -> PostgreSQL container
 
 Redis      -> Redis container
 
-Kafka      -> Kafka-compatible test infrastructure
+SQS      -> SQS-compatible test infrastructure
 ```
 
 ---
@@ -1198,7 +1198,7 @@ Create Service
 
 Create Database
 
-Create Kafka Topic
+Create SQS Topic
 
 Create Redis Instance
 
@@ -2179,7 +2179,7 @@ Corrections require a new migration.
 
 # 213. Messaging by Construction
 
-Kafka-enabled services should receive approved:
+SQS-enabled services should receive approved:
 
 - producer configuration
 - consumer configuration

@@ -33,14 +33,14 @@ The platform must support:
 - operational observability
 - gradual modernization
 
-The application uses Java 21 and Spring Boot, with PostgreSQL, Kafka, Redis and Kubernetes as supporting technologies.
+The application uses Java 21 and Spring Boot, with PostgreSQL, SQS, Redis and Kubernetes as supporting technologies.
 
 Without explicit architectural boundaries, business logic may become coupled to:
 
 - Spring annotations
 - JPA and Hibernate
 - REST controllers
-- Kafka producers and consumers
+- SQS producers and consumers
 - Redis clients
 - database schemas
 - third-party APIs
@@ -95,7 +95,7 @@ The decision must consider the following constraints:
 - Java 21 is the primary programming language
 - Spring Boot is the application framework
 - PostgreSQL is the primary transactional database
-- Kafka may be used for integration events
+- SQS may be used for integration events
 - Redis may be used for distributed caching
 - REST is the primary synchronous interface
 - the platform must support automated testing
@@ -300,7 +300,7 @@ The Domain layer must not depend on:
 - JPA
 - Hibernate
 - REST
-- Kafka
+- SQS
 - Redis
 - PostgreSQL
 - Docker
@@ -395,8 +395,8 @@ The Infrastructure layer contains:
 - JPA entities
 - Spring Data repositories
 - repository adapters
-- Kafka producers
-- Kafka consumers
+- SQS producers
+- SQS consumers
 - Redis adapters
 - external HTTP clients
 - serialization configuration
@@ -464,7 +464,7 @@ The Infrastructure layer may depend on:
 - Domain
 - Spring Boot
 - JPA
-- Kafka
+- SQS
 - Redis
 - PostgreSQL drivers
 - external client libraries
@@ -750,7 +750,7 @@ OrderApprovedIntegrationEventV1
 
 before publication.
 
-The domain event must not contain Kafka-specific fields.
+The domain event must not contain SQS-specific fields.
 
 ---
 
@@ -926,7 +926,7 @@ Infrastructure adapters should be tested using production-compatible dependencie
 Examples:
 
 - PostgreSQL through Testcontainers
-- Kafka through Testcontainers
+- SQS through Testcontainers
 - Redis through Testcontainers
 - HTTP stubs for external services
 

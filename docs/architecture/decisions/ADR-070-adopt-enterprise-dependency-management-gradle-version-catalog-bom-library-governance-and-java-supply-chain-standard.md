@@ -16,6 +16,10 @@
 
 ---
 
+> **Scope relationship:** ADR-070 governs dependency selection, Gradle catalogs/BOMs and library lifecycle. ADR-085 complements it with SBOM, supply-chain security and vulnerability governance; neither supersedes the other.
+
+---
+
 # 1. Context
 
 Modern Java applications depend on large dependency graphs.
@@ -35,7 +39,7 @@ APPLICATION
     |
     +--> PostgreSQL Driver
     |
-    +--> Kafka
+    +--> SQS
     |
     +--> AWS SDK
     |

@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-027 |
 | Title | Adopt Production Incident Management and Operational Readiness Standards |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Production Operations, Incident Management, SRE, Reliability, Disaster Recovery |
 | Related Work Items | Production Readiness Review, SLO, On-Call, Runbooks, Incident Response, Postmortem, Game Days |
 | Supersedes | None |
-| Superseded By | None |
+| Superseded By | ADR-040 |
 
 ---
 

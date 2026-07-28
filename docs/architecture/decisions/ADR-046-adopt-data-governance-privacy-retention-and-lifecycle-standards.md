@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-046 |
 | Title | Adopt Data Governance, Privacy, Retention and Lifecycle Standards |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Data Governance, Privacy, LGPD, PII, Retention, Data Lifecycle |
 | Related Work Items | LGPD, Data Classification, Retention, Masking, Data Quality, Data Lineage |
-| Supersedes | None |
-| Superseded By | None |
+| Supersedes | ADR-029 |
+| Superseded By | ADR-071 |
 
 ---
 

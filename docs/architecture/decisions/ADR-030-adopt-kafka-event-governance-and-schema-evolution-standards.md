@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-030 |
 | Title | Adopt Kafka Event Governance and Schema Evolution Standards |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Apache Kafka, Event-Driven Architecture, Schema Governance, Integration |
 | Related Work Items | Kafka, Outbox, Event Contracts, Idempotency, Retry, DLQ, Replay, Schema Evolution |
 | Supersedes | None |
-| Superseded By | None |
+| Superseded By | ADR-090 |
 
 ---
 

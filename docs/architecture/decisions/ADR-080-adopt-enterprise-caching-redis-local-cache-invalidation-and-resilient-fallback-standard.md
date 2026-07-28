@@ -11,7 +11,7 @@
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Caching, Redis, Local Cache, Performance, Resilience |
 | Related Work Items | Redis, Caffeine, Spring Cache, ResilientCache, Kubernetes, PostgreSQL |
-| Supersedes | None |
+| Supersedes | ADR-059 |
 | Superseded By | None |
 
 ---

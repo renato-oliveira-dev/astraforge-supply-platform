@@ -11,7 +11,7 @@
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Git, Pull Requests, CI/CD, Quality Engineering, DevSecOps |
 | Related Work Items | Java 21, Spring Boot, Gradle, SonarQube, SAST, SCA, JaCoCo, Flyway, OpenAPI |
-| Supersedes | None |
+| Supersedes | ADR-069 |
 | Superseded By | None |
 
 ---
@@ -913,7 +913,7 @@ POSTGRESQL
 
 REDIS
 
-KAFKA
+SQS
 
 OTHER SUPPORTED INFRASTRUCTURE
 ```
@@ -1260,7 +1260,7 @@ Changing HTTP status semantics can be a breaking contract change.
 
 # 129. Message Contract
 
-Kafka/SQS/event contracts require equivalent compatibility governance.
+SQS/event contracts require equivalent compatibility governance.
 
 ---
 

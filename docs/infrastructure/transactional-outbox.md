@@ -6,635 +6,213 @@
 |---|---|
 | Project | Enterprise Order Platform |
 | Document | Transactional Outbox |
-| Status | Draft |
-| Version | 0.1.0 |
-| Author | Renato Oliveira |
+| Status | Active |
+| Version | 1.0.0 |
+| Canonical Decision | ADR-090 |
 
 ---
 
 # 1. Purpose
 
-This document defines how the Enterprise Order Platform guarantees reliable publication of Integration Events.
+The Transactional Outbox guarantees that a local business-state change and the intent to publish its integration event are committed atomically.
 
-The platform adopts the **Transactional Outbox Pattern** to ensure that:
-
-- database updates
-- event persistence
-
-are committed atomically.
-
-No event is published directly from the application transaction.
+The current external queue adapter is Amazon SQS, but the Outbox model itself remains broker-independent.
 
 ---
 
-# 2. Problem Statement
+# 2. Dual-Write Problem
 
-Publishing directly to Kafka after committing the database introduces inconsistency.
+Unsafe flow:
 
-Example
-
-```
-Save Order
-
-↓
-
-Commit Database
-
-↓
-
-Publish Kafka
-
-↓
-
-Kafka unavailable
+```text
+update PostgreSQL
+      |
+      v
+commit
+      |
+      v
+send SQS message
+      |
+      X
+publication fails
 ```
 
-Result
+The database contains the business change but the integration event is missing.
 
-```
-Order exists
-
-Event lost
-```
-
-The opposite is equally problematic.
-
-```
-Publish Kafka
-
-↓
-
-Success
-
-↓
-
-Database rollback
-```
-
-Consumers receive an event for data that does not exist.
+The inverse ordering is also unsafe because a message may escape for a transaction that later rolls back.
 
 ---
 
-# 3. Solution Overview
+# 3. Atomic Local Transaction
 
-Instead of publishing immediately:
+Preferred flow:
 
-```
-Application Service
-
-↓
-
-Aggregate
-
-↓
-
-Repository
-
-↓
-
-Outbox Record
-
-↓
-
-Commit
-```
-
-Publication occurs later.
-
-```
-Outbox Dispatcher
-
-↓
-
-Kafka
-
-↓
-
-Mark as Published
-```
-
----
-
-# 4. Flow
-
-```
-HTTP Request
-
-↓
-
-Application Service
-
-↓
-
-Aggregate
-
-↓
-
-Domain Events
-
-↓
-
-Integration Events
-
-↓
-
-Outbox Table
-
-↓
-
+```text
+BEGIN TRANSACTION
+      |
+      +--> update aggregate/state
+      |
+      +--> insert outbox_event
+      |
+      v
 COMMIT
-
-↓
-
-Dispatcher
-
-↓
-
-Kafka
-
-↓
-
-Success
-
-↓
-
-Update Status
 ```
+
+Only after commit does the dispatcher publish externally.
 
 ---
 
-# 5. Outbox Responsibilities
+# 4. Outbox Record
 
-The Outbox is responsible for:
+A representative Outbox record contains:
 
-- durable storage
-- retry support
-- ordering
-- publication state
-- recovery after failures
-- operational visibility
+```text
+id
+event_id
+aggregate_type
+aggregate_id
+event_type
+destination
+payload
+status
+attempts
+next_attempt_at
+last_error
+created_at
+sent_at
+trace_id
+```
+
+The exact schema is service-owned and evolved only through new Flyway migrations. Applied migrations are immutable.
 
 ---
 
-# 6. Outbox Table
+# 5. Event Identity
 
-Recommended schema
+`eventId` represents the integration event and MUST remain stable across dispatcher retries.
 
-```
-outbox_event
-```
-
-Columns
-
-| Column | Description |
-|---------|-------------|
-| id | Event identifier |
-| aggregate_id | Aggregate Root identifier |
-| aggregate_type | Aggregate type |
-| event_type | Integration Event name |
-| destination | Topic or queue |
-| payload | Serialized event |
-| status | Publication status |
-| attempts | Retry count |
-| next_attempt_at | Retry scheduling |
-| created_at | Event creation |
-| published_at | Successful publication |
-| correlation_id | Business correlation |
-| causation_id | Originating event |
-| trace_id | Distributed tracing |
+A new SQS attempt is not a new business event.
 
 ---
 
-# 7. Event Lifecycle
+# 6. Dispatcher
 
-```
-NEW
+The dispatcher:
 
-↓
+- selects only eligible rows;
+- processes bounded batches;
+- safely supports horizontal concurrency when needed;
+- publishes through the SQS infrastructure adapter;
+- records success/failure state;
+- applies bounded retry/backoff;
+- exposes backlog and failure metrics.
 
-READY
-
-↓
-
-PUBLISHING
-
-↓
-
-PUBLISHED
-```
-
-Failure path
-
-```
-READY
-
-↓
-
-FAILED
-
-↓
-
-WAITING_RETRY
-
-↓
-
-READY
-```
-
-Maximum retries
-
-```
-FAILED_PERMANENTLY
-```
+It MUST NOT contain domain business rules.
 
 ---
 
-# 8. Transaction Boundary
+# 7. Concurrency
 
-The same database transaction persists:
+Multiple dispatcher instances MAY run concurrently.
 
-- aggregate changes
-- outbox rows
+Database claiming SHOULD prevent workers from intentionally selecting the same row at the same time, for example using an appropriate locking/claim strategy such as `FOR UPDATE SKIP LOCKED` when compatible with the implementation.
 
-Example
-
-```
-@Transactional
-
-Order.submit()
-
-↓
-
-Repository.save()
-
-↓
-
-Outbox.save()
-
-↓
-
-Commit
-```
-
-Atomicity is guaranteed.
+Duplicate publication is still possible if SQS accepts a message and the process crashes before the Outbox row is marked sent. This is why consumers remain idempotent.
 
 ---
 
-# 9. Dispatcher
+# 8. Retry
 
-The Dispatcher continuously scans for pending events.
+Retry is only for transient publication failure.
 
-Responsibilities
+Retry policy MUST define:
 
-- poll events
-- lock rows
-- publish messages
-- update status
-- retry failures
-- send permanent failures to DLQ
+- maximum attempts;
+- backoff;
+- jitter where useful;
+- next eligible attempt;
+- terminal failure handling.
 
----
-
-# 10. Dispatcher Architecture
-
-```
-Scheduler
-
-↓
-
-Dispatcher
-
-↓
-
-Batch Loader
-
-↓
-
-Publisher
-
-↓
-
-Status Updater
-```
-
-Each responsibility should remain isolated.
+A permanent failed Outbox event MUST become operationally visible.
 
 ---
 
-# 11. Polling Strategy
+# 9. Ordering
 
-Typical interval
+The Outbox does not imply global ordering.
 
-```
-500 ms
+When business ordering matters, it SHOULD be scoped to an aggregate/business identifier and mapped to the SQS FIFO `MessageGroupId` where FIFO is chosen.
 
-or
-
-1 second
-```
-
-Batch size
-
-```
-100
-
-250
-
-500
-```
-
-Configurable.
+Standard-queue consumers MUST tolerate out-of-order delivery.
 
 ---
 
-# 12. Ordering
+# 10. Payload
 
-Ordering is guaranteed per Aggregate.
+Persist the immutable integration-event representation required for publication.
 
-Example
+Do not serialize JPA entities directly.
 
-```
-OrderCreated
-
-↓
-
-OrderSubmitted
-
-↓
-
-OrderApproved
-
-↓
-
-OrderCompleted
-```
-
-Dispatcher must preserve this sequence.
+Do not store credentials, access tokens, refresh tokens, or unnecessary PII in the payload.
 
 ---
 
-# 13. Concurrency
+# 11. Cleanup and Retention
 
-Multiple dispatcher instances may run simultaneously.
+Sent rows MUST have an explicit retention policy balancing:
 
-Use row-level locking.
-
-Examples
-
-```
-SELECT ...
-
-FOR UPDATE SKIP LOCKED
+```text
+forensics
+audit/replay needs
+storage
+privacy
 ```
 
-or equivalent database mechanisms.
+Cleanup MUST operate in bounded batches and avoid unnecessary contention with active dispatch.
 
 ---
 
-# 14. Retry Strategy
+# 12. Observability
 
-Retry should use exponential backoff.
+Monitor:
 
-Example
-
-```
-Attempt 1
-
-5 seconds
-
-Attempt 2
-
-15 seconds
-
-Attempt 3
-
-45 seconds
-
-Attempt 4
-
-2 minutes
-
-Attempt 5
-
-10 minutes
+```text
+pending outbox count
+oldest pending outbox age
+dispatch rate
+dispatch latency
+retry count
+permanent failures
 ```
 
-Configurable.
+An API can remain healthy while its Outbox backlog grows; therefore Outbox health is part of production health.
 
 ---
 
-# 15. Permanent Failure
+# 13. Testing
 
-After maximum retries:
+Critical tests verify:
 
-```
-FAILED_PERMANENTLY
-```
+- state update + Outbox insert commit together;
+- rollback removes both effects;
+- event ID is stable across retries;
+- bounded batch processing;
+- concurrent dispatcher claiming;
+- retry/backoff and terminal failure;
+- duplicate publication is harmless because consumers are idempotent;
+- cleanup and retention behavior.
 
-Event remains stored for investigation.
-
-Optionally:
-
-```
-Dead Letter Queue
-```
-
----
-
-# 16. Idempotency
-
-The Dispatcher may publish the same event more than once.
-
-Consumers must therefore be idempotent.
-
-Use:
-
-- EventId
-- AggregateVersion
-- CorrelationId
+Use PostgreSQL Testcontainers for PostgreSQL-specific locking and transaction behavior.
 
 ---
 
-# 17. Event Payload
+# 14. Architecture Rules
 
-Payload should contain:
-
-```
-Metadata
-
-+
-
-Business Data
+```text
+Domain -> no SQS/AWS SDK
+Application transaction -> business state + Outbox
+Dispatcher -> infrastructure only
+Consumer -> idempotent
 ```
 
-Never include internal framework objects.
-
----
-
-# 18. Serialization
-
-Preferred
-
-```
-JSON
-```
-
-Alternative
-
-- Avro
-- Protobuf
-
-Payloads must be versioned.
-
----
-
-# 19. Observability
-
-Collect metrics for:
-
-- pending events
-- published events
-- failed events
-- retry count
-- dispatcher latency
-- publication throughput
-
----
-
-# 20. Logging
-
-Log:
-
-- dispatcher startup
-- publication success
-- retries
-- permanent failures
-
-Avoid logging entire payloads containing sensitive data.
-
----
-
-# 21. Monitoring
-
-Recommended dashboards
-
-- Outbox queue depth
-- Retry rate
-- Publication latency
-- DLQ count
-- Dispatcher health
-
----
-
-# 22. Recovery
-
-After application restart:
-
-```
-Dispatcher
-
-↓
-
-Read pending rows
-
-↓
-
-Resume publication
-```
-
-No event is lost.
-
----
-
-# 23. Performance
-
-Recommendations
-
-- index status
-- index next_attempt_at
-- index aggregate_id
-- partition large tables
-- archive published events
-
----
-
-# 24. Cleanup
-
-Published events should not remain indefinitely.
-
-Strategies
-
-- scheduled archival
-- retention policy
-- partition pruning
-
-Typical retention
-
-```
-30–90 days
-```
-
-depending on auditing requirements.
-
----
-
-# 25. Testing
-
-Verify:
-
-- atomic persistence
-- retry behavior
-- duplicate publication
-- ordering
-- dispatcher restart
-- concurrent dispatchers
-- DLQ routing
-
----
-
-# 26. Architecture Rules
-
-The Outbox:
-
-- is the only publication source
-- never publishes inside the business transaction
-- guarantees durability
-- supports retries
-- isolates messaging failures
-
----
-
-# 27. Decision Summary
-
-The platform adopts:
-
-- Transactional Outbox Pattern
-- asynchronous publication
-- configurable retries
-- exponential backoff
-- ordered publication per Aggregate
-- durable event storage
-- idempotent consumers
-- operational monitoring
-
----
-
-# 28. Next Documentation Step
-
-Next document
-
-```
-docs/infrastructure/messaging-architecture.md
-```
-
-It will define:
-
-- Kafka topology
-- Topics
-- Partitions
-- Consumers
-- Producer strategy
-- Dead Letter Queue
-- Retry Topics
-- Message contracts
-- Schema evolution
+The canonical detailed decision is ADR-090.

@@ -1511,7 +1511,7 @@ Database Connections
 
 HTTP Connections
 
-Kafka Capacity
+SQS Capacity
 
 External API Limits
 ```

@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-047 |
 | Title | Adopt Legacy Modernization, Strangler Migration and Technical Evolution Standards |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Legacy Modernization, Strangler Fig, Migration, Technical Evolution |
 | Related Work Items | Java Modernization, Oracle Modernization, Strangler Migration, Legacy Decommission |
 | Supersedes | None |
-| Superseded By | None |
+| Superseded By | ADR-087 |
 
 ---
 

@@ -10,7 +10,7 @@
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Java 21, Virtual Threads, Concurrency, Parallelism, Executors, Context Propagation |
-| Related Work Items | Virtual Threads, Fan-Out, Bulkhead, WebClient, HikariCP, Kafka, Resilience |
+| Related Work Items | Virtual Threads, Fan-Out, Bulkhead, WebClient, HikariCP, SQS, Resilience |
 | Supersedes | None |
 | Superseded By | None |
 
@@ -24,7 +24,7 @@ The Enterprise Order Platform runs workloads that frequently combine:
 - database access
 - external REST APIs
 - Redis
-- Kafka
+- SQS
 - file processing
 - batch jobs
 - independent validations
@@ -56,7 +56,7 @@ HTTP Connections
 
 Redis Capacity
 
-Kafka Partitions
+FIFO MessageGroupIds
 
 External API Capacity
 
@@ -94,7 +94,7 @@ The platform requires standards defining:
 - HTTP client capacity
 - HikariCP capacity
 - Redis concurrency
-- Kafka concurrency
+- SQS concurrency
 - batch parallelism
 - CPU-bound workloads
 - blocking workloads
@@ -804,13 +804,13 @@ Concurrent cache misses must follow ADR-032 stampede controls.
 
 ---
 
-# 64. Kafka
+# 64. SQS
 
-Kafka concurrency differs from HTTP request concurrency.
+SQS concurrency differs from HTTP request concurrency.
 
 ---
 
-# 65. Kafka Partition
+# 65. FIFO MessageGroupId
 
 Within a consumer group, effective parallel consumption of a topic is fundamentally bounded by available partitions.
 
@@ -828,7 +828,7 @@ does not create 20 useful partition consumers for that topic/group.
 
 ---
 
-# 67. Kafka Ordering
+# 67. SQS Ordering
 
 Parallel processing must preserve required ordering semantics.
 
@@ -840,7 +840,7 @@ If business correctness requires ordered events for an aggregate, partitioning/k
 
 ---
 
-# 69. Kafka Listener Concurrency
+# 69. SQS Listener Concurrency
 
 Listener concurrency must be aligned with:
 
@@ -851,9 +851,9 @@ Listener concurrency must be aligned with:
 
 ---
 
-# 70. Async Kafka Processing
+# 70. Async SQS Processing
 
-Offloading Kafka records to arbitrary asynchronous executors can break:
+Offloading SQS records to arbitrary asynchronous executors can break:
 
 - offset semantics
 - ordering
@@ -1303,7 +1303,7 @@ Fire-and-forget work from request handlers is prohibited unless explicitly model
 
 Business work that must survive request/process failure should normally use:
 
-- Kafka
+- SQS
 - Outbox
 - job infrastructure
 
@@ -2407,7 +2407,7 @@ The decision also means:
 - Virtual Threads do not replace reactive programming everywhere
 - connection pools remain necessary
 - some workloads remain CPU-bound
-- Kafka concurrency remains partition-bound
+- SQS concurrency remains bounded by configured consumer capacity and, for FIFO queues, active MessageGroupId distribution
 - concurrency limits vary by dependency
 - high thread counts may be normal
 - throughput remains constrained by the slowest finite resource
@@ -2424,7 +2424,7 @@ The decision also means:
 | Retry amplification | Critical | Medium | Retry budget |
 | Context loss | High | Medium | Context-aware executors |
 | Context leakage | Critical | Low | Capture/restore/cleanup |
-| Kafka ordering violation | Critical | Medium | Partition-aware processing |
+| SQS ordering violation | Critical | Medium | Queue/FIFO-group-aware processing |
 | CPU saturation | High | Medium | CPU-bound pools |
 | Deadlock | Critical | Low | Minimize locks |
 | Memory amplification | High | Medium | Bounded tasks/chunks |
@@ -2452,7 +2452,7 @@ The following rules are mandatory:
 11. Database transactions must remain short.
 12. Slow external calls should normally not occur inside DB transactions.
 13. JPA EntityManager/transaction context must not be casually shared across tasks.
-14. Kafka concurrency must respect partitions and ordering.
+14. SQS concurrency must respect queue/FIFO MessageGroupId ordering.
 15. Large batch workloads must use bounded partitioning/chunking.
 16. Executors must have explicit ownership and lifecycle.
 17. Blocking `CompletableFuture` tasks must not accidentally use the common pool.
@@ -2500,7 +2500,7 @@ A new concurrent workload is not production ready until:
 
 [ ] Redis demand reviewed
 
-[ ] Kafka partition limits reviewed
+[ ] SQS queue and FIFO MessageGroupId limits reviewed
 
 [ ] Concurrency limit defined
 
@@ -2559,7 +2559,7 @@ This ADR will be validated through:
 - context-propagation tests
 - integration tests
 - pool-exhaustion tests
-- Kafka ordering tests
+- SQS ordering tests
 - batch tests
 - load tests
 - stress tests
@@ -2580,7 +2580,7 @@ The decision is successful when:
 - increased concurrency improves throughput until known capacity limits
 - DB pools remain protected
 - HTTP pools remain protected
-- Kafka ordering remains correct
+- SQS ordering remains correct
 - retries do not amplify outages
 - context is preserved across concurrent operations
 - no cross-request context leakage occurs
@@ -2641,12 +2641,12 @@ This ADR is related to:
 
 - ADR-004: Use Spring Boot
 - ADR-005: Use PostgreSQL as the Primary Database
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-014: Adopt OpenTelemetry for Distributed Observability
 - ADR-016: Adopt Resilience4j for Application Resilience
 - ADR-019: Adopt Structured Logging
 - ADR-020: Define Service-Level Objectives
-- ADR-030: Adopt Kafka Event Governance and Schema Evolution Standards
+- ADR-030: Adopt SQS Event Governance and Schema Evolution Standards
 - ADR-031: Adopt Database Performance and Data Access Standards
 - ADR-032: Adopt Distributed Caching and Cache Consistency Standards
 - ADR-033: Adopt API Gateway and Edge Architecture Standards
@@ -2664,7 +2664,7 @@ This ADR is related to:
 - Spring Framework Documentation
 - Reactor Netty Documentation
 - HikariCP Documentation
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - Resilience4j Documentation
 - Java Flight Recorder Documentation
 - ADR-031: Adopt Database Performance and Data Access Standards
@@ -2864,7 +2864,7 @@ HTTP Request
 Transactional State / Outbox
      |
      v
-Kafka
+SQS
      |
      v
 Consumer

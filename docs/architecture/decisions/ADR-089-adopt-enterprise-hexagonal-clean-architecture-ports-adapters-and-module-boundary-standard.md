@@ -16,6 +16,10 @@
 
 ---
 
+> **Scope relationship:** This ADR specializes the Clean/Hexagonal Architecture and dependency-boundary portion of ADR-065. Domain modeling, aggregates, domain events and business-rule modeling are specialized by ADR-088.
+
+---
+
 # 1. Context
 
 Enterprise Java applications frequently begin with a conventional layered structure:
@@ -324,7 +328,7 @@ Domain code MUST NOT depend directly on:
 ```text
 SqsClient
 
-KafkaTemplate
+SQSTemplate
 
 RabbitTemplate
 ```
@@ -670,7 +674,7 @@ REST CONTROLLER
 
 SQS LISTENER
 
-KAFKA CONSUMER
+SQS CONSUMER
 
 BATCH JOB
 

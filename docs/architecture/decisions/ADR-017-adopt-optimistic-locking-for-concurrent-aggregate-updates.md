@@ -25,7 +25,7 @@ Examples include:
 - two users updating the same order
 - approval and cancellation arriving concurrently
 - checkout processing while an order is being modified
-- duplicate commands delivered through Kafka
+- duplicate commands delivered through SQS
 - concurrent saga responses
 - scheduled reconciliation competing with normal processing
 - retry execution overlapping with the original request
@@ -77,7 +77,7 @@ The platform requires a concurrency-control strategy that:
 - supports controlled retries
 - works with transactional outbox persistence
 - works with saga processing
-- supports HTTP and Kafka workloads
+- supports HTTP and SQS workloads
 - exposes meaningful conflict responses
 - remains observable
 - remains testable
@@ -129,7 +129,7 @@ The decision must consider:
 - some operations create irreversible side effects
 - database isolation alone does not prevent every domain conflict
 - state may change between command validation and commit
-- concurrent work may arrive through HTTP, Kafka or scheduled jobs
+- concurrent work may arrive through HTTP, SQS or scheduled jobs
 - distributed locks introduce additional failure modes
 - applied Flyway migrations must never be modified
 
@@ -556,7 +556,7 @@ Committed
 
 inside one short transaction.
 
-Remote HTTP calls, Kafka waits or long-running work must not occur while holding the transaction open.
+Remote HTTP calls, SQS waits or long-running work must not occur while holding the transaction open.
 
 Preferred flow:
 
@@ -1082,9 +1082,9 @@ This protects against:
 
 ---
 
-# 40. Kafka Consumers
+# 40. SQS Consumers
 
-Kafka consumers must assume concurrent or duplicate processing can occur.
+SQS consumers must assume concurrent or duplicate processing can occur.
 
 Optimistic locking is one layer of protection.
 
@@ -1117,7 +1117,7 @@ Optimistic locking alone is not a deduplication strategy.
 
 # 42. Event Ordering
 
-Kafka preserves ordering only within a partition.
+SQS Standard does not guarantee strict ordering; SQS FIFO preserves ordering within a MessageGroupId.
 
 A stable aggregate key should be used when ordered processing is required.
 
@@ -1540,7 +1540,7 @@ Potential redesign strategies include:
 - introduce reservation records
 - introduce append-only commands
 - partition work by aggregate ID
-- serialize commands through Kafka
+- serialize commands through SQS
 - use a dedicated counter table
 - use database atomic operations
 - model a queue
@@ -2037,9 +2037,9 @@ API tests should validate:
 
 ---
 
-# 93. Kafka Integration Tests
+# 93. SQS Integration Tests
 
-Kafka tests should validate:
+SQS tests should validate:
 
 - duplicate command
 - concurrent command processing
@@ -2093,7 +2093,7 @@ Failure tests should cover:
 - application crash after commit
 - database failover
 - retry during deployment
-- duplicate Kafka delivery
+- duplicate SQS delivery
 - delayed transaction
 - optimistic-lock conflict after external dependency preparation
 - collector or logging failure during conflict
@@ -2448,12 +2448,12 @@ Aggregate-level consistency remains preferred.
 
 # 122. Command Serialization
 
-For very high contention, commands may be serialized by aggregate key through Kafka.
+For very high contention, commands may be serialized by aggregate key through SQS.
 
 Example:
 
 ```text
-Kafka key = orderId
+FIFO MessageGroupId = orderId
 ```
 
 This reduces concurrent consumer updates within one consumer group.
@@ -2510,7 +2510,7 @@ The concurrency runbook should include:
 - identifying affected operation
 - checking deployment changes
 - checking transaction duration
-- checking Kafka partitioning
+- checking SQS queue/FIFO MessageGroupId distribution
 - checking duplicate messages
 - checking retry settings
 - detecting aggregate hotspots
@@ -2541,7 +2541,7 @@ Database transaction timing
 
 ↓
 
-Kafka processing metadata
+SQS processing metadata
 
 ↓
 
@@ -2568,7 +2568,7 @@ The following are prohibited:
 - merging full client entities directly
 - bulk JPQL updates that bypass versioning
 - native SQL updates without expected-version predicates
-- direct Kafka publication before local commit
+- direct SQS publication before local commit
 - treating optimistic locking as idempotency
 - treating idempotency as optimistic locking
 - using Redis locks for ordinary database-row updates
@@ -2579,7 +2579,7 @@ The following are prohibited:
 - using aggregate IDs as metric labels
 - modifying applied Flyway migrations
 - assuming PostgreSQL MVCC alone prevents all lost updates
-- relying only on Kafka ordering
+- relying only on SQS ordering
 - forcing stale state after conflict
 - automatic field-level merge without domain semantics
 
@@ -2637,7 +2637,7 @@ The decision also means:
 - database isolation and optimistic locking remain separate concerns
 - cross-aggregate invariants require additional design
 - idempotency remains mandatory for duplicate messages
-- Kafka ordering remains helpful but insufficient
+- SQS ordering remains helpful but insufficient
 - pessimistic locking remains available only by exception
 - public APIs may expose ETags or expected versions
 
@@ -2689,7 +2689,7 @@ The following rules are mandatory:
 13. Non-idempotent external side effects must not be repeated.
 14. Aggregate update and outbox persistence must remain atomic.
 15. Failed optimistic-lock transactions must not emit events.
-16. Kafka idempotency remains mandatory.
+16. SQS idempotency remains mandatory.
 17. Saga state must use version protection.
 18. Bulk updates to versioned aggregates require explicit version handling and review.
 19. Native SQL updates must include expected-version predicates.
@@ -2720,7 +2720,7 @@ The decision will be validated through:
 - bounded retry tests
 - fresh-transaction retry tests
 - outbox rollback tests
-- duplicate Kafka message tests
+- duplicate SQS message tests
 - saga race-condition tests
 - migration tests
 - rolling deployment analysis
@@ -2810,7 +2810,7 @@ This ADR is related to:
 - ADR-006: Use Flyway for Database Migrations
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-011: Adopt OpenAPI-First API Design
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
 - ADR-013: Use Testcontainers for Integration Testing
@@ -2928,7 +2928,7 @@ Idempotency
 
 Database constraints
 
-Kafka ordering
+SQS ordering
 
 Saga transition validation
 

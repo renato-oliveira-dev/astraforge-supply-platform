@@ -260,13 +260,13 @@ Not every ADR applies to every workload.
 
 # 13. Example
 
-A service without Kafka does not need to comply with Kafka-specific producer requirements.
+A service without SQS does not need to comply with SQS-specific producer requirements.
 
 However:
 
 ```text
-IF Kafka is used
-THEN applicable Kafka standards apply.
+IF SQS is used
+THEN applicable SQS standards apply.
 ```
 
 ---
@@ -288,7 +288,7 @@ Database: PostgreSQL
 
 Migration: Flyway
 
-Messaging: Kafka
+Messaging: SQS
 
 Cache: Redis
 
@@ -312,7 +312,7 @@ Controls should support conditions such as:
 ```text
 DATABASE_USED
 
-KAFKA_USED
+SQS_USED
 
 REDIS_USED
 
@@ -553,7 +553,7 @@ REST services SHOULD maintain accurate OpenAPI contracts where applicable.
 
 # 45. Messaging Baseline
 
-Kafka integrations MUST follow event governance standards.
+SQS integrations MUST follow event governance standards.
 
 ---
 
@@ -2837,7 +2837,7 @@ Particularly relevant decisions include:
 
 - ADR-006: Flyway Database Migrations
 - ADR-016: Application Resilience
-- ADR-030: Kafka Event Governance
+- ADR-030: SQS Event Governance
 - ADR-031: Database Performance and Data Access
 - ADR-034: Java 21 Concurrency and Parallelism
 - ADR-036: API Design and Compatibility

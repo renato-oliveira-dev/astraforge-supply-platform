@@ -111,7 +111,7 @@ Use the narrowest test scope that validates the required behavior.
 | Controller mapping | MVC slice test |
 | JPA query | Persistence slice test |
 | PostgreSQL behavior | Integration test |
-| Kafka flow | Integration test |
+| SQS flow | Integration test |
 | External API contract | Contract test |
 | Complete business journey | End-to-end test |
 
@@ -1218,13 +1218,11 @@ Validate:
 
 Use Testcontainers for infrastructure integrations.
 
-Typical containers:
+Typical infrastructure:
 
-- PostgreSQL
-- Kafka
-- Redis
-- RabbitMQ
-- LocalStack when AWS emulation is justified
+- PostgreSQL Testcontainer
+- Redis Testcontainer
+- LocalStack when SQS/AWS emulation is justified
 
 Tests must not depend on manually installed local services.
 
@@ -1313,15 +1311,15 @@ Messaging tests should validate:
 
 - serialization
 - event envelope
-- topic or queue destination
-- message key
+- SQS queue destination
+- FIFO MessageGroupId / deduplication ID when applicable
 - headers
 - consumer deserialization
 - idempotency
 - retry handling
 - dead-letter routing
 
-Do not validate Kafka behavior only by mocking the producer.
+Do not validate SQS behavior only by mocking the AWS SDK client.
 
 ---
 
@@ -1376,21 +1374,22 @@ Validate exact external contract names, not Java implementation details.
 
 ---
 
-# 62. Kafka Integration Tests
+# 62. SQS Integration Tests
 
-Kafka integration tests should use a real compatible broker through Testcontainers where practical.
+SQS integration tests SHOULD use LocalStack or another approved SQS-compatible test environment when broker semantics matter.
 
-Validate:
+Verify applicable behavior such as:
 
-- publication
-- consumption
-- key preservation
-- headers
-- partitioning assumptions
-- duplicate handling
-- error routing
+```text
+SEND / RECEIVE
+MESSAGE ATTRIBUTES
+FIFO GROUP ORDERING
+DUPLICATE / REDELIVERY SAFETY
+VISIBILITY TIMEOUT
+DLQ / REDRIVE
+```
 
-Embedded broker tests may be used for fast feedback but should not be the only broker compatibility test.
+Do not call production AWS services from automated tests.
 
 ---
 
@@ -1757,7 +1756,7 @@ create order p95 latency
 
 search orders p95 latency
 
-Kafka consumer throughput
+SQS consumer throughput
 
 outbox dispatch throughput
 
@@ -2036,7 +2035,7 @@ Tests must not depend on:
 - developer machine paths
 - local credentials
 - local database installations
-- local Kafka
+- local SQS-compatible infrastructure
 - current locale
 - current timezone
 - execution from an IDE
@@ -2306,7 +2305,7 @@ The project adopts:
 - controlled `Clock`
 - business-oriented fixtures
 - Spring slice tests
-- PostgreSQL, Kafka and Redis Testcontainers
+- PostgreSQL and Redis Testcontainers plus LocalStack/SQS-compatible infrastructure
 - real migration validation with Flyway
 - contract tests for external boundaries
 - Outbox and idempotency integration tests

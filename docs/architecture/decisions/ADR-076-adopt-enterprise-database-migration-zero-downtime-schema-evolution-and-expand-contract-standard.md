@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-076 |
 | Title | Adopt Enterprise Database Migration, Zero-Downtime Schema Evolution and Expand/Contract Standard |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-26 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Database Migration, Flyway, PostgreSQL, Zero-Downtime Deployment |
 | Related Work Items | PostgreSQL, Flyway, Kubernetes, Rolling Deployment, CI/CD |
 | Supersedes | None |
-| Superseded By | None |
+| Superseded By | ADR-084 |
 
 ---
 

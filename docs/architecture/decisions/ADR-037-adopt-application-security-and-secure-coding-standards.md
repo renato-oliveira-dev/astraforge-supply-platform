@@ -21,7 +21,7 @@
 The Enterprise Order Platform processes business-critical information through:
 
 - REST APIs
-- Kafka
+- SQS
 - PostgreSQL
 - Redis
 - AWS services
@@ -405,7 +405,7 @@ External input includes:
 - query parameter
 - path parameter
 - header
-- Kafka payload
+- SQS payload
 - file
 - database data originating externally
 - third-party API response
@@ -1666,9 +1666,9 @@ Artifact integrity/signature/provenance controls should follow platform supply-c
 
 ---
 
-# 180. Kafka Security
+# 180. SQS Security
 
-Kafka consumers must not trust event payloads solely because they originate from Kafka.
+SQS consumers must not trust event payloads solely because they originate from SQS.
 
 ---
 
@@ -1694,7 +1694,7 @@ Sensitive data should not be placed into events unnecessarily.
 
 ---
 
-# 184. Kafka Headers
+# 184. SQS Headers
 
 Do not trust arbitrary identity claims from message headers unless produced by an approved trusted mechanism.
 
@@ -1702,13 +1702,13 @@ Do not trust arbitrary identity claims from message headers unless produced by a
 
 # 185. Deserialization Failure
 
-Malformed Kafka payloads must not cause infinite poison-message loops.
+Malformed SQS payloads must not cause infinite poison-message loops.
 
 ---
 
 # 186. DLQ
 
-Poison-message handling should follow the platform Kafka resilience strategy.
+Poison-message handling should follow the platform SQS resilience strategy.
 
 ---
 
@@ -2376,7 +2376,7 @@ The following rules are mandatory:
 27. Security fixes must address the vulnerable sink/context rather than corrupting source data.
 28. Sonar security hotspots require human review.
 29. Dependency vulnerabilities require risk-based assessment and remediation.
-30. Kafka payloads require validation.
+30. SQS payloads require validation.
 31. Cache design must prevent cross-scope data leakage.
 32. Database accounts must follow least privilege.
 33. Critical security controls require automated behavioral tests.
@@ -2449,7 +2449,7 @@ A service/change is not production ready until:
 
 [ ] Dependency vulnerabilities reviewed
 
-[ ] Kafka input reviewed
+[ ] SQS input reviewed
 
 [ ] Cache isolation reviewed
 
@@ -2565,12 +2565,12 @@ This ADR is related to:
 - ADR-001: Adopt Clean Architecture
 - ADR-004: Use Spring Boot
 - ADR-005: Use PostgreSQL as the Primary Database
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-016: Adopt Resilience4j for Application Resilience
 - ADR-019: Adopt Structured Logging
 - ADR-026: Adopt Platform Configuration and Secret Management Standards
 - ADR-029: Adopt Data Protection, Privacy and Retention Standards
-- ADR-030: Adopt Kafka Event Governance and Schema Evolution Standards
+- ADR-030: Adopt SQS Event Governance and Schema Evolution Standards
 - ADR-031: Adopt Database Performance and Data Access Standards
 - ADR-032: Adopt Distributed Caching and Cache Consistency Standards
 - ADR-033: Adopt API Gateway and Edge Architecture Standards

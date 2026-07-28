@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-029 |
 | Title | Adopt Data Protection, Privacy and Retention Standards |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Data Protection, Privacy, LGPD, Security, Retention, Data Lifecycle |
 | Related Work Items | LGPD, PII, Data Classification, Encryption, Masking, Retention, Deletion, Audit |
 | Supersedes | None |
-| Superseded By | None |
+| Superseded By | ADR-046 |
 
 ---
 

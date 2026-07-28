@@ -10,7 +10,7 @@
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Service Ownership, Team Topologies, Platform Engineering, Domain Boundaries |
-| Related Work Items | CODEOWNERS, Service Catalog, Platform Engineering, API Ownership, Kafka Ownership, Data Ownership |
+| Related Work Items | CODEOWNERS, Service Catalog, Platform Engineering, API Ownership, SQS Ownership, Data Ownership |
 | Supersedes | None |
 | Superseded By | None |
 
@@ -37,7 +37,7 @@ Typical topology:
        +------------------+------------------+
        |                  |                  |
        v                  v                  v
-     KAFKA             DATABASE          SECURITY
+     SQS             DATABASE          SECURITY
        |                  |                  |
        +------------------+------------------+
                           |
@@ -53,7 +53,7 @@ Who owns this API?
 
 Who approves a breaking contract change?
 
-Who owns this Kafka topic?
+Who owns this SQS queue?
 
 Who investigates this incident?
 
@@ -87,7 +87,7 @@ The platform requires standards defining:
 - domain ownership
 - API ownership
 - database ownership
-- Kafka topic ownership
+- SQS queue ownership
 - event ownership
 - shared-library ownership
 - infrastructure ownership
@@ -264,7 +264,7 @@ Example:
 | Cart Service | Commerce Team | Platform Team |
 | Orders Service | Order Management Team | Platform Team |
 | Customers Service | Customer Domain Team | Platform Team |
-| Kafka Platform | Platform Team | Cloud Team |
+| SQS Platform | Platform Team | Cloud Team |
 | CI/CD Platform | Platform Team | DevSecOps |
 | Identity Platform | Security/Platform | Domain Teams |
 
@@ -313,7 +313,7 @@ Dependencies
 
 Data Stores
 
-Kafka Topics
+SQS Topics
 ```
 
 ---
@@ -472,7 +472,7 @@ Kubernetes internals
 
 Cloud networking
 
-Kafka cluster administration
+SQS queue/IAM administration
 
 Certificate infrastructure
 
@@ -922,9 +922,9 @@ A service may own its local snapshot while another service remains authoritative
 
 ---
 
-# 76. Kafka Topic Ownership
+# 76. SQS Topic Ownership
 
-Every production Kafka topic requires ownership.
+Every production SQS queue requires ownership.
 
 ---
 
@@ -934,9 +934,9 @@ The topic/event owner is generally the domain team responsible for the event's b
 
 ---
 
-# 78. Platform Kafka Ownership
+# 78. Platform SQS Ownership
 
-The platform team owns the Kafka infrastructure.
+The platform team owns the SQS infrastructure.
 
 It does not automatically own every business event.
 
@@ -948,7 +948,7 @@ It does not automatically own every business event.
 PLATFORM TEAM
      |
      v
-Kafka Cluster
+SQS Queue Infrastructure
 
 DOMAIN TEAM
      |
@@ -989,7 +989,7 @@ Consumers own:
 
 # 83. Topic Configuration
 
-Kafka topic configuration responsibilities should be explicit between platform and domain teams.
+SQS queue configuration responsibilities should be explicit between platform and domain teams.
 
 ---
 
@@ -1431,7 +1431,7 @@ Applicable:
 
 [ ] API consumers reviewed
 
-[ ] Kafka topics/events reviewed
+[ ] SQS queues/events reviewed
 
 [ ] Database ownership reviewed
 
@@ -1473,7 +1473,7 @@ Repository
 
 Service
 
-Kafka Topic
+SQS Topic
 
 Database
 
@@ -1577,7 +1577,7 @@ Service credentials/secrets must be revoked after decommissioning.
 
 # 147. Topic Decommission
 
-Kafka topics require consumer/retention analysis before deletion.
+SQS queues require consumer/retention analysis before deletion.
 
 ---
 
@@ -2007,7 +2007,7 @@ Every service catalog entry has owner
 
 Every production alert has routing owner
 
-Every Kafka topic has ownership metadata
+Every SQS queue has ownership metadata
 
 Every shared library has owner
 ```
@@ -2100,7 +2100,7 @@ A production service is not considered properly governed until:
 
 [ ] System of record identified where applicable
 
-[ ] Kafka topics identified
+[ ] SQS queues identified
 
 [ ] Event ownership identified
 
@@ -2139,11 +2139,11 @@ The following are prohibited or strongly discouraged:
 - "everyone owns it"
 - repositories without accountable teams
 - shared libraries without owners
-- Kafka topics without business ownership
+- SQS queues without business ownership
 - database tables independently modified by multiple services
 - cross-service direct SQL as normal integration
 - platform team owning every business event
-- domain teams owning Kafka cluster administration
+- domain teams owning SQS queue/IAM administration
 - platform teams required for every normal deployment
 - domain teams bypassing platform standards
 - CODEOWNERS treated as complete ownership governance
@@ -2172,7 +2172,7 @@ The decision provides:
 - stronger domain autonomy
 - safer API evolution
 - clear data ownership
-- clear Kafka/event ownership
+- clear SQS/event ownership
 - better platform/domain collaboration
 - reduced orphaned assets
 - improved service decommissioning
@@ -2249,7 +2249,7 @@ The following rules are mandatory:
 15. Cross-service direct database access is prohibited as a normal integration pattern.
 16. Applied Flyway migrations remain immutable regardless of ownership changes.
 17. Critical business data requires an identifiable authoritative source.
-18. Kafka infrastructure and business-event ownership must remain distinct.
+18. SQS infrastructure and business-event ownership must remain distinct.
 19. Every production business event/topic requires ownership.
 20. Shared libraries require explicit owners and versioning.
 21. Security follows a shared-responsibility model.
@@ -2277,7 +2277,7 @@ This ADR will be validated through:
 - service-catalog validation
 - architecture reviews
 - incident reviews
-- Kafka ownership inventory
+- SQS ownership inventory
 - database ownership inventory
 - API ownership inventory
 - shared-library inventory
@@ -2297,7 +2297,7 @@ The decision is successful when:
 - engineers can rapidly identify the correct responder
 - APIs have identifiable provider teams
 - databases have clear schema ownership
-- Kafka events have clear domain ownership
+- SQS messages/events have clear domain ownership
 - platform capabilities are largely self-service
 - domain teams can deploy independently
 - ownership transfer does not lose operational knowledge
@@ -2335,7 +2335,7 @@ Rejected as a universal model because business data semantics belong to the owni
 
 ---
 
-## 214.5 Kafka Team Owns All Events
+## 214.5 SQS Team Owns All Events
 
 Rejected because infrastructure ownership does not imply business-semantic ownership.
 
@@ -2361,8 +2361,8 @@ This ADR is related to:
 - ADR-002: Adopt Domain-Driven Design
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-006: Use Flyway for Database Migrations
-- ADR-009: Use Apache Kafka for Integration Events
-- ADR-030: Adopt Kafka Event Governance and Schema Evolution Standards
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
+- ADR-030: Adopt SQS Event Governance and Schema Evolution Standards
 - ADR-031: Adopt Database Performance and Data Access Standards
 - ADR-035: Adopt Engineering Quality and Testing Standards
 - ADR-036: Adopt API Design, REST Contract and Compatibility Standards
@@ -2446,7 +2446,7 @@ Platform ownership is complementary:
 The key distinction is:
 
 ```text
-Kafka Cluster
+SQS Queue Infrastructure
      |
      v
 PLATFORM OWNERSHIP

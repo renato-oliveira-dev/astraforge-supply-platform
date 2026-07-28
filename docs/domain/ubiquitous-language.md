@@ -1689,7 +1689,7 @@ Examples:
 
 - REST Controller
 - JPA Repository Adapter
-- Kafka Publisher Adapter
+- SQS Publisher Adapter
 - HTTP Customer Client Adapter
 
 ---
@@ -1850,7 +1850,7 @@ Time-dependent domain logic should use an injected Clock rather than direct stat
 | Terminate an eligible order | Cancel Order | Delete Order |
 | Unique business flow identifier | Correlation Identifier | Log ID |
 | Business fact that occurred | Domain Event | Notification Object |
-| External event contract | Integration Event | Kafka DTO |
+| External event contract | Integration Event | SQS message contract |
 | Repeated operation protection | Idempotency | Duplicate check |
 | Local atomic consistency boundary | Transaction Boundary | Method transaction |
 | Historical commercial value | Pricing Snapshot | Cached price |

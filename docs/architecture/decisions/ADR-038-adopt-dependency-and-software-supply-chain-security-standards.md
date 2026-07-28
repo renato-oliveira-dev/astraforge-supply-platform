@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-038 |
 | Title | Adopt Dependency and Software Supply Chain Security Standards |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Dependencies, Gradle, SBOM, CVE, Containers, CI/CD, Supply Chain |
 | Related Work Items | Dependency Management, Vulnerability Scanning, SBOM, Containers, Build Security |
 | Supersedes | None |
-| Superseded By | None |
+| Superseded By | ADR-085 |
 
 ---
 

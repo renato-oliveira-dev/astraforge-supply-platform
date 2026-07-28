@@ -427,7 +427,7 @@ Inside a transaction:
 Avoid:
 
 - HTTP calls
-- Kafka publishing
+- SQS publishing
 - email sending
 - long calculations
 
@@ -881,7 +881,7 @@ Repositories:
 Repositories must not:
 
 - call REST
-- publish Kafka
+- publish to SQS
 - send emails
 - execute business workflows
 

@@ -72,7 +72,7 @@ A Domain Event is not:
 - A request for future execution
 - A database entity
 - A REST request
-- A Kafka-specific object
+- An SQS/AWS-specific object
 - A log entry
 - An audit record
 - A direct replacement for aggregate state
@@ -185,7 +185,7 @@ order.submitted.v1
 
 The application layer or a dedicated event mapper is responsible for this transformation.
 
-The aggregate must not create Kafka payloads directly.
+The aggregate must not create SQS message payloads directly.
 
 ---
 
@@ -547,7 +547,7 @@ The interface must remain independent from:
 
 - Spring
 - JPA
-- Kafka
+- Amazon SQS
 - Jackson
 - Messaging framework annotations
 
@@ -2009,7 +2009,7 @@ Without Outbox:
 
 ```text
 Database commit succeeds
-Kafka publication fails
+SQS publication fails
 ```
 
 Result:
@@ -2112,7 +2112,7 @@ Possible controls:
 - `FOR UPDATE SKIP LOCKED`
 - Optimistic status update
 - Lease-based processing
-- Partition ownership
+- Database row claiming / lease ownership
 
 The chosen strategy must prevent uncontrolled duplicate parallel publication.
 
@@ -2218,13 +2218,7 @@ eventType = order.submitted
 eventVersion = 1
 ```
 
-Alternative topic-style naming:
-
-```text
-order.submitted.v1
-```
-
-The project must select one convention and use it consistently.
+The event version is kept separately from the semantic event type.
 
 Recommended:
 
@@ -2399,7 +2393,7 @@ Controls may include:
 
 - Aggregate Version
 - Sequence Number
-- Message partition key
+- FIFO MessageGroupId or aggregate sequence
 - Expected current state
 - Optimistic locking
 - Stale-event rejection
@@ -2724,7 +2718,7 @@ Money must not be represented using binary floating-point calculations.
 
 ---
 
-## 72. Event Topics and Destinations
+## 72. Event Queues and Destinations
 
 Conceptual destinations may include:
 
@@ -2736,7 +2730,7 @@ enterprise.notifications.commands
 enterprise.audit.events
 ```
 
-Topic design must consider:
+Queue/destination design must consider:
 
 - Ownership
 - Access control
@@ -2747,31 +2741,30 @@ Topic design must consider:
 - Schema governance
 - Operational responsibility
 
-The Domain Layer must not know topic names.
+The Domain Layer must not know SQS queue names.
 
 ---
 
-## 73. Partitioning
+## 73. SQS Ordering Scope
 
-When ordering by Order is required, use:
+When strict per-Order ordering is required, SQS FIFO MAY use:
 
 ```text
-partitionKey = orderId
+MessageGroupId = orderId
 ```
 
 Benefits:
 
-- Events for one Order remain in one partition
-- Relative order may be preserved
+- Events for one Order are serialized within one message group
+- Relative order can be preserved for that group
 
 Trade-offs:
 
-- Hot aggregate risk
-- Partition count constraints
-- Rebalancing behavior
+- Hot aggregate/message-group risk
+- Per-group serialization
 - Consumer parallelism limits
 
-Partitioning does not remove the need for idempotency and stale-state validation.
+FIFO ordering does not remove the need for idempotency and stale-state validation.
 
 ---
 
@@ -3078,7 +3071,7 @@ Domain Events must not depend on Spring.
 ```
 
 ```text
-Domain Events must not depend on Kafka.
+Domain Events must not depend on Amazon SQS or the AWS SDK.
 ```
 
 ```text
@@ -3090,7 +3083,7 @@ Integration Event DTOs must not be located in the Domain package.
 ```
 
 ```text
-Kafka publishers must not be called from aggregates.
+SQS publishers/AWS SDK clients must not be called from aggregates.
 ```
 
 ```text
@@ -3410,8 +3403,8 @@ The following decisions remain open:
 4. Will event versions be embedded in Event Type or stored separately?
 5. Will JSON Schema, Avro, or Protobuf be used?
 6. Will AsyncAPI document asynchronous contracts?
-7. Will the platform use one topic or multiple domain-specific topics?
-8. What is the partitioning strategy?
+7. Which consumer-owned SQS queues/fan-out paths are required for each integration event?
+8. Which events require FIFO and what is the MessageGroupId strategy?
 9. What is the maximum event payload size?
 10. Which Order events are public?
 11. Is `OrderCreated` externally relevant?

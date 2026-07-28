@@ -139,9 +139,7 @@ The Domain layer must remain independent from:
 - JPA
 - Hibernate
 - REST
-- Kafka
-- RabbitMQ
-- SQS
+- Amazon SQS / AWS SDK
 - Redis
 - PostgreSQL
 - Docker
@@ -1343,15 +1341,13 @@ Avoid mocking:
 
 # 67. Integration Tests
 
-Use Testcontainers for production-compatible dependencies.
+Use production-compatible integration infrastructure.
 
 Examples:
 
-- PostgreSQL
-- Kafka
-- RabbitMQ
-- Redis
-- LocalStack where appropriate
+- PostgreSQL Testcontainers
+- Redis Testcontainers
+- LocalStack or another approved SQS-compatible environment
 
 Do not rely exclusively on H2 for PostgreSQL behavior.
 
@@ -1379,8 +1375,8 @@ Messaging tests should validate:
 - serialization
 - deserialization
 - event metadata
-- partition key
-- consumer group behavior
+- FIFO MessageGroupId / ordering behavior when applicable
+- consumer/queue ownership
 - idempotency
 - retries
 - dead-letter routing
@@ -2447,7 +2443,7 @@ The Enterprise Order Platform adopts:
 - PostgreSQL
 - Spring Data JPA and Hibernate
 - Flyway with immutable migrations
-- Kafka, RabbitMQ or SQS according to use case
+- Amazon SQS under the current baseline; another broker requires an explicit ADR
 - Transactional Outbox
 - idempotent consumers
 - Redis for justified caching scenarios

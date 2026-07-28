@@ -83,7 +83,7 @@ Every remote integration must be protected by a Circuit Breaker.
 Typical candidates
 
 - REST APIs
-- Kafka producers
+- SQS producers
 - Redis
 - SMTP
 - External payment gateways
@@ -138,7 +138,7 @@ Recommended values
 |------------|---------|
 | Internal REST | 2 s |
 | External REST | 5 s |
-| Kafka Publish | 3 s |
+| SQS SendMessage | 3 s |
 | Redis | 500 ms |
 | PostgreSQL Query | 2 s |
 
@@ -225,7 +225,7 @@ Critical resources must be isolated.
 Separate execution pools should exist for:
 
 - database operations
-- Kafka consumers
+- SQS consumers
 - external APIs
 - scheduled jobs
 
@@ -244,7 +244,7 @@ HTTP Requests
 
 Web Thread Pool
 
-Kafka Consumers
+SQS Consumers
 
 ↓
 
@@ -357,9 +357,9 @@ This prevents duplicate side effects.
 
 # 19. Messaging Resilience
 
-Kafka consumers must support:
+SQS consumers must support:
 
-- retry topics
+- bounded SQS redelivery/backoff or controlled retry queues where explicitly designed
 - dead-letter queues
 - replay
 - idempotent processing
@@ -423,7 +423,7 @@ Examples
 - terminate service instances
 - introduce network latency
 - simulate database outage
-- block Kafka brokers
+- make SQS unavailable
 - exhaust Redis connections
 
 These experiments should be executed in non-production environments.

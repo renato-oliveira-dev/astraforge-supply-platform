@@ -11,7 +11,7 @@
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Architecture Testing, ArchUnit, Gradle, CI/CD, Automated Governance |
 | Related Work Items | ArchUnit, JaCoCo, SonarQube, SAST, Flyway, OpenAPI, Dependency Governance |
-| Supersedes | None |
+| Supersedes | ADR-042 |
 | Superseded By | None |
 
 ---
@@ -1155,7 +1155,7 @@ Consumer-driven contract testing MAY complement OpenAPI compatibility validation
 
 # 117. Event Contract Fitness Functions
 
-Kafka/event-driven systems SHOULD validate event schema compatibility.
+SQS/event-driven systems SHOULD validate event schema compatibility.
 
 ---
 
@@ -1389,7 +1389,7 @@ service:
   domain: orders
   runtime: java21
   database: postgresql
-  messaging: kafka
+  messaging: sqs
 ```
 
 ---

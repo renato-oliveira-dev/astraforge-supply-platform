@@ -36,7 +36,7 @@ CART SERVICE
    +--> ORDERS SERVICE
    |
    v
-KAFKA / SQS
+SQS
    |
    v
 BACKGROUND PROCESSING
@@ -56,7 +56,7 @@ Connection Pool
 
 Redis
 
-Kafka
+SQS
 
 SQS
 
@@ -104,7 +104,7 @@ The organization requires standards covering:
 - JVM metrics
 - HikariCP
 - Redis
-- Kafka
+- SQS
 - SQS
 - Circuit Breaker
 - HTTP clients
@@ -672,7 +672,7 @@ Required correlation identifiers MUST propagate through:
 ```text
 HTTP
 
-Kafka
+SQS
 
 SQS
 
@@ -911,12 +911,12 @@ Latency
 
 ---
 
-# 79. Kafka Metrics
+# 79. SQS Metrics
 
-Kafka consumers SHOULD expose:
+SQS consumers SHOULD expose:
 
 ```text
-Consumer Lag
+Queue Backlog/Oldest-Message Age
 
 Processing Rate
 
@@ -931,7 +931,7 @@ where applicable.
 
 ---
 
-# 80. Kafka Lag
+# 80. SQS Queue Backlog/Oldest-Message Age
 
 Consumer lag is a critical backlog signal.
 
@@ -1226,7 +1226,7 @@ Remote HTTP Call
 
 Database Operation
 
-Kafka Publish/Consume
+SQS Publish/Consume
 
 SQS Publish/Consume
 
@@ -1255,7 +1255,7 @@ W3C Trace Context SHOULD be preferred where compatible with the platform.
 
 # 113. Async Messaging
 
-Tracing across Kafka/SQS MUST respect asynchronous causality rather than pretending asynchronous processing is a synchronous call stack.
+Tracing across SQS MUST respect asynchronous causality rather than pretending asynchronous processing is a synchronous call stack.
 
 ---
 
@@ -2052,7 +2052,7 @@ Material changes SHOULD evaluate:
 
 [ ] Are Circuit Breaker states visible?
 
-[ ] Is Kafka/SQS backlog visible?
+[ ] Is SQS backlog visible?
 
 [ ] Are health semantics correct?
 
@@ -2171,7 +2171,7 @@ The following are prohibited or strongly discouraged:
 - unbounded telemetry exporter queues
 - making business requests depend on observability-backend availability
 - exposing sensitive Actuator endpoints publicly
-- liveness checks that restart healthy applications because Redis/Kafka is unavailable
+- liveness checks that restart healthy applications because Redis/SQS is unavailable
 - dashboards without actionable alerts
 - paging on every transient warning
 - using pod restart as the permanent incident-remediation strategy
@@ -2271,7 +2271,7 @@ The following rules are mandatory:
 16. Java services should expose JVM/GC metrics where operationally useful.
 17. Database services should expose HikariCP saturation metrics.
 18. Redis behavior should expose relevant cache/failure metrics.
-19. Kafka/SQS consumers should expose backlog and failure metrics.
+19. SQS consumers should expose backlog and failure metrics.
 20. Circuit Breaker state and transitions should be observable.
 21. Outbound HTTP dependencies should expose bounded dependency metrics.
 22. Metric cardinality must remain bounded.
@@ -2308,7 +2308,7 @@ This ADR will be validated through:
 - Resilience4j metrics
 - HikariCP metrics
 - Redis metrics
-- Kafka metrics
+- SQS metrics
 - AWS SQS metrics
 - JVM metrics
 - Kubernetes metrics
@@ -2336,7 +2336,7 @@ The decision is successful when:
 - credentials no longer appear in application logs
 - telemetry cardinality remains controlled
 - database-pool saturation is visible
-- Kafka/SQS backlog is visible
+- SQS backlog is visible
 - Circuit Breaker behavior is visible
 - tail latency is measurable
 - alert noise decreases
@@ -2410,7 +2410,7 @@ This ADR extends and implements:
 - ADR-054: Enterprise Performance Engineering and Capacity Standard
 - ADR-055: Enterprise Resilience Engineering, Fault Tolerance and Graceful Degradation Standard
 - ADR-056: Enterprise REST API and Integration Contract Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-058: Enterprise PostgreSQL Persistence, Transaction Management and Database Engineering Standard
 - ADR-059: Enterprise Redis Caching, Distributed Cache and Data Consistency Standard
 - ADR-060: Enterprise AWS Cloud, Kubernetes, Container and Runtime Deployment Standard
@@ -2587,7 +2587,7 @@ TRACE / CORRELATION CONTEXT
     |
     +--> ORDERS
     |
-    +--> KAFKA / SQS
+    +--> SQS
     |
     v
 CORRELATED DIAGNOSTICS

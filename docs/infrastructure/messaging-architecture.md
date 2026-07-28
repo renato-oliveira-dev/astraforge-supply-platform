@@ -6,576 +6,329 @@
 |---|---|
 | Project | Enterprise Order Platform |
 | Document | Messaging Architecture |
-| Status | Draft |
-| Version | 0.1.0 |
-| Author | Renato Oliveira |
+| Status | Active |
+| Version | 1.0.0 |
+| Canonical Decision | ADR-090 |
 
 ---
 
 # 1. Purpose
 
-This document defines the messaging architecture of the Enterprise Order Platform.
+This document defines the asynchronous messaging architecture of the Enterprise Order Platform under the current architectural baseline.
 
-It establishes:
+The platform uses **Amazon SQS** for queue-based asynchronous integration and the **Transactional Outbox Pattern** when a database state change and an integration event must be made reliable as one local transaction.
 
-- asynchronous communication
-- event publication
-- event consumption
-- topic organization
-- retry strategy
-- dead-letter handling
-- schema evolution
-- ordering guarantees
-- consumer responsibilities
-- producer responsibilities
-
-The platform adopts an **Event-Driven Architecture (EDA)** based on Integration Events.
+The Domain and Application layers remain independent of the AWS SDK and SQS-specific types.
 
 ---
 
-# 2. Goals
+# 2. Core Principles
 
-The messaging platform must provide:
+The messaging architecture follows these rules:
 
-- loose coupling
-- scalability
-- resilience
-- eventual consistency
-- independent deployments
-- replay capability
-- observability
-- fault tolerance
+- integration events are explicit contracts;
+- commands and events have different semantics;
+- producers never rely on unsafe database-plus-broker dual writes;
+- consumers assume at-least-once delivery;
+- consumers are idempotent;
+- retries are bounded;
+- poison messages reach a monitored dead-letter queue;
+- ordering is requested only where the business requires it;
+- queue depth and oldest-message age are production health signals;
+- sensitive data is minimized in messages and logs.
 
 ---
 
 # 3. High-Level Architecture
 
+```text
+Application / Use Case
+        |
+        v
+Domain State Change
+        |
+        +--> Integration Event
+        |
+        v
+Transactional Outbox
+        |
+        v
+Outbox Dispatcher
+        |
+        v
+Amazon SQS
+        |
+        +--> Consumer A
+        +--> Consumer B / dedicated queue
+        +--> Workflow Consumer
 ```
-              Application Service
-                       │
-                       ▼
-                Domain Events
-                       │
-                       ▼
-           Integration Event Mapper
-                       │
-                       ▼
-               Transactional Outbox
-                       │
-                       ▼
-              Outbox Dispatcher
-                       │
-                       ▼
-              Message Broker
-                       │
-      ┌────────────────┼────────────────┐
-      ▼                ▼                ▼
- Inventory      Notification      Analytics
- Consumer         Consumer         Consumer
+
+SQS is queue-oriented. When multiple independent consumers need the same fact, fan-out SHOULD use an approved pattern such as SNS-to-SQS or separate publication/routing architecture rather than assuming one SQS queue behaves like a Kafka topic with consumer groups.
+
+---
+
+# 4. SQS Queue Selection
+
+Use **SQS Standard** when:
+
+- strict ordering is not required;
+- high throughput is desired;
+- duplicate delivery is safe because consumers are idempotent.
+
+Use **SQS FIFO** when:
+
+- ordering is a business requirement;
+- ordering can be scoped to a `MessageGroupId`;
+- FIFO throughput characteristics are acceptable.
+
+FIFO does not eliminate the requirement for idempotent consumers.
+
+---
+
+# 5. Queue Organization
+
+Queues represent consumer-owned work streams, not shared global event logs.
+
+Recommended logical naming:
+
+```text
+<environment>-<domain>-<purpose>
+```
+
+Examples:
+
+```text
+prod-orders-workflow-events
+prod-notifications-order-events
+prod-orders-workflow-events-dlq
+```
+
+Exact cloud naming MUST follow the enterprise infrastructure naming policy.
+
+---
+
+# 6. Event Envelope
+
+Integration events SHOULD use a stable envelope containing fields such as:
+
+```json
+{
+  "eventId": "uuid",
+  "eventType": "ORDER_CREATED",
+  "eventVersion": 1,
+  "occurredAt": "2026-07-26T12:30:00Z",
+  "traceId": "uuid",
+  "correlationId": "uuid",
+  "producer": "ecommerce-order-service",
+  "aggregateType": "ORDER",
+  "aggregateId": "uuid",
+  "payload": {}
+}
+```
+
+`eventId` remains stable across publication retries.
+
+---
+
+# 7. Publication Lifecycle
+
+```text
+BEGIN LOCAL TRANSACTION
+        |
+        +--> update business state
+        +--> insert outbox event
+        |
+        v
+COMMIT
+        |
+        v
+bounded outbox dispatcher
+        |
+        v
+SQS SendMessage
+        |
+        v
+mark outbox event SENT
+```
+
+A crash after SQS accepted the message but before the Outbox row is marked `SENT` can cause duplicate publication. Consumers therefore remain idempotent.
+
+---
+
+# 8. Consumer Lifecycle
+
+```text
+Receive Message
+      |
+      v
+Validate Envelope / Version
+      |
+      v
+Idempotency Check
+      |
+      v
+Local Transaction
+      |
+      +--> business change
+      +--> processed-event marker when used
+      |
+      v
+Commit
+      |
+      v
+Acknowledge/Delete Message
+```
+
+A message MUST NOT be acknowledged as successful before required durable local changes succeed.
+
+---
+
+# 9. Ordering
+
+Ordering is explicit rather than assumed.
+
+SQS Standard consumers tolerate out-of-order messages.
+
+When FIFO is required, `MessageGroupId` SHOULD represent the smallest business scope requiring serialized processing, typically an aggregate identifier such as `orderId`.
+
+A single global message group is prohibited unless global serialization is truly required.
+
+---
+
+# 10. Retry and Visibility Timeout
+
+Retryable failures include transient network, service availability, throttling, and infrastructure failures where re-execution is safe.
+
+Non-retryable failures include malformed contracts, unsupported versions, impossible business states, and other permanent errors.
+
+Visibility timeout MUST exceed normal processing duration with an appropriate margin. Retry counts MUST be bounded and coordinated with application/HTTP retry policies to avoid amplification.
+
+---
+
+# 11. Dead-Letter Queues
+
+Production queues SHOULD have a DLQ when permanent processing failure is possible.
+
+A DLQ is an operational recovery mechanism, not message disposal.
+
+Before redrive:
+
+```text
+identify root cause
+    -> fix root cause
+    -> verify idempotency
+    -> select controlled scope
+    -> redrive
+```
+
+DLQ depth MUST be monitored and alerted.
+
+---
+
+# 12. Message Size and Payload Design
+
+Messages MUST remain within SQS service limits and SHOULD be substantially smaller than the maximum whenever possible.
+
+Large binary payloads SHOULD use a claim-check pattern such as:
+
+```text
+S3 object
+   ^
+   |
+SQS message contains object reference + integrity metadata
+```
+
+Do not publish complete persistence entities merely because they are available.
+
+---
+
+# 13. Security
+
+Messaging follows least privilege:
+
+- producers receive only required send permissions;
+- consumers receive only required receive/delete/change-visibility permissions;
+- DLQ redrive privileges are restricted;
+- workload IAM roles are preferred over static AWS credentials;
+- encryption in transit and approved encryption at rest are required;
+- passwords, access tokens, refresh tokens, API keys, and credentials are forbidden in event payloads.
+
+---
+
+# 14. Observability
+
+Critical metrics include:
+
+```text
+outbox_pending
+outbox_failed
+outbox_dispatch_latency
+messages_received
+messages_processed
+messages_failed
+duplicates_detected
+queue_depth
+oldest_message_age
+dlq_depth
+processing_duration
+```
+
+Event IDs and aggregate UUIDs MUST NOT be metric labels.
+
+Logs SHOULD include safe event metadata such as event type, event ID, correlation ID, aggregate ID, result, and elapsed time, while avoiding full payload logging by default.
+
+---
+
+# 15. Replay and Recovery
+
+Replay/redrive operations MUST be:
+
+- authorized;
+- auditable;
+- scope-controlled;
+- idempotency-aware.
+
+Reprocessing that intentionally creates a new business effect MUST be represented as a new business operation rather than bypassing duplicate protection casually.
+
+---
+
+# 16. Testing
+
+Critical messaging tests cover:
+
+- event serialization and versioning;
+- Outbox atomicity;
+- stable event ID across retry;
+- duplicate delivery;
+- idempotent consumer behavior;
+- retryable versus permanent failures;
+- DLQ behavior;
+- FIFO ordering/message-group behavior where applicable;
+- shutdown/redelivery behavior;
+- contract compatibility.
+
+AWS connectivity is not required for domain tests. LocalStack or another approved SQS-compatible integration environment MAY be used for infrastructure tests.
+
+---
+
+# 17. Architecture Rules
+
+```text
+Domain -> no AWS SDK
+Domain -> no SQS client
+Application -> outbound messaging port / Outbox abstraction
+Infrastructure -> SQS implementation
+Consumer -> use case, not duplicated business rules
 ```
 
 ---
 
-# 4. Broker
+# 18. Canonical Decisions
 
-The reference implementation uses:
+This document is governed primarily by:
 
-```
-Apache Kafka
-```
+- **ADR-008** — Assume At-Least-Once Message Delivery
+- **ADR-018** — Version Integration Event Contracts
+- **ADR-090** — Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 
-Alternative implementations may use:
-
-- RabbitMQ
-- Azure Service Bus
-- Amazon SNS/SQS
-- Google Pub/Sub
-
-The Domain and Application layers remain independent of the messaging technology.
-
----
-
-# 5. Event Lifecycle
-
-```
-Aggregate
-
-↓
-
-Domain Event
-
-↓
-
-Integration Event
-
-↓
-
-Outbox
-
-↓
-
-Dispatcher
-
-↓
-
-Kafka
-
-↓
-
-Consumer
-
-↓
-
-Business Processing
-```
-
----
-
-# 6. Topic Organization
-
-Topics follow the pattern:
-
-```
-<context>.<aggregate>.<event>
-```
-
-Examples
-
-```
-orders.order.created
-
-orders.order.submitted
-
-orders.order.approved
-
-orders.order.cancelled
-
-inventory.reservation.confirmed
-
-inventory.reservation.failed
-
-payment.authorized
-
-payment.failed
-
-shipment.created
-
-shipment.delivered
-```
-
----
-
-# 7. Naming Rules
-
-Topics:
-
-- lowercase
-- dot-separated
-- business-oriented
-- technology-independent
-
-Avoid:
-
-```
-topic1
-
-ordersTopic
-
-kafka-orders
-```
-
----
-
-# 8. Event Envelope
-
-Every Integration Event contains:
-
-```
-EventId
-
-EventType
-
-AggregateId
-
-AggregateType
-
-AggregateVersion
-
-OccurredAt
-
-CorrelationId
-
-CausationId
-
-TraceId
-
-Payload
-```
-
----
-
-# 9. Producer Responsibilities
-
-The producer:
-
-- publishes Integration Events
-- validates serialization
-- adds metadata
-- preserves ordering keys
-- never performs business logic
-
----
-
-# 10. Consumer Responsibilities
-
-Consumers:
-
-- deserialize events
-- validate contracts
-- process business logic
-- acknowledge messages
-- implement idempotency
-- emit metrics
-
----
-
-# 11. Partition Strategy
-
-Partition key:
-
-```
-AggregateId
-```
-
-Benefits:
-
-- preserves ordering
-- improves scalability
-- distributes workload
-
-All events for the same Aggregate are routed to the same partition.
-
----
-
-# 12. Ordering Guarantees
-
-Ordering is guaranteed only within a partition.
-
-Example:
-
-```
-OrderCreated
-
-↓
-
-OrderSubmitted
-
-↓
-
-OrderApproved
-
-↓
-
-OrderCompleted
-```
-
-Cross-aggregate ordering is not guaranteed.
-
----
-
-# 13. Consumer Groups
-
-Each business capability owns an independent consumer group.
-
-Example
-
-```
-Inventory Service
-
-↓
-
-inventory-group
-```
-
-```
-Notification Service
-
-↓
-
-notification-group
-```
-
-```
-Analytics Service
-
-↓
-
-analytics-group
-```
-
-Each consumer group processes every event independently.
-
----
-
-# 14. Retry Strategy
-
-Transient failures should trigger retries.
-
-Recommended approach:
-
-```
-Main Topic
-
-↓
-
-Retry Topic (5s)
-
-↓
-
-Retry Topic (30s)
-
-↓
-
-Retry Topic (5m)
-
-↓
-
-DLQ
-```
-
----
-
-# 15. Dead Letter Queue
-
-Events that cannot be processed are moved to:
-
-```
-<topic>.dlq
-```
-
-Example
-
-```
-orders.order.created.dlq
-```
-
-DLQ events require operational investigation.
-
----
-
-# 16. Idempotency
-
-Consumers must tolerate duplicate delivery.
-
-Recommended key:
-
-```
-EventId
-```
-
-Alternative:
-
-```
-AggregateId + AggregateVersion
-```
-
-Duplicate processing must not change business state.
-
----
-
-# 17. Event Contracts
-
-Contracts are immutable.
-
-Breaking changes require:
-
-- new version
-- new schema
-- backward compatibility
-
-Never modify published contracts in place.
-
----
-
-# 18. Schema Evolution
-
-Preferred strategy:
-
-```
-v1
-
-↓
-
-v2
-
-↓
-
-v3
-```
-
-Consumers should ignore unknown fields whenever possible.
-
----
-
-# 19. Message Size
-
-Recommended maximum:
-
-```
-< 1 MB
-```
-
-Large binary content must not be embedded.
-
-Instead, publish a reference (e.g., object storage URI).
-
----
-
-# 20. Security
-
-Messages must never contain:
-
-- passwords
-- tokens
-- credentials
-- sensitive personal data
-
-Sensitive fields should be encrypted or omitted.
-
----
-
-# 21. Observability
-
-Each producer and consumer exposes metrics:
-
-- publish rate
-- consume rate
-- retry count
-- processing latency
-- consumer lag
-- DLQ size
-- failures
-
----
-
-# 22. Logging
-
-Log:
-
-- publication
-- consumption
-- retries
-- failures
-- processing time
-
-Avoid logging full payloads in production.
-
----
-
-# 23. Monitoring
-
-Recommended dashboards:
-
-- topic throughput
-- partition distribution
-- consumer lag
-- retry rate
-- DLQ count
-- publication latency
-- processing latency
-
----
-
-# 24. Failure Recovery
-
-Consumers must support restart without data loss.
-
-Recovery flow:
-
-```
-Consumer Restart
-
-↓
-
-Resume Offset
-
-↓
-
-Continue Processing
-```
-
----
-
-# 25. Replay
-
-Events may be replayed for:
-
-- rebuilding projections
-- analytics
-- auditing
-- disaster recovery
-
-Replay requires idempotent consumers.
-
----
-
-# 26. Testing
-
-Messaging tests should verify:
-
-- serialization
-- deserialization
-- ordering
-- duplicate delivery
-- retry flow
-- DLQ routing
-- contract compatibility
-- schema evolution
-
----
-
-# 27. Architecture Rules
-
-Messaging infrastructure:
-
-- never invokes aggregates directly
-- never bypasses Application Services
-- transports Integration Events only
-- remains asynchronous
-- preserves eventual consistency
-
----
-
-# 28. Decision Summary
-
-The platform adopts:
-
-- Event-Driven Architecture
-- Apache Kafka (reference implementation)
-- Transactional Outbox
-- Integration Events
-- Aggregate-based partitioning
-- idempotent consumers
-- retry topics
-- dead-letter queues
-- schema versioning
-- consumer isolation
-
----
-
-# 29. Next Documentation Step
-
-Next document
-
-```
-docs/infrastructure/idempotency.md
-```
-
-It will define:
-
-- duplicate detection
-- exactly-once vs at-least-once semantics
-- idempotency keys
-- consumer persistence
-- replay safety
-- deduplication algorithms
+Earlier Kafka-specific ADRs remain historical and are superseded by ADR-090 under the current platform baseline.

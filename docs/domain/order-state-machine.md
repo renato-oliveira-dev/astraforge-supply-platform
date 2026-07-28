@@ -392,7 +392,7 @@ Outbox Record
 
 ↓
 
-Kafka Event
+SQS Integration Event
 ```
 
 ---

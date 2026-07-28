@@ -235,7 +235,7 @@ All communications use TLS.
 Protected channels include:
 
 - REST
-- Kafka
+- Amazon SQS
 - PostgreSQL
 - Redis
 

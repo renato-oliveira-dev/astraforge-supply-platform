@@ -1,0 +1,40 @@
+name: ADR Governance
+
+on:
+  pull_request:
+    paths:
+      - "docs/**/*.md"
+      - "README.md"
+      - "scripts/validate_adr_governance.py"
+      - ".github/workflows/adr-governance.yml"
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "docs/**/*.md"
+      - "README.md"
+      - "scripts/validate_adr_governance.py"
+      - ".github/workflows/adr-governance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-adr-governance:
+    name: Validate ADR baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate ADR governance and documentation links
+        run: python scripts/validate_adr_governance.py --root . --first 1 --last 90

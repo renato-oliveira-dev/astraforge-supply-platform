@@ -11,8 +11,12 @@
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Event-Driven Architecture, Messaging, AWS SQS, Transactional Outbox, Distributed Systems |
 | Related Domains | Cart, Orders, Customers, Products, Workflow |
-| Supersedes | None |
+| Supersedes | ADR-009, ADR-030, ADR-057 |
 | Superseded By | None |
+
+---
+
+> **Canonical messaging decision:** For this platform baseline, AWS SQS is the current broker for governed integration messaging. This ADR supersedes the earlier Kafka-specific ADR-009, ADR-030 and ADR-057. Kafka-specific documents remain historical records and MUST NOT be interpreted as the active broker standard unless a future ADR explicitly reintroduces Kafka for a defined use case.
 
 ---
 

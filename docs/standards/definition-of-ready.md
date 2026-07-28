@@ -272,8 +272,8 @@ Identify:
 - modified events
 - new consumers
 - new producers
-- topic changes
 - queue changes
+- fan-out/routing changes
 - ordering impact
 - replay impact
 

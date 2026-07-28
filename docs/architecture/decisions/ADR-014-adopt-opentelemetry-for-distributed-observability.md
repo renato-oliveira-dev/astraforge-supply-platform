@@ -26,7 +26,7 @@ The platform uses:
 - Spring Boot
 - PostgreSQL
 - Redis
-- Apache Kafka
+- Amazon SQS
 - Transactional Outbox
 - Saga orchestration
 - synchronous HTTP integrations
@@ -55,7 +55,7 @@ Transactional Outbox
 
 ↓
 
-Kafka
+SQS
 
 ↓
 
@@ -80,7 +80,7 @@ Without distributed observability, engineering and operations teams may be unabl
 
 - where latency was introduced
 - which service failed
-- which Kafka event caused a downstream effect
+- which SQS message/event caused a downstream effect
 - whether an outbox event was published
 - whether a saga is delayed
 - which external dependency caused degradation
@@ -99,7 +99,7 @@ The platform requires an observability architecture that:
 - provides distributed tracing
 - exposes application and infrastructure metrics
 - correlates logs with traces
-- propagates context across HTTP and Kafka
+- propagates context across HTTP and SQS
 - integrates with Java 21
 - integrates with Spring Boot
 - supports Kubernetes
@@ -127,7 +127,7 @@ The primary decision drivers are:
 2. distributed trace correlation
 3. standardized instrumentation
 4. operational visibility
-5. HTTP and Kafka context propagation
+5. HTTP and SQS context propagation
 6. support for logs, metrics and traces
 7. Spring Boot compatibility
 8. Kubernetes compatibility
@@ -149,7 +149,7 @@ The decision must consider:
 
 - multiple services may participate in one business operation
 - events may be processed long after the originating HTTP request
-- Kafka delivery is at least once
+- SQS delivery is at least once
 - consumer retries may create multiple processing attempts
 - outbox dispatch is asynchronous
 - saga workflows may last minutes or longer
@@ -246,7 +246,7 @@ OpenTelemetry provides standardized APIs, SDKs, semantic conventions, context pr
 - standardized semantic conventions
 - strong Java support
 - Spring Boot integration
-- HTTP and Kafka propagation
+- HTTP and SQS propagation
 - compatibility with multiple backends
 - supports collectors and centralized processing
 
@@ -285,8 +285,8 @@ Application code must remain independent from a specific observability backend.
 OpenTelemetry provides a standard observability model across:
 
 - HTTP requests
-- Kafka producers
-- Kafka consumers
+- SQS producers
+- SQS consumers
 - database access
 - Redis access
 - external-service calls
@@ -336,7 +336,7 @@ They answer questions such as:
 - where time was spent
 - which dependency failed
 - how retries affected latency
-- which Kafka event continued the operation
+- which SQS message/event continued the operation
 - where a saga stopped progressing
 
 ---
@@ -350,7 +350,7 @@ They answer questions such as:
 - request rate
 - error rate
 - latency distribution
-- consumer lag
+- queue backlog/oldest-message age
 - outbox backlog
 - saga duration
 - retry volume
@@ -505,8 +505,8 @@ Examples:
 - Spring MVC
 - Spring WebFlux
 - JDBC
-- Kafka producer
-- Kafka consumer
+- SQS producer
+- SQS consumer
 - Redis
 - scheduled execution
 - thread context propagation
@@ -592,11 +592,11 @@ POST /api/v1/orders
 Asynchronous continuation:
 
 ```text
-Kafka publish
+SQS publish
 
 ↓
 
-Kafka consume
+SQS consume
 
 ├── inventory.reserve
 ├── PostgreSQL transaction
@@ -703,7 +703,7 @@ tracestate
 Propagation must work across:
 
 - HTTP
-- Kafka headers
+- SQS headers
 - scheduled continuation where context is persisted explicitly
 - background executors
 - virtual threads
@@ -777,11 +777,11 @@ Raw identifiers create unbounded cardinality.
 
 ---
 
-# 29. Kafka Propagation
+# 29. SQS Propagation
 
-Kafka producers must inject trace context into Kafka headers.
+SQS producers must inject trace context into SQS headers.
 
-Kafka consumers must extract the context and create a consumer-processing span.
+SQS consumers must extract the context and create a consumer-processing span.
 
 Recommended correlation metadata includes:
 
@@ -793,13 +793,13 @@ Recommended correlation metadata includes:
 - correlation ID
 - causation ID
 
-Authentication credentials must never be propagated in Kafka headers.
+Authentication credentials must never be propagated in SQS headers.
 
 ---
 
-# 30. Kafka Producer Spans
+# 30. SQS Producer Spans
 
-Kafka publication spans should represent logical publication.
+SQS publication spans should represent logical publication.
 
 Relevant attributes may include:
 
@@ -816,9 +816,9 @@ Do not include event payloads as span attributes.
 
 ---
 
-# 31. Kafka Consumer Spans
+# 31. SQS Consumer Spans
 
-Kafka consumer spans should include:
+SQS consumer spans should include:
 
 - destination
 - consumer group
@@ -867,7 +867,7 @@ Examples include:
 
 # 34. Transactional Outbox Tracing
 
-The outbox introduces a temporal boundary between the business transaction and Kafka publication.
+The outbox introduces a temporal boundary between the business transaction and SQS publication.
 
 The platform must correlate:
 
@@ -884,7 +884,7 @@ Outbox dispatcher
 
 ↓
 
-Kafka publication
+SQS publication
 ```
 
 The outbox record should persist sufficient correlation metadata, such as:
@@ -907,7 +907,7 @@ The dispatcher should create spans for:
 - polling
 - claimed batch
 - event serialization
-- Kafka publication
+- SQS publication
 - publication acknowledgement
 - retry scheduling
 - terminal failure
@@ -1172,9 +1172,9 @@ Examples:
 - HTTP request rate
 - HTTP error rate
 - HTTP latency
-- Kafka consumer rate
-- Kafka consumer failure rate
-- Kafka processing duration
+- SQS consumer rate
+- SQS consumer failure rate
+- SQS processing duration
 
 ---
 
@@ -1196,7 +1196,7 @@ Examples:
 - executor saturation
 - CPU utilization
 - memory pressure
-- Kafka producer buffer exhaustion
+- SQS producer buffer exhaustion
 - Redis connection saturation
 
 ---
@@ -1231,7 +1231,7 @@ orders.created.total
 
 outbox.published.total
 
-kafka.consumer.errors.total
+sqs.consumer.errors.total
 
 saga.completed.total
 ```
@@ -1328,7 +1328,7 @@ Do not use:
 - URL with identifiers
 - exception message
 - SQL statement
-- Kafka offset
+- SQS message identifier / receive context
 
 as metric labels.
 
@@ -1952,7 +1952,7 @@ Examples:
 - HTTP server duration
 - checkout business duration
 - outbox publication delay
-- Kafka event age
+- SQS message/event age
 - saga completion duration
 - external dependency latency
 
@@ -1960,7 +1960,7 @@ Examples:
 
 # 96. Event Processing Delay
 
-Kafka consumer observability should distinguish:
+SQS consumer observability should distinguish:
 
 - broker lag
 - event age
@@ -2013,9 +2013,9 @@ saga.duration
 
 ---
 
-# 99. Kafka Metrics
+# 99. SQS Metrics
 
-Relevant Kafka application metrics include:
+Relevant SQS application metrics include:
 
 - producer send rate
 - producer error rate
@@ -2023,7 +2023,7 @@ Relevant Kafka application metrics include:
 - record size
 - consumer processing rate
 - consumer processing errors
-- consumer lag
+- queue backlog/oldest-message age
 - consumer rebalance count
 - dead-letter rate
 
@@ -2080,7 +2080,7 @@ Recommended dashboard classes:
 
 - executive service-health overview
 - service operational dashboard
-- Kafka and outbox dashboard
+- SQS and outbox dashboard
 - saga workflow dashboard
 - dependency dashboard
 - infrastructure saturation dashboard
@@ -2097,7 +2097,7 @@ A service dashboard should include:
 - latency percentiles
 - top dependencies
 - database pool
-- Kafka consumer state
+- SQS consumer state
 - outbox backlog
 - JVM health
 - recent deployment version
@@ -2131,7 +2131,7 @@ Examples:
 - sustained high error rate
 - severe latency increase
 - oldest outbox event beyond threshold
-- consumer lag beyond threshold
+- queue backlog/oldest-message age beyond threshold
 - saga timeout increase
 - compensation failure
 - collector export failure
@@ -2301,7 +2301,7 @@ Tests may verify:
 Integration tests should validate context propagation across:
 
 - inbound HTTP to outbound HTTP
-- Kafka producer to Kafka consumer
+- SQS producer to SQS consumer
 - outbox record to dispatcher publication
 - executor boundaries
 - virtual threads
@@ -2329,14 +2329,14 @@ Outbound dependency span
 Same distributed trace
 ```
 
-For Kafka:
+For SQS:
 
 ```text
 Producer trace context
 
 ↓
 
-Kafka headers
+SQS headers
 
 ↓
 
@@ -2568,7 +2568,7 @@ Release markers help correlate:
 - error increase
 - latency regression
 - resource saturation
-- consumer lag
+- queue backlog/oldest-message age
 - saga failures
 
 with a deployment.
@@ -2590,7 +2590,7 @@ Trace data should support generation of a service-dependency map.
 The map should show:
 
 - HTTP dependencies
-- Kafka flows
+- SQS flows
 - database dependencies
 - Redis dependencies
 - external providers
@@ -2670,7 +2670,7 @@ Telemetry supports diagnostics and operations but does not replace the audit sub
 
 # 140. Event History Versus Traces
 
-Kafka event retention and saga transition history are not replaced by traces.
+SQS message/event retention and saga transition history are not replaced by traces.
 
 Traces may be sampled or expire earlier.
 
@@ -2891,7 +2891,7 @@ The decision provides:
 - vendor-neutral observability
 - standardized distributed tracing
 - consistent context propagation
-- HTTP and Kafka correlation
+- HTTP and SQS correlation
 - saga and outbox visibility
 - improved incident diagnosis
 - better latency analysis
@@ -2965,7 +2965,7 @@ The decision also means:
 | Collector memory becomes saturated | High | Medium | Memory limiter, batching and scaling |
 | New attributes break dashboards | Medium | Medium | Semantic convention and change review |
 | Production and non-production telemetry mix | High | Low | Environment isolation and resource attributes |
-| Outbox and Kafka traces lose original context | High | Medium | Persist approved correlation metadata |
+| Outbox and SQS traces lose original context | High | Medium | Persist approved correlation metadata |
 | High-volume logs increase cost | Medium | High | Structured logging and level policies |
 
 ---
@@ -2979,7 +2979,7 @@ The following rules are mandatory:
 3. Applications must remain backend-independent.
 4. OpenTelemetry Collector or an approved equivalent must mediate production export.
 5. W3C Trace Context is the standard propagation format.
-6. HTTP and Kafka propagation must be supported.
+6. HTTP and SQS propagation must be supported.
 7. Trace and span IDs must appear in structured logs.
 8. Domain code must not depend on OpenTelemetry.
 9. Automatic instrumentation should cover standard technical operations.
@@ -2995,7 +2995,7 @@ The following rules are mandatory:
 19. Metrics must remain reliable independently of trace sampling.
 20. Long-running sagas must use stable correlation across multiple traces.
 21. Outbox records must preserve approved correlation metadata.
-22. Kafka messages must propagate trace context through headers.
+22. SQS messages must propagate trace context through headers.
 23. Custom attributes require governance.
 24. Collector configuration must be version controlled.
 25. Dashboards and alerts must have clear ownership.
@@ -3012,7 +3012,7 @@ The following rules are mandatory:
 The decision will be validated through:
 
 - HTTP propagation tests
-- Kafka propagation tests
+- SQS propagation tests
 - outbox correlation tests
 - saga correlation tests
 - virtual-thread context tests
@@ -3037,7 +3037,7 @@ The decision will be validated through:
 The decision is successful when:
 
 - one distributed operation can be traced across services
-- HTTP and Kafka context propagation works reliably
+- HTTP and SQS context propagation works reliably
 - outbox publication can be correlated with the originating transaction
 - saga transitions can be investigated across multiple processing activations
 - logs contain trace and span correlation
@@ -3102,7 +3102,7 @@ This ADR is related to:
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-010: Use Redis for Distributed Caching
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
 - ADR-013: Use Testcontainers for Integration Testing
@@ -3133,7 +3133,7 @@ This ADR is related to:
 - Enterprise Order Platform Messaging Architecture
 - Enterprise Order Platform Resilience Guide
 - ADR-007: Adopt the Transactional Outbox Pattern
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
 
 ---
@@ -3187,7 +3187,7 @@ The platform requires correlation across:
 ```text
 HTTP
 
-Kafka
+SQS
 
 Transactional Outbox
 

@@ -25,7 +25,7 @@ The platform includes:
 - Java 21
 - Spring Boot
 - REST APIs
-- Apache Kafka producers and consumers
+- Amazon SQS producers and consumers
 - PostgreSQL
 - Flyway
 - Transactional Outbox
@@ -64,7 +64,7 @@ The platform requires a deployment strategy that:
 - supports Kubernetes rolling updates
 - allows old and new application versions to coexist
 - preserves active HTTP requests
-- preserves Kafka processing
+- preserves SQS processing
 - avoids message loss
 - avoids duplicate side effects
 - supports safe database evolution
@@ -398,7 +398,7 @@ It must not be used as a general dependency-health check.
 The following is prohibited:
 
 ```text
-Kafka unavailable
+SQS unavailable
 → liveness fails
 → Kubernetes restarts every consumer
 ```
@@ -514,7 +514,7 @@ The value must exceed the realistic graceful shutdown requirement.
 It should consider:
 
 - longest expected HTTP request
-- Kafka processing time
+- SQS processing time
 - transaction duration
 - shutdown hooks
 - executor shutdown
@@ -528,7 +528,7 @@ It should consider:
 A very short termination grace period may cause:
 
 - interrupted transactions
-- abandoned Kafka processing
+- abandoned SQS processing
 - incomplete responses
 - lost telemetry
 - unnecessary retries
@@ -610,9 +610,9 @@ No material increase in failed requests
 
 ---
 
-# 31. Kafka Consumer Shutdown
+# 31. SQS Consumer Shutdown
 
-Kafka consumers require graceful shutdown.
+SQS consumers require graceful shutdown.
 
 During pod termination the consumer should:
 
@@ -623,7 +623,7 @@ During pod termination the consumer should:
 
 ---
 
-# 32. Kafka Rebalancing
+# 32. SQS Rebalancing
 
 Rolling deployments may trigger consumer-group rebalances.
 
@@ -633,7 +633,7 @@ Deployment design must account for:
 - partition ownership changes
 - processing interruption
 - duplicate delivery
-- consumer lag growth
+- queue backlog/oldest-message age growth
 
 ---
 
@@ -643,11 +643,11 @@ Cooperative rebalancing should be considered where supported and appropriate.
 
 It can reduce partition movement compared with eager rebalancing.
 
-The exact Kafka consumer strategy remains a platform configuration decision.
+The exact SQS consumer strategy remains a platform configuration decision.
 
 ---
 
-# 34. Kafka At-Least-Once Delivery
+# 34. SQS At-Least-Once Delivery
 
 The platform assumes at-least-once message delivery.
 
@@ -659,7 +659,7 @@ Zero-downtime deployment does not depend on exactly-once processing assumptions.
 
 ---
 
-# 35. In-Flight Kafka Message
+# 35. In-Flight SQS Message
 
 If a consumer terminates while processing an event, the event may be delivered again.
 
@@ -1287,7 +1287,7 @@ Semantic compatibility matters as much as structural compatibility.
 
 # 76. Topic Stability
 
-Kafka topic names should remain stable across normal application releases.
+SQS queue names should remain stable across normal application releases.
 
 Topic duplication must not be used as the default deployment-version mechanism.
 
@@ -1938,7 +1938,7 @@ Post-deployment verification must validate:
 - SLO health
 - error rate
 - latency
-- Kafka processing
+- SQS processing
 - database behavior
 - dependency health
 - critical business journeys
@@ -2184,7 +2184,7 @@ Pre-production environments should approximate production characteristics for:
 
 - Kubernetes behavior
 - PostgreSQL version
-- Kafka version
+- SQS version
 - deployment strategy
 - health probes
 - resource limits
@@ -2290,9 +2290,9 @@ An automated integration test should:
 
 ---
 
-# 153. Kafka Deployment Test
+# 153. SQS Deployment Test
 
-A deployment-oriented Kafka test should verify:
+A deployment-oriented SQS test should verify:
 
 - consumer shutdown
 - rebalance
@@ -2317,7 +2317,7 @@ Version N+1
 against the same:
 
 - database
-- Kafka topics
+- SQS queues
 - Redis
 - external contract stubs
 
@@ -2333,7 +2333,7 @@ This reveals:
 - connection-draining failures
 - readiness problems
 - startup latency
-- consumer lag spikes
+- queue backlog/oldest-message age spikes
 - database contention
 
 ---
@@ -2345,9 +2345,9 @@ Deployment validation should include controlled failures such as:
 - new pod fails startup
 - new pod fails readiness
 - pod terminates during request
-- pod terminates during Kafka processing
+- pod terminates during SQS processing
 - database migration lock timeout
-- Kafka rebalance
+- SQS in-flight message redelivery
 - Redis unavailable
 - dependency timeout
 
@@ -2472,7 +2472,7 @@ database connections
 
 HTTP connections
 
-Kafka connections
+SQS connections
 ```
 
 Dependency capacity must support deployment overlap.
@@ -2507,9 +2507,9 @@ Pool sizing and PostgreSQL capacity must account for this.
 
 ---
 
-# 167. Kafka Consumer Surge
+# 167. SQS Consumer Surge
 
-Additional Kafka consumer replicas do not necessarily increase parallelism beyond the number of partitions.
+Additional SQS consumer replicas do not necessarily increase parallelism beyond the configured queue/FIFO message-group concurrency.
 
 Deployment configuration should understand partition count.
 
@@ -2847,7 +2847,7 @@ Every critical service should maintain a deployment runbook containing:
 - roll-forward
 - migration failure
 - readiness failure
-- Kafka consumer failure
+- SQS consumer failure
 - stuck rollout
 - SLO regression
 - emergency recovery
@@ -2928,7 +2928,7 @@ Database
 
 ↓
 
-Kafka
+SQS
 
 ↓
 
@@ -2960,10 +2960,10 @@ The following are prohibited:
 - storing critical state only in pod memory
 - relying on sticky sessions for correctness
 - treating liveness as dependency health
-- restarting pods because Kafka is unavailable
+- restarting pods because SQS is unavailable
 - using arbitrary long `preStop` sleeps as the primary drain strategy
 - using insufficient termination grace periods
-- ignoring Kafka redelivery during deployment
+- ignoring SQS redelivery during deployment
 - assuming exactly-once behavior
 - using mutable production image tags as release identity
 - rebuilding different artifacts per environment
@@ -2992,7 +2992,7 @@ The decision provides:
 - reduced deployment blast radius
 - compatibility between overlapping versions
 - better Kubernetes utilization
-- safer Kafka consumer deployments
+- safer SQS consumer deployments
 - graceful request draining
 - better release observability
 - improved SLO protection
@@ -3032,7 +3032,7 @@ The decision also means:
 - rollback may occasionally be replaced by roll-forward
 - old structures may remain temporarily unused
 - deployment temporarily consumes additional capacity
-- Kafka consumers may rebalance during releases
+- SQS messages may be redelivered during consumer termination or deployment transitions
 - some messages may legitimately be redelivered
 - application versions coexist temporarily
 - feature activation may occur separately from code deployment
@@ -3051,7 +3051,7 @@ The decision also means:
 | Pod receives traffic before ready | High | Medium | Correct readiness probe |
 | Liveness creates restart storm | High | Medium | Separate liveness from dependency health |
 | In-flight requests are terminated | High | Medium | Graceful shutdown and draining |
-| Kafka event is redelivered | Medium | High | Idempotent consumers |
+| SQS message/event is redelivered | Medium | High | Idempotent consumers |
 | Consumer lag increases during rollout | Medium | Medium | Capacity and rebalance monitoring |
 | Surge pods cannot schedule | High | Medium | Capacity planning |
 | Database connection count spikes | High | Medium | Pool and surge analysis |
@@ -3079,8 +3079,8 @@ The following rules are mandatory:
 6. Startup probes should protect legitimately slow startup where necessary.
 7. Graceful shutdown is mandatory.
 8. Termination grace periods must be based on measured workload behavior.
-9. Kafka consumers must support graceful termination.
-10. Kafka consumers must remain idempotent.
+9. SQS consumers must support graceful termination.
+10. SQS consumers must remain idempotent.
 11. Transactional Outbox dispatch must survive pod termination.
 12. Database evolution must follow Expand and Contract for incompatible changes.
 13. Applied Flyway migrations are immutable.
@@ -3119,8 +3119,8 @@ The decision will be validated through:
 - startup tests
 - graceful-shutdown tests
 - active-traffic deployment tests
-- Kafka rebalance tests
-- Kafka duplicate-delivery tests
+- SQS in-flight message redelivery tests
+- SQS duplicate-delivery tests
 - idempotency tests
 - Transactional Outbox recovery tests
 - Flyway migration tests
@@ -3147,8 +3147,8 @@ The decision is successful when:
 - healthy traffic continues during rolling updates
 - old and new versions coexist safely
 - active HTTP requests are not unnecessarily terminated
-- Kafka processing continues during deployments
-- duplicate Kafka delivery remains safe
+- SQS processing continues during deployments
+- duplicate SQS delivery remains safe
 - database migrations do not break old replicas
 - applied Flyway migrations remain immutable
 - destructive schema changes occur only after compatibility windows
@@ -3231,7 +3231,7 @@ This ADR is related to:
 - ADR-006: Use Flyway for Database Schema Evolution
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
 - ADR-013: Use Testcontainers for Integration Testing
 - ADR-014: Adopt OpenTelemetry for Distributed Observability
@@ -3255,7 +3255,7 @@ This ADR is related to:
 - Spring Boot Actuator Documentation
 - Flyway Documentation
 - PostgreSQL Documentation
-- Apache Kafka Consumer Documentation
+- Amazon SQS Consumer Documentation
 - OpenTelemetry Specification
 - Google Site Reliability Engineering
 - Continuous Delivery
@@ -3380,7 +3380,7 @@ Database schema
 
 REST contracts
 
-Kafka event contracts
+SQS message/event contracts
 
 Configuration
 

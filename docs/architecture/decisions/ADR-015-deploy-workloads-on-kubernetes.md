@@ -190,7 +190,7 @@ Microservices
 
 PostgreSQL
 Redis
-Kafka
+SQS
 
 ↓
 
@@ -421,7 +421,7 @@ Stateless services are preferred.
 
 # 28. Stateful Workloads
 
-Stateful infrastructure such as PostgreSQL or Kafka should preferably use managed cloud services.
+Stateful infrastructure such as PostgreSQL or SQS should preferably use managed cloud services.
 
 When self-managed, StatefulSets are required.
 
@@ -436,7 +436,7 @@ Examples:
 - request rate
 - CPU utilization
 - queue depth
-- Kafka lag
+- SQS queue backlog/oldest-message age
 
 ---
 
@@ -591,7 +591,7 @@ The decision is successful when:
 
 - ADR-003: Use Java 21
 - ADR-004: Use Spring Boot
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-010: Use Redis for Distributed Caching
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
 - ADR-014: Adopt OpenTelemetry for Distributed Observability

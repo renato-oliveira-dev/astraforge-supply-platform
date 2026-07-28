@@ -10,7 +10,7 @@
 | Date | 2026-07-26 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Distributed Transactions, Saga, Idempotency, Consistency, Compensation |
-| Related Work Items | Transactional Outbox, Kafka, SQS, PostgreSQL, Microservices, Workflow |
+| Related Work Items | Transactional Outbox, SQS, SQS, PostgreSQL, Microservices, Workflow |
 | Supersedes | None |
 | Superseded By | None |
 
@@ -1149,9 +1149,9 @@ Message ordering MUST be treated as scoped rather than global.
 
 ---
 
-# 88. Kafka Ordering
+# 88. SQS Ordering
 
-Kafka ordering is generally guaranteed only within a partition.
+SQS Standard does not guarantee strict ordering; SQS FIFO ordering is scoped to a MessageGroupId.
 
 ---
 
@@ -1163,7 +1163,7 @@ Events requiring order for the same aggregate SHOULD use a stable partition key 
 orderId
 ```
 
-when Kafka is used.
+when SQS is used.
 
 ---
 
@@ -2143,7 +2143,7 @@ Concurrent update tests SHOULD verify conflict detection.
 
 # 205. Testcontainers
 
-PostgreSQL, Kafka and other infrastructure-sensitive tests SHOULD use Testcontainers where appropriate.
+PostgreSQL, SQS and other infrastructure-sensitive tests SHOULD use Testcontainers where appropriate.
 
 ---
 
@@ -2347,7 +2347,7 @@ The following are prohibited or strongly discouraged:
 - compensation without idempotency
 - compensation by directly changing another service's database
 - holding database locks during remote calls
-- assuming global Kafka ordering
+- assuming global SQS ordering
 - treating timeout as definite failure
 - using trace ID as durable workflow state ID
 - endless Inbox/Outbox retention without policy
@@ -2416,7 +2416,7 @@ The decision also means:
 | Saga stuck | High | Medium | Durable state + timeout |
 | Compensation failure | High | Medium | Retry + reconciliation |
 | Retry storm | Critical | Medium | Bounded retry |
-| Out-of-order event | High | Medium | Version/partition strategy |
+| Out-of-order event | High | Medium | Version/queue-ordering strategy |
 | Unknown remote outcome | Critical | Medium | Idempotency + status query |
 | Inbox growth | Medium | High | Retention policy |
 | Outbox backlog | High | Medium | Monitoring + dispatcher |
@@ -2447,7 +2447,7 @@ The following rules are mandatory:
 17. Idempotency records must have retention policy.
 18. Optimistic locking should protect appropriate concurrent aggregate updates.
 19. Database locks must not remain held during remote network calls without exceptional justification.
-20. Message ordering must be treated as partition/group scoped.
+20. Message ordering must be treated as queue/FIFO-message-group scoped.
 21. Consumers must handle stale/out-of-order events when possible.
 22. Retries must be bounded and failure-aware.
 23. Retry amplification across service chains must be considered.
@@ -2473,7 +2473,7 @@ This ADR will be validated through:
 - Spring Data JPA
 - optimistic locking
 - Transactional Outbox
-- Kafka
+- SQS
 - SQS
 - workflow/Saga services
 - JUnit 5
@@ -2557,7 +2557,7 @@ This ADR extends and implements:
 
 - ADR-007: Adopt Transactional Outbox
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
 - ADR-034: Java 21 Concurrency and Parallelism Standards
 - ADR-040: Production Reliability and Operational Readiness Standards
@@ -2565,7 +2565,7 @@ This ADR extends and implements:
 - ADR-053: Enterprise Testing Strategy and Quality Engineering Standard
 - ADR-055: Enterprise Resilience Engineering Standard
 - ADR-056: Enterprise REST API and Integration Contract Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-058: Enterprise PostgreSQL Persistence, Transaction Management and Database Engineering Standard
 - ADR-060: Enterprise AWS Cloud, Kubernetes, Container and Runtime Deployment Standard
 - ADR-062: Enterprise Logging, Observability, OpenTelemetry and Production Diagnostics Standard
@@ -2585,7 +2585,7 @@ This ADR extends and implements:
 - Enterprise Integration Patterns
 - Designing Data-Intensive Applications
 - Building Microservices
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - AWS SQS Documentation
 - PostgreSQL Documentation
 - Spring Framework Transaction Documentation

@@ -357,7 +357,7 @@ requestId
 These identifiers must be propagated across:
 
 - REST
-- Kafka
+- Amazon SQS
 - SQS
 - scheduled jobs
 - asynchronous execution
@@ -484,18 +484,18 @@ If SQL diagnostics are required:
 
 ---
 
-# 26. Kafka Logging
+# 26. SQS Messaging Logging
 
 Producer logs should include:
 
 ```text
-topic
-
-partition (when known)
+queue
 
 eventType
 
 eventId
+
+messageGroupId (FIFO only, when safe)
 
 elapsedMs
 ```
@@ -503,17 +503,17 @@ elapsedMs
 Consumer logs should include:
 
 ```text
-consumerGroup
-
-topic
-
-partition
-
-offset
+queue
 
 eventType
 
+eventId
+
+receiveCount (when useful)
+
 processingOutcome
+
+elapsedMs
 ```
 
 ---
@@ -562,7 +562,7 @@ Recommended thresholds:
 |---|---:|
 | REST call | >500 ms |
 | Database query | >200 ms |
-| Kafka publish | >200 ms |
+| SQS SendMessage | >200 ms |
 | Scheduled task | configurable |
 
 Thresholds should be configurable.

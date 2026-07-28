@@ -11,7 +11,7 @@
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Business Continuity, Disaster Recovery, Regional Resilience, Backup, Restore |
 | Related Work Items | RTO, RPO, Multi-AZ, Multi-Region, PostgreSQL PITR, DR Drills, Chaos Engineering |
-| Supersedes | None |
+| Supersedes | ADR-028 |
 | Superseded By | None |
 
 ---
@@ -29,7 +29,7 @@ The Enterprise Order Platform operates business-critical distributed services wh
         +------------------+------------------+
         |                  |                  |
         v                  v                  v
-    POSTGRESQL           KAFKA              REDIS
+    POSTGRESQL           SQS              REDIS
         |                  |                  |
         +------------------+------------------+
                            |
@@ -79,7 +79,7 @@ The platform requires standards defining:
 - regional failover
 - regional failback
 - DNS
-- Kafka recovery
+- SQS recovery
 - Redis recovery
 - object-storage recovery
 - external dependency failures
@@ -373,7 +373,7 @@ Downstream Dependencies
 
 Databases
 
-Kafka
+SQS
 
 Redis
 
@@ -719,13 +719,13 @@ If database endpoints change during failover, application connection behavior mu
 
 ---
 
-# 65. Kafka Recovery
+# 65. SQS Recovery
 
-Kafka requires explicit disaster-recovery analysis.
+SQS requires explicit disaster-recovery analysis.
 
 ---
 
-# 66. Kafka Availability
+# 66. SQS Availability
 
 Broker replication within a region improves availability but does not automatically provide regional DR.
 
@@ -749,9 +749,9 @@ Source-System Reconstruction
 
 ---
 
-# 68. Kafka Source of Truth
+# 68. SQS Source of Truth
 
-Kafka must not automatically be treated as the permanent source of truth for every business entity.
+SQS must not automatically be treated as the permanent source of truth for every business entity.
 
 ---
 
@@ -761,7 +761,7 @@ Consumers requiring replay must have sufficient retention or another event-recon
 
 ---
 
-# 70. Kafka Retention and RTO
+# 70. SQS Retention and RTO
 
 Long event replay windows can significantly increase recovery time.
 
@@ -791,7 +791,7 @@ Recovery procedures must consider ordering requirements where business semantics
 
 ---
 
-# 75. Cross-Region Kafka
+# 75. Cross-Region SQS
 
 Cross-region replication may be adopted when justified by:
 
@@ -811,9 +811,9 @@ Replication lag must be measured.
 
 ---
 
-# 77. Kafka Failback
+# 77. SQS Failback
 
-Returning to the original Kafka environment requires controlled offset/event reconciliation.
+Returning to the original SQS environment requires controlled message/event reconciliation.
 
 ---
 
@@ -1378,7 +1378,7 @@ Technical tests should verify:
 
 - health endpoints
 - database connectivity
-- Kafka connectivity
+- SQS connectivity
 - Redis connectivity
 - authentication
 
@@ -1649,7 +1649,7 @@ Interrupt Redis connection
 
 Break database connection
 
-Introduce Kafka broker failure
+Introduce SQS service failure
 ```
 
 according to environment and safety controls.
@@ -2105,7 +2105,7 @@ A critical production capability is not considered DR-ready until:
 
 [ ] Restore successfully tested
 
-[ ] Kafka recovery strategy defined
+[ ] SQS recovery strategy defined
 
 [ ] Redis recovery strategy defined
 
@@ -2159,7 +2159,7 @@ The following are prohibited or strongly discouraged:
 - encrypted backups without recoverable keys
 - PostgreSQL recovery tested only with H2
 - modifying applied Flyway migrations during recovery
-- assuming Kafka replication automatically provides regional DR
+- assuming SQS replication automatically provides regional DR
 - assuming Redis must always be restored rather than rebuilt
 - critical state stored only in non-durable cache
 - Multi-Region adopted without business justification
@@ -2188,7 +2188,7 @@ The decision provides:
 - stronger backup governance
 - verified restore capability
 - safer PostgreSQL recovery
-- explicit Kafka/Redis recovery
+- explicit SQS/Redis recovery
 - clearer Multi-AZ/Multi-Region decisions
 - controlled failover/failback
 - better regional resilience
@@ -2241,7 +2241,7 @@ The decision also means:
 | Split brain | Critical | Low/Medium | Fencing/consistency design |
 | Missing secret/key | Critical | Low | Secret/key recovery |
 | Recovery quota shortage | Critical | Medium | Quota validation |
-| Kafka replay exceeds RTO | High | Medium | Replay testing |
+| SQS replay exceeds RTO | High | Medium | Replay testing |
 | Cold cache overload | High | Medium | Controlled warm-up |
 | DNS delays failover | High | Medium | TTL/routing design |
 | Retry storm | High | Medium | Bounded retries |
@@ -2266,7 +2266,7 @@ The following rules are mandatory:
 10. PostgreSQL PITR must be used where required by RPO/logical recovery needs.
 11. PostgreSQL recovery testing must use representative PostgreSQL technology.
 12. Applied Flyway migrations remain immutable during disaster recovery.
-13. Kafka recovery/replay requirements must be explicit.
+13. SQS recovery/replay requirements must be explicit.
 14. Redis recovery must distinguish reconstructable cache from critical state.
 15. Critical non-reconstructable state must not depend solely on ephemeral cache.
 16. Infrastructure should be reproducible through IaC where practical.
@@ -2298,7 +2298,7 @@ This ADR will be validated through:
 - restore tests
 - PostgreSQL PITR tests
 - infrastructure reconstruction tests
-- Kafka replay tests
+- SQS replay tests
 - Redis recovery tests
 - DNS/failover tests
 - DR tabletop exercises
@@ -2321,7 +2321,7 @@ The decision is successful when:
 - backup restorability is demonstrated
 - recovery does not depend on undocumented knowledge
 - PostgreSQL can be restored within required objectives
-- Kafka replay behavior is understood
+- SQS replay behavior is understood
 - Redis recovery semantics are explicit
 - failover and failback are executable
 - regional dependencies are understood
@@ -2383,12 +2383,12 @@ This ADR is related to:
 
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-006: Use Flyway for Database Migrations
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-010: Use Redis for Distributed Caching
 - ADR-014: Adopt Distributed Observability
 - ADR-016: Adopt Resilience4j for Application Resilience
 - ADR-026: Adopt Platform Configuration and Secret Management Standards
-- ADR-030: Adopt Kafka Event Governance and Schema Evolution Standards
+- ADR-030: Adopt SQS Event Governance and Schema Evolution Standards
 - ADR-031: Adopt Database Performance and Data Access Standards
 - ADR-037: Adopt Application Security and Secure Coding Standards
 - ADR-039: Adopt CI/CD, Release and Deployment Governance Standards
@@ -2407,7 +2407,7 @@ This ADR is related to:
 - AWS Disaster Recovery Guidance
 - PostgreSQL Backup and Restore
 - PostgreSQL Continuous Archiving and Point-in-Time Recovery
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - Redis Documentation
 - Google Site Reliability Engineering
 - Chaos Engineering Principles
@@ -2517,7 +2517,7 @@ APPLICATION VALIDATION
 DATA RECONCILIATION
 ```
 
-For Kafka:
+For SQS:
 
 ```text
 EVENTS

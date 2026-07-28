@@ -9,7 +9,7 @@
 | Status | Accepted |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
-| Technical Area | Resilience, Fault Tolerance, Resilience4j, HTTP, Kafka, Redis |
+| Technical Area | Resilience, Fault Tolerance, Resilience4j, HTTP, SQS, Redis |
 | Related Work Items | Circuit Breaker, Retry, Timeout, Bulkhead, Idempotency, Graceful Degradation |
 | Supersedes | None |
 | Superseded By | None |
@@ -31,7 +31,7 @@ PostgreSQL
 
 Redis
 
-Kafka
+SQS
 
 External REST APIs
 
@@ -106,7 +106,7 @@ The organization requires consistent standards covering:
 - retry storms
 - HTTP failure taxonomy
 - Redis fallback
-- Kafka retry
+- SQS retry/redrive
 - dead-letter handling
 - recovery
 - resilience testing
@@ -1125,7 +1125,7 @@ Messaging systems require:
 ```text
 Consumer Capacity
 
-Partition Strategy
+Queue/FIFO Group Strategy
 
 Lag Monitoring
 
@@ -1478,9 +1478,9 @@ Application retries MUST NOT overwhelm a recovering database.
 
 ---
 
-# 116. Kafka Resilience
+# 116. SQS Resilience
 
-Kafka resilience MUST assume at-least-once processing where applicable.
+SQS resilience MUST assume at-least-once processing where applicable.
 
 ---
 
@@ -1490,7 +1490,7 @@ Consumer processing failure SHOULD follow an explicit policy.
 
 ---
 
-# 118. Kafka Failure Flow
+# 118. SQS Failure Flow
 
 Conceptually:
 
@@ -1515,7 +1515,7 @@ PROCESS
 
 ---
 
-# 119. Retry Topic
+# 119. Retry / Redrive Policy
 
 Retry topics MAY be used to delay repeated processing without blocking normal partition progress where appropriate.
 
@@ -1551,19 +1551,19 @@ A permanently invalid message MUST NOT block a consumer partition indefinitely.
 
 ---
 
-# 123. Kafka Retry
+# 123. SQS Retry/Redrive
 
-Kafka retry MUST be bounded.
+SQS retry/redrive MUST be bounded.
 
 ---
 
-# 124. Kafka Backoff
+# 124. SQS Backoff
 
 Retry timing SHOULD avoid immediate hot-loop processing of failing events.
 
 ---
 
-# 125. Kafka Idempotency
+# 125. SQS Idempotency
 
 Consumers SHOULD use stable event/business identifiers for duplicate protection.
 
@@ -1934,7 +1934,7 @@ DLQ growth
 
 Outbox backlog
 
-Kafka lag
+SQS queue backlog/oldest-message age
 
 Fallback activation
 ```
@@ -1992,7 +1992,7 @@ Retry
 
 Redis Failure
 
-Kafka Failure
+SQS Failure
 ```
 
 where applicable.
@@ -2072,7 +2072,7 @@ Terminate Instance
 
 Disable Redis
 
-Interrupt Kafka Connectivity
+Interrupt SQS Connectivity
 
 Reject Database Connections
 
@@ -2124,7 +2124,7 @@ Examples:
 ```text
 Database unavailable
 
-Kafka unavailable
+SQS unavailable
 
 Redis unavailable
 
@@ -2363,7 +2363,7 @@ Examples:
 
 [ ] Executor queues are bounded
 
-[ ] Kafka retries are bounded
+[ ] SQS retries are bounded
 
 [ ] DLQ configuration exists where required
 
@@ -2423,7 +2423,7 @@ A critical integration is not considered compliant when applicable conditions in
 
 [ ] DLQ without ownership
 
-[ ] Kafka poison message can block processing indefinitely
+[ ] SQS poison message can block processing indefinitely
 
 [ ] No idempotency for at-least-once critical processing
 
@@ -2501,7 +2501,7 @@ The following are prohibited or strongly discouraged:
 - silent fallback
 - cache fallback without staleness semantics
 - DLQ without ownership
-- poison messages blocking Kafka partitions indefinitely
+- poison messages blocking FIFO MessageGroupIds indefinitely
 - health checks causing dependency overload
 - non-critical dependency failure making process liveness fail
 - resilience configuration copied without workload validation
@@ -2522,7 +2522,7 @@ The decision provides:
 - safer dependency recovery
 - explicit fallback semantics
 - stronger idempotency
-- improved Kafka failure handling
+- improved SQS failure handling
 - safer Redis degradation
 - better operational visibility
 - predictable dependency behavior
@@ -2570,7 +2570,7 @@ The decision also means:
 | Duplicate writes | High | Medium | Idempotency |
 | Circuit flapping | Medium | Medium | Threshold tuning |
 | Dependency overload | High | Medium | Rate limit + concurrency bounds |
-| Kafka poison message | High | Medium | Bounded retry + DLQ |
+| SQS poison message | High | Medium | Bounded retry + DLQ |
 | Silent degraded mode | High | Medium | Metrics + alerts |
 | Cache inconsistency | High | Medium | Explicit stale-data semantics |
 | Recovery overload | High | Medium | Controlled ramp |
@@ -2602,7 +2602,7 @@ The following rules are mandatory:
 18. Cache fallback requires explicit staleness and consistency semantics.
 19. HTTP errors must be consistently classified.
 20. Sensitive remote error information must be sanitized.
-21. Kafka retry must be bounded.
+21. SQS retry/redrive must be bounded.
 22. Poison messages must not block processing indefinitely.
 23. DLQs must have ownership, monitoring and replay procedures.
 24. At-least-once critical consumers require idempotent processing.
@@ -2631,7 +2631,7 @@ This ADR will be validated through:
 - WireMock
 - MockWebServer
 - Testcontainers
-- Kafka integration tests
+- SQS integration tests
 - Redis integration tests
 - concurrency tests
 - architecture tests
@@ -2654,7 +2654,7 @@ The decision is successful when:
 - critical dependency failures are isolated
 - unsafe fallbacks are eliminated
 - duplicate side effects decrease
-- Kafka poison messages no longer block normal processing
+- SQS poison messages no longer block normal processing
 - DLQ backlog is actively managed
 - Redis outages degrade predictably
 - asynchronous backlogs recover within defined objectives
@@ -2705,7 +2705,7 @@ Rejected because predictable failure and recovery behavior should be designed an
 
 This ADR extends and implements:
 
-- ADR-009: Apache Kafka Integration Events
+- ADR-009: Amazon SQS Integration Events
 - ADR-010: Redis Distributed Caching
 - ADR-016: Application Resilience
 - ADR-031: Database Performance and Data Access Standards
@@ -2726,7 +2726,7 @@ This ADR extends and implements:
 - Resilience4j Documentation
 - Spring Boot Documentation
 - Java 21 Documentation
-- Apache Kafka Documentation
+- Amazon SQS Documentation
 - Redis Documentation
 - PostgreSQL Documentation
 - Release It!
@@ -2848,7 +2848,7 @@ FALLBACK  FAIL
 MARK DEGRADED
 ```
 
-Kafka:
+SQS:
 
 ```text
 EVENT

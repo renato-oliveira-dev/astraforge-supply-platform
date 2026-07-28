@@ -1168,189 +1168,95 @@ payload
 
 ---
 
-# 39. Kafka Topics
+# 39. SQS Queue Names
 
-Kafka topic names must be:
+SQS queue names MUST communicate environment, owning domain, and purpose.
 
-- lowercase
-- separated with dots
-- business-oriented
-- versioned when the contract requires it
-- independent from consumer names
-
-Recommended pattern:
+Preferred logical pattern:
 
 ```text
-<domain>.<entity>.<event>.v<version>
+<environment>-<domain>-<purpose>
 ```
 
 Examples:
 
 ```text
-orders.order.created.v1
-
-orders.order.approved.v1
-
-inventory.reservation.completed.v1
-
-payments.authorization.failed.v1
+prod-orders-workflow-events
+prod-notifications-order-events
 ```
 
-Avoid:
+Dead-letter queues use:
 
 ```text
-order-created-topic
-
-kafka-order-events
-
-orderQueue
+<source-queue>-dlq
 ```
 
 ---
 
-# 40. Kafka Consumer Groups
+# 40. SQS FIFO Message Groups
 
-Consumer group names should identify the consuming application and responsibility.
+When FIFO is used, `MessageGroupId` SHOULD identify the smallest business ordering boundary.
 
-Recommended pattern:
-
-```text
-<application>.<capability>.v<version>
-```
-
-Examples:
+Preferred examples:
 
 ```text
-inventory-service.order-reservation.v1
-
-notification-service.order-created.v1
-
-analytics-service.order-events.v1
+order:<orderId>
+workflow:<workflowId>
 ```
 
-Do not name consumer groups after deployment instances.
+Avoid a single global group unless global serialization is a true business requirement.
 
 ---
 
-# 41. Kafka Keys
+# 41. SQS Message Deduplication Identifiers
 
-Kafka message keys should represent the entity or ordering boundary.
+`MessageDeduplicationId` SHOULD normally derive from the stable integration `eventId` when explicit deduplication IDs are used.
 
-Examples:
-
-```text
-orderId
-
-customerId
-
-reservationId
-```
-
-The key name should be documented in the event contract.
+A retry of the same integration event MUST NOT create a new business event identity.
 
 ---
 
-# 42. RabbitMQ Exchanges
+# 42. Messaging Event Names
 
-Exchange names should be lowercase and dot-separated.
-
-Recommended pattern:
+Integration event names describe facts in past tense, for example:
 
 ```text
-<domain>.<purpose>
+OrderCreated
+OrderApproved
+CartCheckedOut
 ```
+
+Transport resource names MUST NOT replace semantic event names.
+
+---
+
+# 43. Messaging Consumer Names
+
+Consumer/listener classes SHOULD describe the event or queue purpose rather than AWS SDK mechanics.
 
 Examples:
 
 ```text
-orders.events
-
-payments.commands
-
-notifications.events
+OrderWorkflowEventConsumer
+NotificationRequestConsumer
 ```
 
 ---
 
-# 43. RabbitMQ Queues
+# 44. Outbox Dispatcher Names
 
-Queue names should identify the consumer and responsibility.
-
-Recommended pattern:
+Use a domain/capability-oriented dispatcher name, for example:
 
 ```text
-<consumer>.<purpose>
-```
-
-Examples:
-
-```text
-notification-service.order-created
-
-billing-service.order-approved
-
-inventory-service.reserve-order-items
-```
-
-Avoid queue names based only on the producer.
-
----
-
-# 44. Routing Keys
-
-Routing keys should use business-oriented dot-separated names.
-
-Examples:
-
-```text
-order.created
-
-order.approved
-
-inventory.reservation.failed
-```
-
-Use past tense for facts and imperative form for commands.
-
-Event:
-
-```text
-order.created
-```
-
-Command:
-
-```text
-inventory.reserve
+OrderOutboxDispatcher
+WorkflowOutboxDispatcher
 ```
 
 ---
 
-# 45. SQS Queues
+# 45. Messaging Resource Rule
 
-SQS queue names should use lowercase kebab-case.
-
-Recommended pattern:
-
-```text
-<application>-<capability>-<environment>
-```
-
-Examples:
-
-```text
-inventory-order-reservation-prod
-
-notification-order-events-dev
-```
-
-Dead-letter queues should use the `-dlq` suffix.
-
-Example:
-
-```text
-inventory-order-reservation-prod-dlq
-```
+The current baseline is Amazon SQS. Introducing Kafka, RabbitMQ, or another broker into the platform requires an explicit accepted architectural decision defining the new naming and operational conventions.
 
 ---
 
@@ -1905,7 +1811,7 @@ integration.inventory
 
 integration.payment
 
-messaging.kafka
+messaging.sqs
 
 outbox.dispatcher
 

@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-069 |
 | Title | Adopt Enterprise Code Review, Refactoring, Technical Debt and Legacy Modernization Standard |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-26 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Code Review, Refactoring, Technical Debt, Legacy Modernization |
 | Related Work Items | Java 21, Spring Boot 3, SonarQube, SAST, ArchUnit, JaCoCo |
 | Supersedes | None |
-| Superseded By | None |
+| Superseded By | ADR-086, ADR-087 |
 
 ---
 

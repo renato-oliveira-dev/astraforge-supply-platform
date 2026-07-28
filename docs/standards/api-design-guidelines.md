@@ -72,7 +72,7 @@ Alternative protocols may be adopted when justified by the use case.
 
 Examples:
 
-- Kafka for asynchronous event distribution
+- Amazon SQS for asynchronous event distribution
 - gRPC for internal low-latency communication
 - file exchange for legacy integrations
 - GraphQL for specific client-driven query scenarios

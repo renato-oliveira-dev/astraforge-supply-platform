@@ -25,7 +25,7 @@ The Enterprise Order Platform consists of independently deployable services usin
 - Gradle
 - PostgreSQL
 - Flyway
-- Kafka
+- SQS
 - Redis
 - AWS
 - containers
@@ -1312,7 +1312,7 @@ Stateful workloads require additional deployment/recovery consideration.
 
 ---
 
-# 139. Kafka Consumer Deployment
+# 139. SQS Consumer Deployment
 
 Deploying multiple consumer versions simultaneously requires event-schema compatibility.
 
@@ -1320,7 +1320,7 @@ Deploying multiple consumer versions simultaneously requires event-schema compat
 
 # 140. Event Compatibility
 
-Kafka evolution follows the platform event-governance ADR.
+SQS evolution follows the platform event-governance ADR.
 
 ---
 
@@ -2025,12 +2025,12 @@ This ADR is related to:
 - ADR-001: Adopt Clean Architecture
 - ADR-004: Use Spring Boot
 - ADR-005: Use PostgreSQL as the Primary Database
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-016: Adopt Resilience4j for Application Resilience
 - ADR-019: Adopt Structured Logging
 - ADR-020: Define Service-Level Objectives
 - ADR-026: Adopt Platform Configuration and Secret Management Standards
-- ADR-030: Adopt Kafka Event Governance and Schema Evolution Standards
+- ADR-030: Adopt SQS Event Governance and Schema Evolution Standards
 - ADR-031: Adopt Database Performance and Data Access Standards
 - ADR-033: Adopt API Gateway and Edge Architecture Standards
 - ADR-035: Adopt Engineering Quality and Testing Standards

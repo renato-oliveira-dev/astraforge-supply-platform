@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-033 |
 | Title | Adopt API Gateway and Edge Architecture Standards |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | API Gateway, Edge Security, Routing, Rate Limiting, Authentication |
 | Related Work Items | Gateway, JWT, Keycloak, CORS, Routing, Rate Limiting, Correlation |
 | Supersedes | None |
-| Superseded By | None |
+| Superseded By | ADR-073 |
 
 ---
 

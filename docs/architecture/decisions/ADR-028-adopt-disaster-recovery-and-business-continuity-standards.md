@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-028 |
 | Title | Adopt Disaster Recovery and Business Continuity Standards |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-24 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Disaster Recovery, Business Continuity, Data Protection, Kubernetes, PostgreSQL, Kafka |
 | Related Work Items | RTO, RPO, Backup, Restore, PITR, Multi-AZ, Multi-Region, Failover, Failback, DR Testing |
 | Supersedes | None |
-| Superseded By | None |
+| Superseded By | ADR-045 |
 
 ---
 

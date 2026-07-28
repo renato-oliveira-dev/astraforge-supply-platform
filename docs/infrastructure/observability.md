@@ -215,7 +215,7 @@ GC
 
 Database Connections
 
-Kafka Lag
+SQS Backlog / Oldest Message Age
 
 Redis Hit Ratio
 ```
@@ -321,7 +321,7 @@ Expose:
 Include:
 
 - database
-- Kafka
+- Amazon SQS
 - Redis
 - external services
 - disk
@@ -393,7 +393,7 @@ Example
 | API Latency (P95) | < 300 ms |
 | API Latency (P99) | < 1 s |
 | Error Rate | < 1% |
-| Kafka Consumer Lag | < 1 minute |
+| SQS Oldest Message Age | < 1 minute |
 
 ---
 
@@ -445,7 +445,7 @@ Monitor:
 - memory
 - storage
 - connections
-- Kafka partitions
+- SQS queues/message groups
 - Redis memory
 - PostgreSQL growth
 

@@ -383,9 +383,9 @@ Redis-dependent behavior SHOULD use Redis Testcontainers where actual Redis sema
 
 ---
 
-# 22. Kafka Container
+# 22. SQS Container
 
-Kafka integration behavior SHOULD use representative broker infrastructure when serialization, partitions, offsets or delivery semantics matter.
+SQS integration behavior SHOULD use representative queue infrastructure when serialization, FIFO MessageGroupId ordering, acknowledgement, visibility timeout or delivery semantics matter.
 
 ---
 
@@ -559,7 +559,7 @@ where applicable.
 
 # 43. Messaging Contract
 
-Kafka/SQS contracts SHOULD validate:
+SQS contracts SHOULD validate:
 
 ```text
 Event Type
@@ -2557,7 +2557,7 @@ This ADR will be validated through:
 - Testcontainers
 - PostgreSQL
 - Redis
-- Kafka
+- SQS
 - LocalStack where appropriate
 - WireMock
 - MockWebServer
@@ -2653,7 +2653,7 @@ This ADR extends and implements:
 - ADR-054: Enterprise Performance Engineering and Capacity Standard
 - ADR-055: Enterprise Resilience Engineering Standard
 - ADR-056: Enterprise REST API and Integration Contract Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-058: Enterprise PostgreSQL Persistence, Transaction Management and Database Engineering Standard
 - ADR-059: Enterprise Redis Caching, Distributed Cache and Data Consistency Standard
 - ADR-060: Enterprise AWS Cloud, Kubernetes, Container and Runtime Deployment Standard

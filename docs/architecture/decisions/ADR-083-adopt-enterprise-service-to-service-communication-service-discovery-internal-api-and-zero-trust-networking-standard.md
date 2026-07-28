@@ -2375,7 +2375,7 @@ This ADR will be validated through:
 - Kubernetes NetworkPolicy
 - TLS/mTLS
 - Resilience4j
-- Kafka/SQS where asynchronous integration applies
+- SQS where asynchronous integration applies
 - OpenAPI
 - Testcontainers
 - WireMock or equivalent controlled HTTP test infrastructure
@@ -2460,7 +2460,7 @@ This ADR extends and implements:
 
 - ADR-007: Adopt Transactional Outbox
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-013: Use Testcontainers for Integration Testing
 - ADR-034: Java 21 Concurrency and Parallelism Standards
 - ADR-037: Application Security and Secure Coding Standards
@@ -2469,7 +2469,7 @@ This ADR extends and implements:
 - ADR-053: Enterprise Testing Strategy and Quality Engineering Standard
 - ADR-054: Enterprise Performance Engineering and Capacity Standard
 - ADR-055: Enterprise Resilience Engineering Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-060: Enterprise AWS Cloud, Kubernetes, Container and Runtime Deployment Standard
 - ADR-061: Enterprise Authentication, Authorization, OAuth2, OIDC and JWT Security Standard
 - ADR-062: Enterprise Logging, Observability, OpenTelemetry and Production Diagnostics Standard

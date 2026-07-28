@@ -670,7 +670,7 @@ Entities:
 
 - do not depend on Spring
 - do not depend on JPA
-- do not depend on Kafka
+- do not depend on Amazon SQS or the AWS SDK
 - do not depend on REST
 
 Entities expose business behavior only.

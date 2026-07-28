@@ -31,7 +31,7 @@ The platform includes:
 - Keycloak
 - REST APIs
 - OpenAPI
-- Apache Kafka
+- Amazon SQS
 - PostgreSQL
 - Redis
 - Kubernetes
@@ -579,7 +579,7 @@ This applies to:
 - database users
 - Kubernetes service accounts
 - cloud identities
-- Kafka identities
+- SQS identities
 - administrative tools
 
 ---
@@ -907,7 +907,7 @@ This includes:
 - uploaded files
 - JWT claims after structural parsing but before token validation
 - webhook payloads
-- Kafka events from external trust zones
+- SQS messages/events from external trust zones
 
 ---
 
@@ -1710,15 +1710,15 @@ Applied migration immutability from ADR-021 remains mandatory.
 
 ---
 
-# 143. Kafka Security
+# 143. SQS Security
 
-Kafka access must follow least privilege.
+SQS access must follow least privilege.
 
 Producers and consumers should receive permissions only for required topics and operations.
 
 ---
 
-# 144. Kafka Authorization
+# 144. SQS Authorization
 
 A service producing to:
 
@@ -1730,9 +1730,9 @@ must not automatically receive unrestricted access to every platform topic.
 
 ---
 
-# 145. Kafka Event Trust
+# 145. SQS Event Trust
 
-An event received from Kafka must not automatically be considered authorized merely because it came from Kafka.
+An event received from SQS must not automatically be considered authorized merely because it came from SQS.
 
 Trust depends on:
 
@@ -1852,7 +1852,7 @@ Security-supported versions of:
 - Spring Boot
 - Spring Security
 - database drivers
-- Kafka clients
+- SQS clients
 
 must be maintained.
 
@@ -3114,13 +3114,13 @@ Delegated operations must preserve enough identity context to determine:
 
 # 279. Async Identity
 
-When an authenticated HTTP operation produces an asynchronous Kafka workflow, required actor information may need to be captured in the event or durable business/audit state.
+When an authenticated HTTP operation produces an asynchronous SQS workflow, required actor information may need to be captured in the event or durable business/audit state.
 
 ---
 
 # 280. Token in Event
 
-Bearer access tokens must not be placed in Kafka events merely to preserve identity.
+Bearer access tokens must not be placed in SQS messages/events merely to preserve identity.
 
 ---
 
@@ -3270,7 +3270,7 @@ The following are prohibited:
 - logging access tokens
 - logging refresh tokens
 - putting tokens in URLs
-- putting bearer tokens into Kafka events
+- putting bearer tokens into SQS messages/events
 - hardcoding secrets
 - committing secrets to source control
 - using trust-all TLS
@@ -3433,7 +3433,7 @@ The following rules are mandatory:
 35. Production secrets must use the approved secret-management mechanism.
 36. Credentials must be rotatable.
 37. Database access must follow least privilege.
-38. Kafka access must follow least privilege.
+38. SQS access must follow least privilege.
 39. Kubernetes workload identities must follow least privilege.
 40. Production containers should run non-root where practical.
 41. Dependencies and container images must undergo vulnerability scanning.
@@ -3585,7 +3585,7 @@ This ADR is related to:
 - ADR-006: Use Flyway for Database Schema Evolution
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-008: Assume At-Least-Once Message Delivery
-- ADR-009: Use Apache Kafka for Integration Events
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
 - ADR-013: Use Testcontainers for Integration Testing
 - ADR-014: Adopt OpenTelemetry for Distributed Observability
@@ -3615,7 +3615,7 @@ This ADR is related to:
 - W3C Trace Context
 - OpenTelemetry Specification
 - Kubernetes Security Documentation
-- Apache Kafka Security Documentation
+- Amazon SQS Security Documentation
 - PostgreSQL Security Documentation
 - Enterprise Order Platform Security Standards
 - ADR-018: Version Integration Event Contracts

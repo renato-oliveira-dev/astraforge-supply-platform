@@ -6,13 +6,13 @@
 |---|---|
 | ADR | ADR-073 |
 | Title | Adopt Enterprise API Gateway, BFF, Edge Security, Traffic Management and Rate Limiting Standard |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-07-26 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | API Gateway, BFF, Edge Security, Traffic Management, Rate Limiting |
 | Related Work Items | OAuth2/OIDC, Spring Security, Kubernetes, AWS, API Management |
-| Supersedes | None |
-| Superseded By | None |
+| Supersedes | ADR-033 |
+| Superseded By | ADR-082 |
 
 ---
 

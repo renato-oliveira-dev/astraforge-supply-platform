@@ -39,7 +39,7 @@ JAVA 21 / SPRING BOOT
    |
    +--> PostgreSQL / RDS
    +--> Redis / ElastiCache
-   +--> Kafka / MSK
+   +--> Amazon SQS
    +--> SQS
    +--> External APIs
 ```
@@ -360,7 +360,7 @@ RDS
 
 S3
 
-Kafka
+SQS
 
 Approved Persistent Storage
 ```
@@ -582,7 +582,7 @@ Database Connections
 
 HTTP Connections
 
-Kafka Partitions
+FIFO MessageGroupIds
 
 Memory
 
@@ -689,7 +689,7 @@ Liveness SHOULD NOT normally fail merely because an external dependency such as:
 ```text
 Redis
 
-Kafka
+SQS
 
 Remote HTTP API
 ```
@@ -838,7 +838,7 @@ Large arbitrary `sleep` hooks SHOULD NOT substitute for correct endpoint removal
 
 # 79. Background Workers
 
-Kafka/SQS/background consumers MUST also stop gracefully.
+SQS/background consumers MUST also stop gracefully.
 
 ---
 
@@ -910,7 +910,7 @@ Database changes MUST follow ADR-058 expand/contract principles.
 
 ---
 
-# 88. Kafka Compatibility
+# 88. SQS Compatibility
 
 Event contracts MUST follow ADR-057 compatibility rules.
 
@@ -1099,7 +1099,7 @@ Autoscaling MAY use workload-specific metrics such as:
 ```text
 HTTP Request Rate
 
-Kafka Consumer Lag
+SQS Queue Backlog/Oldest-Message Age
 
 SQS Queue Depth
 
@@ -1130,13 +1130,13 @@ Processing Rate
 
 ---
 
-# 114. Kafka Scaling
+# 114. SQS Scaling
 
-Kafka consumer scaling MUST account for partition count.
+SQS consumer scaling MUST account for queue backlog, oldest-message age, downstream capacity and FIFO MessageGroupId concurrency where applicable.
 
 ---
 
-# 115. Kafka Parallelism Ceiling
+# 115. SQS Parallelism Ceiling
 
 If a topic has:
 
@@ -1453,21 +1453,21 @@ SQS FIFO SHOULD only be used when ordering/deduplication semantics justify its c
 
 ---
 
-# 156. Kafka / MSK
+# 156. Amazon SQS
 
-Kafka/MSK workloads MUST follow ADR-057.
-
----
-
-# 157. Kafka Credentials
-
-Kafka authentication/authorization MUST use approved platform mechanisms.
+Amazon SQS workloads MUST follow ADR-057.
 
 ---
 
-# 158. Kafka Network
+# 157. SQS Credentials
 
-Kafka brokers MUST remain in approved private/network-controlled infrastructure.
+SQS authentication/authorization MUST use approved platform mechanisms.
+
+---
+
+# 158. SQS Network
+
+SQS endpoints MUST remain in approved private/network-controlled infrastructure.
 
 ---
 
@@ -1698,7 +1698,7 @@ DB Pool Saturation
 
 Redis Failures
 
-Kafka Lag
+SQS Queue Backlog/Oldest-Message Age
 
 SQS Backlog
 
@@ -2024,7 +2024,7 @@ Review:
 
 [ ] Redis behavior defined
 
-[ ] Kafka/SQS semantics defined
+[ ] SQS semantics defined
 
 [ ] Logs centralized
 
@@ -2142,7 +2142,7 @@ Redis Outage
 
 Database Slowdown
 
-Kafka Unavailability
+SQS Unavailability
 
 SQS Backlog
 
@@ -2269,12 +2269,12 @@ The following are prohibited or strongly discouraged:
 - killing pods without graceful shutdown
 - huge fixed `preStop` sleeps as the primary draining strategy
 - HPA without downstream-capacity analysis
-- scaling Kafka consumers beyond useful partition parallelism
+- scaling SQS consumers beyond useful queue/FIFO MessageGroupId concurrency or downstream capacity
 - scaling HTTP services until the database collapses
 - plaintext secrets in ConfigMaps
 - static AWS credentials in application properties
 - wildcard IAM permissions
-- public Redis/RDS/Kafka endpoints without explicit architecture
+- public Redis/RDS/SQS endpoints without explicit architecture
 - hardcoded cloud IP addresses
 - unbounded HTTP connection pools
 - local persistent log files in containers
@@ -2351,7 +2351,7 @@ The decision also means:
 | Secret leakage | Critical | Low/Medium | Secret management |
 | Restart storm | High | Medium | Correct liveness semantics |
 | Single-AZ concentration | High | Low/Medium | Topology spread |
-| Kafka over-scaling | Medium | Medium | Partition-aware scaling |
+| SQS over-scaling | Medium | Medium | Queue/FIFO-group-aware scaling |
 | SQS duplicate effect | High | Medium | Idempotent consumers |
 | Migration incompatibility | Critical | Medium | Expand/contract |
 
@@ -2378,14 +2378,14 @@ The following rules are mandatory:
 15. Kubernetes termination grace must align with application shutdown behavior.
 16. Rolling deployments must preserve old/new version compatibility.
 17. Database evolution must follow expand/contract.
-18. Kafka contracts must remain compatible during rollout.
+18. SQS contracts must remain compatible during rollout.
 19. Redis serialization must remain rollout compatible.
 20. Critical workloads should have multiple replicas.
 21. Critical replicas should be distributed across failure domains.
 22. Appropriate PDBs should protect voluntary disruptions.
 23. HPA must be based on workload-appropriate signals.
 24. Maximum autoscaling must respect downstream capacity.
-25. Kafka consumer scaling must account for partition count.
+25. SQS consumer scaling must account for queue backlog, oldest-message age, downstream capacity and FIFO MessageGroupId concurrency.
 26. SQS consumers must assume duplicate delivery.
 27. AWS permissions must follow least privilege.
 28. Static long-lived AWS credentials must not be embedded in applications.
@@ -2519,7 +2519,7 @@ This ADR extends and implements:
 - ADR-054: Enterprise Performance Engineering and Capacity Standard
 - ADR-055: Enterprise Resilience Engineering Standard
 - ADR-056: Enterprise REST API and Integration Contract Standard
-- ADR-057: Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard
+- ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-058: Enterprise PostgreSQL Persistence, Transaction Management and Database Engineering Standard
 - ADR-059: Enterprise Redis Caching, Distributed Cache and Data Consistency Standard
 
@@ -2624,7 +2624,7 @@ BOUNDED RESOURCES
         +--> DB POOL
         +--> HTTP POOL
         +--> CPU
-        +--> KAFKA PARTITIONS
+        +--> SQS PARTITIONS
 ```
 
 Health:
