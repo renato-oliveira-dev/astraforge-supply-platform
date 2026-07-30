@@ -1,0 +1,94 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'org.springframework.boot' version '4.1.0'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.enterprise.orderplatform'
+version = '0.1.0-SNAPSHOT'
+description = 'Enterprise-grade B2B order management platform'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.tngtech.archunit:archunit-junit5:1.4.1'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-parameters', '-Xlint:all']
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    failFast = false
+    testLogging {
+        events 'FAILED', 'SKIPPED'
+        exceptionFormat = 'FULL'
+    }
+}
+
+jacoco {
+    toolVersion = '0.8.13'
+}
+
+def jacocoCoverageExclusions = [
+        '**/EnterpriseOrderPlatformApplication.class',
+        '**/package-info.class'
+]
+
+jacocoTestReport {
+    dependsOn test
+    classDirectories.setFrom(
+            files(classDirectories.files.collect { directory ->
+                fileTree(dir: directory, exclude: jacocoCoverageExclusions)
+            })
+    )
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn test
+    classDirectories.setFrom(
+            files(classDirectories.files.collect { directory ->
+                fileTree(dir: directory, exclude: jacocoCoverageExclusions)
+            })
+    )
+    violationRules {
+        rule {
+            element = 'BUNDLE'
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+        }
+    }
+}
+
+check {
+    dependsOn jacocoTestReport
+    dependsOn jacocoTestCoverageVerification
+}
+
+tasks.named('bootJar') {
+    archiveFileName = 'enterprise-order-platform.jar'
+}

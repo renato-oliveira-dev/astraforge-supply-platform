@@ -10,7 +10,7 @@
 | Date | 2026-07-26 |
 | Decision Owners | Enterprise Order Platform Architecture Team |
 | Technical Area | Data Privacy, PII, LGPD, Auditability, Retention, Secure Data Handling |
-| Related Work Items | Java 21, Spring Boot 3, PostgreSQL, Redis, SQS, SQS, AWS, Observability |
+| Related Work Items | Java 21, Spring Boot 4.1, PostgreSQL, Redis, SQS, AWS, Observability |
 | Supersedes | ADR-046 |
 | Superseded By | None |
 

@@ -2145,7 +2145,7 @@ The following rules are mandatory:
 This ADR will be validated through:
 
 - Java 21
-- Spring Boot 3
+- Spring Boot 4.1
 - Spring Security 6
 - OAuth2 Resource Server
 - OpenID Connect

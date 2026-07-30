@@ -40,7 +40,7 @@ These guidelines complement the general coding standards and Java guidelines.
 The project uses:
 
 ```text
-Spring Boot 3
+Spring Boot 4.1
 ```
 
 The platform should remain on a supported Spring Boot release line.
@@ -1725,7 +1725,7 @@ Spring Boot code must:
 
 The project adopts:
 
-- Spring Boot 3
+- Spring Boot 4.1
 - constructor injection
 - immutable configuration properties
 - thin REST controllers

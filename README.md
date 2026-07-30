@@ -8,7 +8,7 @@ Enterprise-grade B2B Order Management Platform built with **Java 21**, **Spring 
 
 ## Project Status
 
-**Current Phase:** 🏗️ Architecture & Planning
+**Current Phase:** 🚀 Foundation Bootstrap
 
 The project follows an **Architecture First** approach.
 
@@ -95,8 +95,8 @@ Although fictional, every business rule is inspired by real enterprise systems.
 ## Backend
 
 - Java 21
-- Spring Boot 3
-- Gradle
+- Spring Boot 4.1
+- Gradle 9.6
 
 ## Persistence
 
@@ -209,15 +209,29 @@ docs
 - ✅ Functional Requirements
 - ✅ Non-Functional Requirements
 
-## Planned Documentation
+## Implementation Status
 
-- Domain Overview
-- Ubiquitous Language
-- Bounded Contexts
-- Context Map
-- Domain Model
-- Event Catalog
-- API Design
+- ✅ ADR-001 through ADR-090 governance baseline
+- ✅ Java 21 and Spring Boot foundation
+- ✅ Gradle bootstrap automation
+- ✅ JaCoCo and ArchUnit quality gates
+- ⏳ Order domain implementation
+
+## First Local Build
+
+Generate the official Gradle Wrapper once from PowerShell:
+
+```powershell
+.\scripts\bootstrap_gradle_wrapper.ps1
+```
+
+Then validate the project:
+
+```powershell
+.\gradlew.bat clean check --no-daemon --stacktrace
+```
+
+Commit the generated `gradlew`, `gradlew.bat`, and `gradle/wrapper` files together with the foundation bootstrap.
 - Architecture Decision Records
 - Security Architecture
 - Testing Strategy
