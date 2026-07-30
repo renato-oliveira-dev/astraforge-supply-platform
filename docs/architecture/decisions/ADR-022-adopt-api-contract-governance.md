@@ -8,7 +8,7 @@
 | Title | Adopt API Contract Governance |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | REST APIs, OpenAPI, Contract Evolution and Integration Governance |
 | Related Work Items | OpenAPI, REST, Backward Compatibility, Contract Testing, API Versioning |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform is composed of independently deployable services that communicate through synchronous REST APIs and asynchronous integration events.
+The AstraForge Supply Platform is composed of independently deployable services that communicate through synchronous REST APIs and asynchronous integration events.
 
 The platform includes:
 
@@ -124,7 +124,7 @@ Primary decision drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts formal API Contract Governance for all production REST APIs.
+The AstraForge Supply Platform adopts formal API Contract Governance for all production REST APIs.
 
 The governance model is based on:
 
@@ -1549,13 +1549,13 @@ Legitimate business values must not be mutated merely as a generic response work
 For example, a legitimate value such as:
 
 ```text
-M&M
+Forge & Field
 ```
 
 must remain:
 
 ```text
-M&M
+Forge & Field
 ```
 
 unless the contract explicitly requires another representation.
@@ -3433,8 +3433,8 @@ This ADR is related to:
 - OWASP API Security
 - Consumer-Driven Contract Testing
 - Semantic Versioning
-- Enterprise Order Platform API Guidelines
-- Enterprise Order Platform Security Standards
+- AstraForge Supply Platform API Guidelines
+- AstraForge Supply Platform Security Standards
 - ADR-018: Version Integration Event Contracts
 - ADR-019: Adopt Structured Logging
 - ADR-020: Define Service-Level Objectives
@@ -3446,13 +3446,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial REST API contract-governance baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial REST API contract-governance baseline |
 
 ---
 
 # 238. Decision Summary
 
-The Enterprise Order Platform adopts formal API Contract Governance for all production REST APIs.
+The AstraForge Supply Platform adopts formal API Contract Governance for all production REST APIs.
 
 The governance lifecycle is:
 
@@ -3598,4 +3598,4 @@ Security boundaries remain intact
 The change can be deployed independently
 ```
 
-This decision establishes the REST contract-governance foundation required for independently deployable services in the Enterprise Order Platform.
+This decision establishes the REST contract-governance foundation required for independently deployable services in the AstraForge Supply Platform.

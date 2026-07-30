@@ -1,6 +1,6 @@
 spring:
   application:
-    name: enterprise-order-platform
+    name: astraforge-supply-platform
   lifecycle:
     timeout-per-shutdown-phase: 30s
 

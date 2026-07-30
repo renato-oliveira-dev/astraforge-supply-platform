@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Data Privacy, PII, Auditability, Retention and Secure Data Handling Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Data Privacy, PII, LGPD, Auditability, Retention, Secure Data Handling |
 | Related Work Items | Java 21, Spring Boot 4.1, PostgreSQL, Redis, SQS, AWS, Observability |
 | Supersedes | ADR-046 |
@@ -651,7 +651,7 @@ Security transformations MUST NOT corrupt legitimate business data.
 For example:
 
 ```text
-M&M
+Forge & Field
 ```
 
 MUST NOT be persistently transformed into:
@@ -2029,7 +2029,7 @@ Example:
 ```java
 assertThat(sanitized)
         .as("legitimate business ampersands must remain unchanged")
-        .isEqualTo("M&M");
+        .isEqualTo("Forge & Field");
 ```
 
 ---
@@ -2870,7 +2870,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise privacy, PII and secure-data-handling baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise privacy, PII and secure-data-handling baseline |
 
 ---
 
@@ -2994,13 +2994,13 @@ DATA
 Therefore:
 
 ```text
-M&M
+Forge & Field
 ```
 
 remains:
 
 ```text
-M&M
+Forge & Field
 ```
 
 in the domain/database rather than becoming:

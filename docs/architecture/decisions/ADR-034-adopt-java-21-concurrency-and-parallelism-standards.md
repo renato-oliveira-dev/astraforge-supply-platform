@@ -8,7 +8,7 @@
 | Title | Adopt Java 21 Concurrency and Parallelism Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Java 21, Virtual Threads, Concurrency, Parallelism, Executors, Context Propagation |
 | Related Work Items | Virtual Threads, Fan-Out, Bulkhead, WebClient, HikariCP, SQS, Resilience |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform runs workloads that frequently combine:
+The AstraForge Supply Platform runs workloads that frequently combine:
 
 - HTTP requests
 - database access
@@ -127,7 +127,7 @@ Primary drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts Java 21 Virtual Threads as the preferred thread-per-task execution model for suitable blocking I/O workloads.
+The AstraForge Supply Platform adopts Java 21 Virtual Threads as the preferred thread-per-task execution model for suitable blocking I/O workloads.
 
 The architectural model is:
 
@@ -2677,7 +2677,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial Java 21 concurrency baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial Java 21 concurrency baseline |
 
 ---
 

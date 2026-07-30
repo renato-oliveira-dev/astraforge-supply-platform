@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Architecture Decision Records Guide |
 | Status | Approved |
 | Version | 1.0.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines how Architecture Decision Records, or ADRs, are created, reviewed, approved, maintained and superseded within the Enterprise Order Platform.
+This document defines how Architecture Decision Records, or ADRs, are created, reviewed, approved, maintained and superseded within the AstraForge Supply Platform.
 
 An ADR records a significant technical or architectural decision together with:
 
@@ -1618,7 +1618,7 @@ A concise decision summary may look like:
 
 # 81. Initial ADR Backlog
 
-The initial ADR set for the Enterprise Order Platform should include:
+The initial ADR set for the AstraForge Supply Platform should include:
 
 ```text
 ADR-001: Adopt Clean Architecture
@@ -1685,7 +1685,7 @@ The ADR process must:
 
 # 83. Decision Summary
 
-The Enterprise Order Platform adopts Architecture Decision Records as the standard mechanism for recording significant architectural decisions.
+The AstraForge Supply Platform adopts Architecture Decision Records as the standard mechanism for recording significant architectural decisions.
 
 Every ADR must:
 

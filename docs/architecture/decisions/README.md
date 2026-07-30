@@ -1,6 +1,6 @@
 # Architecture Decision Records — Master Index
 
-> Enterprise Order Platform — canonical index for ADR-001 through ADR-090.
+> AstraForge Supply Platform — canonical index for ADR-001 through ADR-090.
 
 ## Purpose
 

@@ -8,7 +8,7 @@
 | Title | Adopt Distributed Caching and Cache Consistency Standards |
 | Status | Superseded |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Redis, Caffeine, Spring Cache, Distributed Caching, Resilience |
 | Related Work Items | Redis, Cache-Aside, L1/L2 Cache, TTL, Invalidation, Resilience |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform uses distributed services with:
+The AstraForge Supply Platform uses distributed services with:
 
 - Java 21
 - Spring Boot
@@ -124,7 +124,7 @@ Primary drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts caching according to:
+The AstraForge Supply Platform adopts caching according to:
 
 ```text
 AUTHORITATIVE SOURCE
@@ -2643,7 +2643,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial distributed caching baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial distributed caching baseline |
 
 ---
 

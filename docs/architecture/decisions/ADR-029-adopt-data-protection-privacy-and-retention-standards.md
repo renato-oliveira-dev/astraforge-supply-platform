@@ -8,7 +8,7 @@
 | Title | Adopt Data Protection, Privacy and Retention Standards |
 | Status | Superseded |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Data Protection, Privacy, LGPD, Security, Retention, Data Lifecycle |
 | Related Work Items | LGPD, PII, Data Classification, Encryption, Masking, Retention, Deletion, Audit |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform processes information associated with:
+The AstraForge Supply Platform processes information associated with:
 
 - customers
 - users
@@ -145,7 +145,7 @@ Primary decision drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts a data-protection model based on:
+The AstraForge Supply Platform adopts a data-protection model based on:
 
 ```text
 CLASSIFY
@@ -775,7 +775,7 @@ Business metrics should aggregate data.
 Example:
 
 ```text
-orders_created_total{segment="M&M"}
+orders_created_total{segment="Forge & Field"}
 ```
 
 rather than customer-specific metrics.
@@ -2587,13 +2587,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial Data Protection, Privacy and Retention baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial Data Protection, Privacy and Retention baseline |
 
 ---
 
 # 281. Decision Summary
 
-The Enterprise Order Platform adopts the following data lifecycle:
+The AstraForge Supply Platform adopts the following data lifecycle:
 
 ```text
 BUSINESS REQUIREMENT

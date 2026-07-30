@@ -8,7 +8,7 @@
 | Title | Adopt Legacy Modernization, Strangler Migration and Technical Evolution Standards |
 | Status | Superseded |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Legacy Modernization, Strangler Fig, Migration, Technical Evolution |
 | Related Work Items | Java Modernization, Oracle Modernization, Strangler Migration, Legacy Decommission |
 | Supersedes | None |
@@ -2940,7 +2940,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial legacy modernization and incremental migration baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial legacy modernization and incremental migration baseline |
 
 ---
 

@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Definition of Done |
 | Status | Approved |
 | Version | 1.0.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the objective completion criteria adopted by the Enterprise Order Platform.
+This document defines the objective completion criteria adopted by the AstraForge Supply Platform.
 
 A work item is considered done only when it satisfies the applicable criteria for:
 
@@ -1651,7 +1651,7 @@ A completed implementation must:
 
 # 88. Decision Summary
 
-The Enterprise Order Platform considers work complete only when the applicable criteria for the following areas are satisfied:
+The AstraForge Supply Platform considers work complete only when the applicable criteria for the following areas are satisfied:
 
 - business behavior
 - Domain-Driven Design

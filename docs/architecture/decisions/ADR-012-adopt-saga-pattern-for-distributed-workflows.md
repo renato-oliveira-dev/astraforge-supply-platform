@@ -8,7 +8,7 @@
 | Title | Adopt the Saga Pattern for Distributed Workflows |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Distributed Transactions and Workflow Coordination |
 | Related Work Items | Order fulfillment and cross-context business workflows |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform coordinates business processes that span multiple bounded contexts.
+The AstraForge Supply Platform coordinates business processes that span multiple bounded contexts.
 
 Examples include:
 
@@ -286,7 +286,7 @@ The platform could adopt the Saga pattern and use orchestration for complex work
 
 # 6. Decision
 
-The Enterprise Order Platform adopts the Saga pattern for distributed business workflows.
+The AstraForge Supply Platform adopts the Saga pattern for distributed business workflows.
 
 The default strategy for complex, stateful or compensating workflows will be orchestration.
 
@@ -3022,10 +3022,10 @@ This ADR is related to:
 - Transactional Outbox Pattern
 - Spring for Amazon SQS Documentation
 - PostgreSQL Documentation
-- Enterprise Order Platform Messaging Architecture
-- Enterprise Order Platform Domain Events
-- Enterprise Order Platform Idempotency Guide
-- Enterprise Order Platform Resilience Guide
+- AstraForge Supply Platform Messaging Architecture
+- AstraForge Supply Platform Domain Events
+- AstraForge Supply Platform Idempotency Guide
+- AstraForge Supply Platform Resilience Guide
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-008: Assume At-Least-Once Message Delivery
 - ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
@@ -3036,13 +3036,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved | Initial distributed workflow and compensation baseline |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved | Initial distributed workflow and compensation baseline |
 
 ---
 
 # 133. Decision Summary
 
-The Enterprise Order Platform adopts the Saga pattern for distributed business workflows.
+The AstraForge Supply Platform adopts the Saga pattern for distributed business workflows.
 
 Complex workflows will use explicit orchestration based on:
 

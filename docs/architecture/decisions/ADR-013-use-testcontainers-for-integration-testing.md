@@ -8,7 +8,7 @@
 | Title | Use Testcontainers for Integration Testing |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Quality Engineering |
 | Related Work Items | Automated Testing Strategy |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform depends on infrastructure components that provide behavior impossible to reproduce accurately using mocks or in-memory implementations.
+The AstraForge Supply Platform depends on infrastructure components that provide behavior impossible to reproduce accurately using mocks or in-memory implementations.
 
 Examples include:
 
@@ -161,7 +161,7 @@ Disadvantages:
 
 # 5. Decision
 
-The Enterprise Order Platform adopts **Testcontainers** as the standard integration-testing framework.
+The AstraForge Supply Platform adopts **Testcontainers** as the standard integration-testing framework.
 
 Every infrastructure integration test must execute against real containerized dependencies whenever practical.
 
@@ -551,7 +551,7 @@ The decision is successful when:
 - PostgreSQL Documentation
 - Amazon SQS Documentation
 - Redis Documentation
-- Enterprise Order Platform Testing Standards
+- AstraForge Supply Platform Testing Standards
 
 ---
 
@@ -559,13 +559,13 @@ The decision is successful when:
 
 | Date | Reviewer | Result |
 |---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved |
 
 ---
 
 # 37. Decision Summary
 
-The Enterprise Order Platform adopts **Testcontainers** as the standard framework for infrastructure integration testing.
+The AstraForge Supply Platform adopts **Testcontainers** as the standard framework for infrastructure integration testing.
 
 Integration tests execute against real containerized services instead of embedded substitutes, providing:
 

@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Engineering Standards |
 | Status | Draft |
 | Version | 0.1.0 |
@@ -14,7 +14,7 @@
 
 # Purpose
 
-This directory contains the engineering standards adopted by the Enterprise Order Platform.
+This directory contains the engineering standards adopted by the AstraForge Supply Platform.
 
 These documents define how software should be designed, implemented, tested, reviewed and maintained across the entire project.
 

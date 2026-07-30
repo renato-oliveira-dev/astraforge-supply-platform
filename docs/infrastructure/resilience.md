@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Resilience |
 | Status | Draft |
 | Version | 0.1.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the resilience strategy adopted by the Enterprise Order Platform.
+This document defines the resilience strategy adopted by the AstraForge Supply Platform.
 
 It establishes:
 

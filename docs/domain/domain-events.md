@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Domain Events |
 | Status | Draft |
 | Version | 0.1.0 |
@@ -14,7 +14,7 @@
 
 ## 1. Purpose
 
-This document defines the Domain Event model used by Enterprise Order Platform.
+This document defines the Domain Event model used by AstraForge Supply Platform.
 
 It establishes:
 
@@ -2186,7 +2186,7 @@ Example:
   "aggregateVersion": 5,
   "occurredAt": "2026-07-21T20:15:30Z",
   "publishedAt": "2026-07-21T20:15:31Z",
-  "producer": "enterprise-order-platform",
+  "producer": "astraforge-supply-platform",
   "correlationId": "a2a3d4e5-f607-48ac-9ac7-3b78a61b0896",
   "causationId": "1dfabf8f-c381-4879-a86e-8cead547fb9a",
   "contentType": "application/json",

@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Distributed Transactions, Saga, Idempotency, Consistency and Compensation Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Distributed Transactions, Saga, Idempotency, Consistency, Compensation |
 | Related Work Items | Transactional Outbox, SQS, SQS, PostgreSQL, Microservices, Workflow |
 | Supersedes | None |
@@ -2598,7 +2598,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise distributed consistency and Saga baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise distributed consistency and Saga baseline |
 
 ---
 

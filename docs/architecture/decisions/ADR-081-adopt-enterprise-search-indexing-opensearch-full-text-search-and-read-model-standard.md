@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Search, Indexing, OpenSearch/Elasticsearch, Full-Text Search and Read Model Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Search, OpenSearch, Elasticsearch, Indexing, CQRS, Read Models |
 | Related Work Items | OpenSearch, SQS, Outbox, PostgreSQL, Search APIs |
 | Supersedes | None |
@@ -611,7 +611,7 @@ Exact business constraints SHOULD use filters rather than full-text scoring quer
 Examples:
 
 ```text
-segment = "M&M"
+segment = "Forge & Field"
 
 status = "APPROVED"
 
@@ -2698,7 +2698,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise search, indexing and read-model baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise search, indexing and read-model baseline |
 
 ---
 

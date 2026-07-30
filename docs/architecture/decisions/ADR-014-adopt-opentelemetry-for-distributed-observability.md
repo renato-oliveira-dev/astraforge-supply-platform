@@ -8,7 +8,7 @@
 | Title | Adopt OpenTelemetry for Distributed Observability |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Observability |
 | Related Work Items | Platform Monitoring, Distributed Tracing and Operational Diagnostics |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform is composed of independently deployable services and infrastructure components.
+The AstraForge Supply Platform is composed of independently deployable services and infrastructure components.
 
 The platform uses:
 
@@ -263,7 +263,7 @@ OpenTelemetry provides standardized APIs, SDKs, semantic conventions, context pr
 
 # 6. Decision
 
-The Enterprise Order Platform adopts OpenTelemetry as the standard distributed-observability framework.
+The AstraForge Supply Platform adopts OpenTelemetry as the standard distributed-observability framework.
 
 OpenTelemetry will be used for:
 
@@ -3128,10 +3128,10 @@ This ADR is related to:
 - Grafana Documentation
 - Jaeger Documentation
 - Grafana Tempo Documentation
-- Enterprise Order Platform Observability Guide
-- Enterprise Order Platform Logging Standards
-- Enterprise Order Platform Messaging Architecture
-- Enterprise Order Platform Resilience Guide
+- AstraForge Supply Platform Observability Guide
+- AstraForge Supply Platform Logging Standards
+- AstraForge Supply Platform Messaging Architecture
+- AstraForge Supply Platform Resilience Guide
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-090: Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
@@ -3142,13 +3142,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved | Initial distributed observability architecture baseline |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved | Initial distributed observability architecture baseline |
 
 ---
 
 # 164. Decision Summary
 
-The Enterprise Order Platform adopts OpenTelemetry as its standard framework for distributed observability.
+The AstraForge Supply Platform adopts OpenTelemetry as its standard framework for distributed observability.
 
 The platform will use:
 
@@ -3228,4 +3228,4 @@ Non-blocking
 Vendor neutral
 ```
 
-This decision establishes a consistent and portable observability foundation for diagnosing, measuring and operating the Enterprise Order Platform across distributed synchronous and asynchronous workflows.
+This decision establishes a consistent and portable observability foundation for diagnosing, measuring and operating the AstraForge Supply Platform across distributed synchronous and asynchronous workflows.

@@ -8,7 +8,7 @@
 | Title | Adopt Architecture Fitness Functions and Automated Governance Standards |
 | Status | Superseded |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Architecture Fitness Functions, ArchUnit, CI/CD, Static Analysis, Automated Governance |
 | Related Work Items | Clean Architecture, ArchUnit, Flyway, Testing Standards, API Governance, Quality Gates |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform has established architectural standards covering:
+The AstraForge Supply Platform has established architectural standards covering:
 
 - Clean Architecture
 - Domain-Driven Design
@@ -116,7 +116,7 @@ Primary drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts architecture fitness functions as automated checks that continuously verify important architectural properties.
+The AstraForge Supply Platform adopts architecture fitness functions as automated checks that continuously verify important architectural properties.
 
 The canonical model is:
 
@@ -2216,7 +2216,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial architecture fitness-function baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial architecture fitness-function baseline |
 
 ---
 

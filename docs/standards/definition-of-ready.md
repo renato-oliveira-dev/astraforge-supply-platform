@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Definition of Ready |
 | Status | Approved |
 | Version | 1.0.0 |
@@ -566,7 +566,7 @@ A work item is Ready only when:
 
 # 36. Decision Summary
 
-The Enterprise Order Platform considers a work item **Ready** only when:
+The AstraForge Supply Platform considers a work item **Ready** only when:
 
 - business value is clear
 - acceptance criteria are complete

@@ -8,7 +8,7 @@
 | Title | Deploy Workloads on Kubernetes |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Platform Infrastructure |
 | Related Work Items | Cloud Platform, Scalability and Operations |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform consists of multiple independently deployable services.
+The AstraForge Supply Platform consists of multiple independently deployable services.
 
 Examples include:
 
@@ -146,7 +146,7 @@ Disadvantages:
 
 # 5. Decision
 
-The Enterprise Order Platform adopts Kubernetes as the standard orchestration platform for production workloads.
+The AstraForge Supply Platform adopts Kubernetes as the standard orchestration platform for production workloads.
 
 All production services will execute inside Kubernetes clusters.
 
@@ -604,7 +604,7 @@ The decision is successful when:
 - CNCF Landscape
 - Helm Documentation
 - OpenTelemetry Documentation
-- Enterprise Order Platform Kubernetes Architecture
+- AstraForge Supply Platform Kubernetes Architecture
 
 ---
 
@@ -612,13 +612,13 @@ The decision is successful when:
 
 | Date | Reviewer | Result |
 |---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved |
 
 ---
 
 # 46. Decision Summary
 
-The Enterprise Order Platform adopts Kubernetes as its production orchestration platform.
+The AstraForge Supply Platform adopts Kubernetes as its production orchestration platform.
 
 The platform standardizes on:
 

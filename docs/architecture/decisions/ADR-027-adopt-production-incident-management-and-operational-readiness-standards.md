@@ -8,7 +8,7 @@
 | Title | Adopt Production Incident Management and Operational Readiness Standards |
 | Status | Superseded |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Production Operations, Incident Management, SRE, Reliability, Disaster Recovery |
 | Related Work Items | Production Readiness Review, SLO, On-Call, Runbooks, Incident Response, Postmortem, Game Days |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform is a distributed production system composed of:
+The AstraForge Supply Platform is a distributed production system composed of:
 
 - Java 21 services
 - Spring Boot applications
@@ -139,7 +139,7 @@ Primary decision drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts a production operations model based on:
+The AstraForge Supply Platform adopts a production operations model based on:
 
 ```text
 Production Readiness
@@ -3316,13 +3316,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial production operations and incident-management baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial production operations and incident-management baseline |
 
 ---
 
 # 314. Decision Summary
 
-The Enterprise Order Platform adopts the following production lifecycle:
+The AstraForge Supply Platform adopts the following production lifecycle:
 
 ```text
 DESIGN

@@ -8,7 +8,7 @@
 | Title | Adopt the Transactional Outbox Pattern |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Messaging and Data Consistency |
 | Related Work Items | Reliable integration-event publication |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform performs business operations that must update transactional data and notify other bounded contexts.
+The AstraForge Supply Platform performs business operations that must update transactional data and notify other bounded contexts.
 
 Examples include:
 
@@ -314,7 +314,7 @@ A background process could identify unpublished business changes from aggregate 
 
 # 6. Decision
 
-The Enterprise Order Platform will adopt the Transactional Outbox pattern for reliable integration-event publication.
+The AstraForge Supply Platform will adopt the Transactional Outbox pattern for reliable integration-event publication.
 
 For every business operation that requires an integration event:
 
@@ -658,7 +658,7 @@ A standard integration-event envelope should include:
   "eventId": "3a31c8d3-1c30-4fd3-94d0-6e0e084d20a8",
   "eventType": "ORDER_APPROVED",
   "eventVersion": 1,
-  "producer": "enterprise-order-platform",
+  "producer": "astraforge-supply-platform",
   "aggregateType": "ORDER",
   "aggregateId": "59b1177f-3c48-4a35-a78f-ae8374b56327",
   "occurredAt": "2026-07-23T15:30:00Z",
@@ -2383,10 +2383,10 @@ This ADR is related to:
 - Spring for Amazon SQS Documentation
 - Flyway Documentation
 - Testcontainers PostgreSQL Documentation
-- Enterprise Order Platform Messaging Architecture
-- Enterprise Order Platform Domain Events
-- Enterprise Order Platform Transactional Outbox Guide
-- Enterprise Order Platform Messaging Guidelines
+- AstraForge Supply Platform Messaging Architecture
+- AstraForge Supply Platform Domain Events
+- AstraForge Supply Platform Transactional Outbox Guide
+- AstraForge Supply Platform Messaging Guidelines
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-006: Use Flyway for Database Migrations
 
@@ -2396,13 +2396,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved | Initial reliable event-publication baseline |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved | Initial reliable event-publication baseline |
 
 ---
 
 # 111. Decision Summary
 
-The Enterprise Order Platform adopts the Transactional Outbox pattern for reliable integration-event publication.
+The AstraForge Supply Platform adopts the Transactional Outbox pattern for reliable integration-event publication.
 
 Every relevant business transaction will atomically persist:
 

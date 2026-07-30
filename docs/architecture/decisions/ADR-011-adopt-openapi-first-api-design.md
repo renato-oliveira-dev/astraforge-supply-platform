@@ -8,7 +8,7 @@
 | Title | Adopt OpenAPI-First API Design |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | API Architecture |
 | Related Work Items | API Standardization and Governance |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform exposes REST APIs consumed by:
+The AstraForge Supply Platform exposes REST APIs consumed by:
 
 - Web applications
 - Mobile applications
@@ -128,7 +128,7 @@ Disadvantages:
 
 # 5. Decision
 
-The Enterprise Order Platform adopts an **OpenAPI-First** approach.
+The AstraForge Supply Platform adopts an **OpenAPI-First** approach.
 
 Every public REST endpoint must begin with an OpenAPI specification.
 
@@ -565,7 +565,7 @@ The decision is successful when:
 - OpenAPI Specification 3.1
 - RFC 9457 – Problem Details for HTTP APIs
 - RESTful API Design Best Practices
-- Enterprise Order Platform API Design Guidelines
+- AstraForge Supply Platform API Design Guidelines
 
 ---
 
@@ -573,13 +573,13 @@ The decision is successful when:
 
 | Date | Reviewer | Result |
 |---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved |
 
 ---
 
 # 39. Decision Summary
 
-The Enterprise Order Platform adopts **OpenAPI-First** as the mandatory API design strategy.
+The AstraForge Supply Platform adopts **OpenAPI-First** as the mandatory API design strategy.
 
 Every REST API will:
 

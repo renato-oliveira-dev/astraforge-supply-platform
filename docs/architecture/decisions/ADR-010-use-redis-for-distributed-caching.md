@@ -8,7 +8,7 @@
 | Title | Use Redis for Distributed Caching |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Caching Architecture |
 | Related Work Items | Platform performance and scalability |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform executes thousands of read operations against relatively stable datasets.
+The AstraForge Supply Platform executes thousands of read operations against relatively stable datasets.
 
 Examples include:
 
@@ -145,7 +145,7 @@ Disadvantages:
 
 # 5. Decision
 
-The Enterprise Order Platform adopts Redis as its distributed cache.
+The AstraForge Supply Platform adopts Redis as its distributed cache.
 
 Redis will be used for:
 
@@ -680,7 +680,7 @@ The decision is successful when:
 - Spring Data Redis Documentation
 - Spring Cache Documentation
 - Redis Cluster Specification
-- Enterprise Order Platform Redis Architecture
+- AstraForge Supply Platform Redis Architecture
 
 ---
 
@@ -688,13 +688,13 @@ The decision is successful when:
 
 | Date | Reviewer | Result |
 |---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved |
 
 ---
 
 # 42. Decision Summary
 
-The Enterprise Order Platform adopts **Redis** as its distributed cache.
+The AstraForge Supply Platform adopts **Redis** as its distributed cache.
 
 Redis provides:
 

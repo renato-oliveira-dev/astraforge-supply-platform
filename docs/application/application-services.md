@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Application Services |
 | Status | Draft |
 | Version | 0.1.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the Application Layer of the Enterprise Order Platform.
+This document defines the Application Layer of the AstraForge Supply Platform.
 
 It establishes:
 

@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Database Migration, Zero-Downtime Schema Evolution and Expand/Contract Standard |
 | Status | Superseded |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Database Migration, Flyway, PostgreSQL, Zero-Downtime Deployment |
 | Related Work Items | PostgreSQL, Flyway, Kubernetes, Rolling Deployment, CI/CD |
 | Supersedes | None |
@@ -1743,7 +1743,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise zero-downtime database migration baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise zero-downtime database migration baseline |
 
 ---
 

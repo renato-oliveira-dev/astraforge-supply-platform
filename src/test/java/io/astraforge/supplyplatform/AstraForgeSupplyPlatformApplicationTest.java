@@ -1,10 +1,10 @@
-package com.enterprise.orderplatform;
+package io.astraforge.supplyplatform;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EnterpriseOrderPlatformApplicationTest {
+class AstraForgeSupplyPlatformApplicationTest {
 
     @Test
     void testApplicationContextShouldLoad() {

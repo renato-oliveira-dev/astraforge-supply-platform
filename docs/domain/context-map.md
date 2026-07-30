@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Context Map |
 | Status | Draft |
 | Version | 0.1.0 |
@@ -14,7 +14,7 @@
 
 ## 1. Purpose
 
-This document defines the initial Context Map for Enterprise Order Platform.
+This document defines the initial Context Map for AstraForge Supply Platform.
 
 Its purpose is to describe:
 

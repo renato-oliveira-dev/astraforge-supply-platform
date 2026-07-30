@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Code Review, Refactoring, Technical Debt and Legacy Modernization Standard |
 | Status | Superseded |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Code Review, Refactoring, Technical Debt, Legacy Modernization |
 | Related Work Items | Java 21, Spring Boot 3, SonarQube, SAST, ArchUnit, JaCoCo |
 | Supersedes | None |
@@ -1207,7 +1207,7 @@ Security remediation MUST preserve legitimate values.
 Example:
 
 ```text
-M&M
+Forge & Field
 ```
 
 must not become:
@@ -2575,7 +2575,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise refactoring and legacy-modernization baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise refactoring and legacy-modernization baseline |
 
 ---
 

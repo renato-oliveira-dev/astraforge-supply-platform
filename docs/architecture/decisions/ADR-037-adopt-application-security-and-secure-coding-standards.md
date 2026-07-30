@@ -8,7 +8,7 @@
 | Title | Adopt Application Security and Secure Coding Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Application Security, Spring Security, OWASP, SAST, Secure Coding |
 | Related Work Items | Authentication, Authorization, JWT, Validation, SAST, SonarQube, Secrets |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform processes business-critical information through:
+The AstraForge Supply Platform processes business-critical information through:
 
 - REST APIs
 - SQS
@@ -486,18 +486,18 @@ Valid business data must not be generically corrupted to satisfy a security scan
 
 ---
 
-# 32. Example: M&M
+# 32. Example: Forge & Field
 
 If:
 
 ```text
-M&M
+Forge & Field
 ```
 
 is valid business data, the canonical domain value remains:
 
 ```text
-M&M
+Forge & Field
 ```
 
 It must not be globally transformed into:
@@ -516,7 +516,7 @@ Global HTML escaping can cause:
 
 ```text
 Input:
-M&M
+Forge & Field
 
 Backend:
 M&amp;M
@@ -1833,13 +1833,13 @@ Verify valid business strings are preserved by JSON APIs.
 For example:
 
 ```text
-M&M
+Forge & Field
 ```
 
 must remain:
 
 ```text
-M&M
+Forge & Field
 ```
 
 through normal API persistence/return flows unless the API contract explicitly defines otherwise.
@@ -2602,7 +2602,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial application security baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial application security baseline |
 
 ---
 
@@ -2647,7 +2647,7 @@ EVERYTHING ELSE
 For XSS:
 
 ```text
-M&M
+Forge & Field
  |
  v
 DOMAIN
@@ -2659,7 +2659,7 @@ DATABASE
 JSON API
  |
  v
-"M&M"
+"Forge & Field"
  |
  v
 FRONTEND HTML CONTEXT
@@ -2671,7 +2671,7 @@ HTML ENCODING
 not:
 
 ```text
-M&M
+Forge & Field
  |
  v
 BACKEND GENERIC ESCAPE

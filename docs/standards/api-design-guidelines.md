@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | API Design Guidelines |
 | Status | Approved |
 | Version | 1.0.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the API design standards adopted by the Enterprise Order Platform.
+This document defines the API design standards adopted by the AstraForge Supply Platform.
 
 It establishes conventions for:
 
@@ -2199,7 +2199,7 @@ The project must define whether OpenAPI is:
 - code-first
 - hybrid
 
-The Enterprise Order Platform adopts a hybrid approach:
+The AstraForge Supply Platform adopts a hybrid approach:
 
 - contract reviewed as an architectural artifact
 - runtime generated documentation validated against expectations

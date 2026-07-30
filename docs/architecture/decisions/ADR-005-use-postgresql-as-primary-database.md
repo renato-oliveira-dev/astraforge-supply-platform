@@ -8,7 +8,7 @@
 | Title | Use PostgreSQL as the Primary Database |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Data Architecture |
 | Related Work Items | Initial platform architecture |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform requires a transactional database capable of supporting complex business operations while providing strong consistency, reliability and operational maturity.
+The AstraForge Supply Platform requires a transactional database capable of supporting complex business operations while providing strong consistency, reliability and operational maturity.
 
 The platform stores information related to:
 
@@ -213,7 +213,7 @@ Disadvantages:
 
 # 6. Decision
 
-The Enterprise Order Platform adopts PostgreSQL as its primary transactional database.
+The AstraForge Supply Platform adopts PostgreSQL as its primary transactional database.
 
 PostgreSQL will be used for:
 
@@ -639,7 +639,7 @@ Rejected because aggregate consistency and transactional guarantees are core req
 - Hibernate Documentation
 - Flyway Documentation
 - Testcontainers PostgreSQL Module
-- Enterprise Order Platform Persistence Guidelines
+- AstraForge Supply Platform Persistence Guidelines
 
 ---
 
@@ -647,13 +647,13 @@ Rejected because aggregate consistency and transactional guarantees are core req
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved | Initial database architecture baseline |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved | Initial database architecture baseline |
 
 ---
 
 # 35. Decision Summary
 
-The Enterprise Order Platform adopts PostgreSQL as its primary transactional database.
+The AstraForge Supply Platform adopts PostgreSQL as its primary transactional database.
 
 PostgreSQL provides:
 

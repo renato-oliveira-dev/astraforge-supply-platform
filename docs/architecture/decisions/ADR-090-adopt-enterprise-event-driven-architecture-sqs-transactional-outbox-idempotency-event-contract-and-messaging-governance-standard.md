@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Event-Driven Architecture, SQS, Transactional Outbox, Idempotency, Event Contract and Messaging Governance Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Event-Driven Architecture, Messaging, AWS SQS, Transactional Outbox, Distributed Systems |
 | Related Domains | Cart, Orders, Customers, Products, Workflow |
 | Supersedes | ADR-009, ADR-030, ADR-057 |
@@ -3313,7 +3313,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise event-driven architecture and messaging governance baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise event-driven architecture and messaging governance baseline |
 
 ---
 

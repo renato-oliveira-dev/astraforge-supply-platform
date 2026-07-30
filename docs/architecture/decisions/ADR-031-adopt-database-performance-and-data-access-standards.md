@@ -8,7 +8,7 @@
 | Title | Adopt Database Performance and Data Access Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | PostgreSQL, Spring Data JPA, Hibernate, Transactions, Performance |
 | Related Work Items | JPA, Hibernate, SQL, Indexing, Pagination, Locking, HikariCP, Performance |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform uses PostgreSQL as its primary transactional database and Spring Data JPA/Hibernate as its principal Java persistence abstraction.
+The AstraForge Supply Platform uses PostgreSQL as its primary transactional database and Spring Data JPA/Hibernate as its principal Java persistence abstraction.
 
 The application stack includes:
 
@@ -136,7 +136,7 @@ Primary drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts database access based on:
+The AstraForge Supply Platform adopts database access based on:
 
 ```text
 INTENTIONAL QUERY
@@ -2973,13 +2973,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial database performance and data-access baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial database performance and data-access baseline |
 
 ---
 
 # 302. Decision Summary
 
-The Enterprise Order Platform treats database performance as an application architecture responsibility.
+The AstraForge Supply Platform treats database performance as an application architecture responsibility.
 
 The primary execution model is:
 

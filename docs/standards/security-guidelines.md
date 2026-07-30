@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Security Guidelines |
 | Status | Approved |
 | Version | 1.0.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the security standards adopted by the Enterprise Order Platform.
+This document defines the security standards adopted by the AstraForge Supply Platform.
 
 It establishes requirements for:
 

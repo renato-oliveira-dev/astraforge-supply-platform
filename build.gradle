@@ -3,11 +3,12 @@ plugins {
     id 'jacoco'
     id 'org.springframework.boot' version '4.1.0'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'io.astraforge.repository-governance'
 }
 
-group = 'com.enterprise.orderplatform'
+group = 'io.astraforge.supplyplatform'
 version = '0.1.0-SNAPSHOT'
-description = 'Enterprise-grade B2B order management platform'
+description = 'Fictional industrial procurement and supply orchestration platform'
 
 java {
     toolchain {
@@ -47,7 +48,7 @@ jacoco {
 }
 
 def jacocoCoverageExclusions = [
-        '**/EnterpriseOrderPlatformApplication.class',
+        '**/AstraForgeSupplyPlatformApplication.class',
         '**/package-info.class'
 ]
 
@@ -90,5 +91,5 @@ check {
 }
 
 tasks.named('bootJar') {
-    archiveFileName = 'enterprise-order-platform.jar'
+    archiveFileName = 'astraforge-supply-platform.jar'
 }

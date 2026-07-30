@@ -8,7 +8,7 @@
 | Title | Adopt Software Supply Chain Security |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Software Supply Chain, CI/CD, Dependencies, Containers and Artifact Security |
 | Related Work Items | SBOM, SLSA, Provenance, Artifact Signing, Vulnerability Scanning, Secret Scanning, Container Security |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform is built and deployed through automated software delivery pipelines.
+The AstraForge Supply Platform is built and deployed through automated software delivery pipelines.
 
 The platform includes:
 
@@ -154,7 +154,7 @@ Primary decision drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts a defense-in-depth Software Supply Chain Security model based on:
+The AstraForge Supply Platform adopts a defense-in-depth Software Supply Chain Security model based on:
 
 ```text
 Protected Source
@@ -3409,13 +3409,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial software supply-chain security baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial software supply-chain security baseline |
 
 ---
 
 # 292. Decision Summary
 
-The Enterprise Order Platform adopts a secure software supply-chain lifecycle:
+The AstraForge Supply Platform adopts a secure software supply-chain lifecycle:
 
 ```text
 SOURCE

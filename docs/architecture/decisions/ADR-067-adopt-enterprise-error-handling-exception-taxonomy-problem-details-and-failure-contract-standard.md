@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Error Handling, Exception Taxonomy, Problem Details and Failure Contract Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Error Handling, Exceptions, REST, Problem Details, Integration Failures |
 | Related Work Items | Spring Boot, RFC 9457, WebClient, RestClient, SQS, SQS, Resilience4j |
 | Supersedes | None |
@@ -966,18 +966,18 @@ HTML escaping MUST NOT be applied indiscriminately to ordinary JSON API business
 
 ---
 
-# 76. M&M Example
+# 76. Forge & Field Example
 
 A legitimate business value:
 
 ```text
-M&M
+Forge & Field
 ```
 
 MUST remain:
 
 ```text
-M&M
+Forge & Field
 ```
 
 and MUST NOT become:
@@ -2418,7 +2418,7 @@ The following are prohibited or strongly discouraged:
 - losing exception causes during translation
 - logging tokens in remote errors
 - globally escaping legitimate API values to satisfy SAST
-- using generic HTML escaping that turns `M&M` into `M&amp;M`
+- using generic HTML escaping that turns `Forge & Field` into `M&amp;M`
 - unlimited remote error messages
 - unlimited `last_error` persistence
 - retrying poison messages forever
@@ -2682,7 +2682,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise exception taxonomy and failure-contract baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise exception taxonomy and failure-contract baseline |
 
 ---
 
@@ -2853,13 +2853,13 @@ SAFE DIAGNOSTIC / CONTRACT
 Valid business data remains intact:
 
 ```text
-M&M
+Forge & Field
 ```
 
 stays:
 
 ```text
-M&M
+Forge & Field
 ```
 
 and does not become:

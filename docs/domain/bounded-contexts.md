@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Bounded Contexts |
 | Status | Draft |
 | Version | 0.1.0 |
@@ -14,7 +14,7 @@
 
 ## 1. Purpose
 
-This document defines the initial bounded contexts of Enterprise Order Platform.
+This document defines the initial bounded contexts of AstraForge Supply Platform.
 
 Its purpose is to establish:
 
@@ -39,7 +39,7 @@ Detailed aggregates, entities, value objects, domain services, events, commands,
 
 ## 2. Architectural Context
 
-Enterprise Order Platform will initially be implemented as a modular monolith.
+AstraForge Supply Platform will initially be implemented as a modular monolith.
 
 Each bounded context will be represented as an explicit application module with:
 
@@ -331,7 +331,7 @@ The Order aggregate is expected to protect consistency for:
 
 Generic or Supporting Domain.
 
-The final classification depends on whether Enterprise Order Platform owns Customer master data or only integrates with an external Customer system.
+The final classification depends on whether AstraForge Supply Platform owns Customer master data or only integrates with an external Customer system.
 
 ### 7.2 Responsibilities
 
@@ -1797,8 +1797,8 @@ Microservice extraction must not be performed only for portfolio appearance or a
 
 The following questions require future decisions:
 
-1. Does Enterprise Order Platform own Customer master data?
-2. Does Enterprise Order Platform own Product Catalog data?
+1. Does AstraForge Supply Platform own Customer master data?
+2. Does AstraForge Supply Platform own Product Catalog data?
 3. Is Pricing a separate bounded context in the first implementation?
 4. Is Pricing called during every Draft modification or only during explicit recalculation?
 5. Is Approval Process an independent aggregate?

@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Service-to-Service Communication, Service Discovery, Internal APIs and Zero-Trust Networking Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Microservices, Internal APIs, Networking, Security, Resilience |
 | Related Work Items | REST, WebClient, OAuth2, JWT, Kubernetes, NetworkPolicy, Circuit Breaker |
 | Supersedes | None |
@@ -2513,7 +2513,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise service communication and zero-trust networking baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise service communication and zero-trust networking baseline |
 
 ---
 

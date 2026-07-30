@@ -8,7 +8,7 @@
 | Title | Adopt Business Continuity, Disaster Recovery and Regional Resilience Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Business Continuity, Disaster Recovery, Regional Resilience, Backup, Restore |
 | Related Work Items | RTO, RPO, Multi-AZ, Multi-Region, PostgreSQL PITR, DR Drills, Chaos Engineering |
 | Supersedes | ADR-028 |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform operates business-critical distributed services whose availability depends on multiple layers:
+The AstraForge Supply Platform operates business-critical distributed services whose availability depends on multiple layers:
 
 ```text
                    BUSINESS CAPABILITY
@@ -2421,7 +2421,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial business continuity and disaster recovery baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial business continuity and disaster recovery baseline |
 
 ---
 

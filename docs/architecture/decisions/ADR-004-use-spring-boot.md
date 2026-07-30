@@ -8,7 +8,7 @@
 | Title | Use Spring Boot |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Application Framework |
 | Related Work Items | Initial platform architecture |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform requires a production-ready application framework for implementing backend services using Java 21.
+The AstraForge Supply Platform requires a production-ready application framework for implementing backend services using Java 21.
 
 The platform must support:
 
@@ -253,7 +253,7 @@ The platform could use Java standard APIs and selected libraries without a compr
 
 # 6. Decision
 
-The Enterprise Order Platform will use Spring Boot as its standard application framework.
+The AstraForge Supply Platform will use Spring Boot as its standard application framework.
 
 Spring Boot will provide capabilities for:
 
@@ -1885,10 +1885,10 @@ This ADR is related to:
 - Spring for Amazon SQS documentation
 - Spring Boot Actuator documentation
 - Micrometer documentation
-- Enterprise Order Platform Spring Boot guidelines
-- Enterprise Order Platform coding standards
-- Enterprise Order Platform testing standards
-- Enterprise Order Platform security guidelines
+- AstraForge Supply Platform Spring Boot guidelines
+- AstraForge Supply Platform coding standards
+- AstraForge Supply Platform testing standards
+- AstraForge Supply Platform security guidelines
 - ADR-001: Adopt Clean Architecture
 - ADR-002: Adopt Domain-Driven Design
 - ADR-003: Use Java 21
@@ -1899,13 +1899,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved | Initial application framework baseline |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved | Initial application framework baseline |
 
 ---
 
 # 84. Decision Summary
 
-The Enterprise Order Platform adopts Spring Boot as its standard application framework.
+The AstraForge Supply Platform adopts Spring Boot as its standard application framework.
 
 Spring Boot will provide:
 

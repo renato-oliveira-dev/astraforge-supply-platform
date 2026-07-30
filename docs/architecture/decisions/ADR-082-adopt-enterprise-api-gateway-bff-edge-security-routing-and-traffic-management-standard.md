@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise API Gateway, BFF, Edge Security, Routing and Traffic Management Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | API Gateway, BFF, Edge Security, Routing, Traffic Management |
 | Related Work Items | OAuth2, JWT, Keycloak, Kubernetes, Ingress, WAF, Rate Limiting |
 | Supersedes | ADR-073 |
@@ -2668,7 +2668,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise API edge and traffic-management baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise API edge and traffic-management baseline |
 
 ---
 

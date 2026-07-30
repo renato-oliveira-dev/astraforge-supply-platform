@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Redis Caching, Distributed Cache and Data Consistency Standard |
 | Status | Superseded |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Redis, Caching, Distributed Systems, Performance, Resilience |
 | Related Work Items | Redis, ResilientCache, Cache-Aside, TTL, Invalidation, Fallback Cache |
 | Supersedes | ADR-032 |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-Caching is a performance optimization and resilience mechanism used throughout the Enterprise Order Platform.
+Caching is a performance optimization and resilience mechanism used throughout the AstraForge Supply Platform.
 
 Typical cacheable data includes:
 
@@ -2305,7 +2305,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise Redis and distributed caching baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise Redis and distributed caching baseline |
 
 ---
 

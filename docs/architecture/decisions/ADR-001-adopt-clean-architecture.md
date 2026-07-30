@@ -8,7 +8,7 @@
 | Title | Adopt Clean Architecture |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Software Architecture |
 | Related Work Items | Initial platform architecture |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform is designed as a long-lived backend platform responsible for order creation, validation, approval, cancellation, persistence and integration with external systems.
+The AstraForge Supply Platform is designed as a long-lived backend platform responsible for order creation, validation, approval, cancellation, persistence and integration with external systems.
 
 The platform must support:
 
@@ -266,7 +266,7 @@ The platform could rely on conventions without adopting a formal architecture.
 
 # 6. Decision
 
-The Enterprise Order Platform will adopt Clean Architecture as its primary application architecture.
+The AstraForge Supply Platform will adopt Clean Architecture as its primary application architecture.
 
 The architecture will define the following principal layers:
 
@@ -1147,9 +1147,9 @@ This ADR is related to future decisions including:
 - Alistair Cockburn, Hexagonal Architecture
 - Eric Evans, *Domain-Driven Design*
 - Vaughn Vernon, *Implementing Domain-Driven Design*
-- Enterprise Order Platform architecture documentation
-- Enterprise Order Platform package structure standard
-- Enterprise Order Platform code review guidelines
+- AstraForge Supply Platform architecture documentation
+- AstraForge Supply Platform package structure standard
+- AstraForge Supply Platform code review guidelines
 
 ---
 
@@ -1157,13 +1157,13 @@ This ADR is related to future decisions including:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved | Initial architectural baseline |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved | Initial architectural baseline |
 
 ---
 
 # 38. Decision Summary
 
-The Enterprise Order Platform adopts Clean Architecture.
+The AstraForge Supply Platform adopts Clean Architecture.
 
 The system will be organized around:
 

@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Non-Functional Requirements |
 | Status | Draft |
 | Version | 0.1.0 |
@@ -12,7 +12,7 @@
 
 ## 1. Purpose
 
-This document defines the initial non-functional requirements for Enterprise Order Platform.
+This document defines the initial non-functional requirements for AstraForge Supply Platform.
 
 These requirements establish measurable quality attributes for:
 

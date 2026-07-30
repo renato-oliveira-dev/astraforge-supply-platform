@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Notification, Email, SMS, Push and External Communication Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Notifications, Email, SMS, Push, Messaging, External Communication |
 | Related Work Items | SQS, SQS, Transactional Outbox, Templates, i18n, Notifications Service |
 | Supersedes | None |
@@ -1124,7 +1124,7 @@ Security encoding MUST occur at the appropriate output boundary.
 Domain values such as:
 
 ```text
-M&M
+Forge & Field
 ```
 
 MUST NOT be permanently mutated to:
@@ -1888,12 +1888,12 @@ Subject
 
 ---
 
-# 187. M&M Test
+# 187. Forge & Field Test
 
 Values containing characters such as:
 
 ```text
-M&M
+Forge & Field
 ```
 
 SHOULD verify domain data remains unchanged while rendered HTML is safely encoded at the presentation boundary.
@@ -2466,7 +2466,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise notification and external communication baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise notification and external communication baseline |
 
 ---
 
@@ -2577,7 +2577,7 @@ Template processing becomes:
 ```text
 DOMAIN VALUE
    |
-   |  M&M
+   |  Forge & Field
    v
 TEMPLATE RENDERER
    |
@@ -2730,7 +2730,7 @@ at the output boundary.
 Do not corrupt domain data
 to make HTML safe.
 
-Keep M&M as M&M
+Keep Forge & Field as Forge & Field
 in the business model.
 
 Minimize PII.

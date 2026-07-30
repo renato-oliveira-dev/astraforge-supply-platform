@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Caching, Redis, Local Cache, Cache Invalidation and Resilient Fallback Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Caching, Redis, Local Cache, Performance, Resilience |
 | Related Work Items | Redis, Caffeine, Spring Cache, ResilientCache, Kubernetes, PostgreSQL |
 | Supersedes | ADR-059 |
@@ -2479,7 +2479,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise caching and resilient Redis baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise caching and resilient Redis baseline |
 
 ---
 

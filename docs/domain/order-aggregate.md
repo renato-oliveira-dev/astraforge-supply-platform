@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Order Aggregate |
 | Status | Draft |
 | Version | 0.1.0 |
@@ -14,7 +14,7 @@
 
 ## 1. Purpose
 
-This document defines the initial tactical Domain-Driven Design model for the Order aggregate in Enterprise Order Platform.
+This document defines the initial tactical Domain-Driven Design model for the Order aggregate in AstraForge Supply Platform.
 
 Its purpose is to establish:
 

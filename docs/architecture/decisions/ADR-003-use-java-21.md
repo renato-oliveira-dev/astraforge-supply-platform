@@ -8,7 +8,7 @@
 | Title | Use Java 21 |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Application Platform |
 | Related Work Items | Initial platform architecture |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform requires a stable, modern and long-term supported runtime for implementing business-critical backend services.
+The AstraForge Supply Platform requires a stable, modern and long-term supported runtime for implementing business-critical backend services.
 
 The platform is expected to support:
 
@@ -239,7 +239,7 @@ The platform could adopt Kotlin as the primary JVM language.
 
 # 6. Decision
 
-The Enterprise Order Platform will use Java 21 as the mandatory Java version.
+The AstraForge Supply Platform will use Java 21 as the mandatory Java version.
 
 Java 21 will be used for:
 
@@ -1619,9 +1619,9 @@ This ADR is related to:
 - Java Platform Module System documentation
 - OpenJDK documentation
 - Gradle Java Toolchains documentation
-- Enterprise Order Platform Java guidelines
-- Enterprise Order Platform coding standards
-- Enterprise Order Platform testing standards
+- AstraForge Supply Platform Java guidelines
+- AstraForge Supply Platform coding standards
+- AstraForge Supply Platform testing standards
 - ADR-001: Adopt Clean Architecture
 - ADR-002: Adopt Domain-Driven Design
 
@@ -1631,13 +1631,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved | Initial Java platform baseline |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved | Initial Java platform baseline |
 
 ---
 
 # 72. Decision Summary
 
-The Enterprise Order Platform adopts Java 21 as its mandatory language and runtime baseline.
+The AstraForge Supply Platform adopts Java 21 as its mandatory language and runtime baseline.
 
 Java 21 will be used for:
 

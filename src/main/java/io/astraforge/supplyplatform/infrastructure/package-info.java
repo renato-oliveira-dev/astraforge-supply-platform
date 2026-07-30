@@ -1,4 +1,4 @@
 /**
  * Inbound and outbound infrastructure adapters.
  */
-package com.enterprise.orderplatform.infrastructure;
+package io.astraforge.supplyplatform.infrastructure;

@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Test Architecture, Test Data, Mocking, Testcontainers and Coverage Governance Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Testing, Quality Engineering, Coverage, Testcontainers, Mockito |
 | Related Work Items | Java 21, Spring Boot, JUnit 5, AssertJ, Mockito, JaCoCo, Testcontainers |
 | Supersedes | None |
@@ -2188,7 +2188,7 @@ without corrupting legitimate business values.
 A regression test SHOULD ensure legitimate values such as:
 
 ```text
-M&M
+Forge & Field
 ```
 
 remain unchanged when no rendering-context escaping is required.
@@ -2692,7 +2692,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise test architecture and coverage-governance baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise test architecture and coverage-governance baseline |
 
 ---
 

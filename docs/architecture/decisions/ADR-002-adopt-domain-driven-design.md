@@ -8,7 +8,7 @@
 | Title | Adopt Domain-Driven Design |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Domain Architecture |
 | Related Work Items | Initial platform architecture |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform manages business processes related to the complete order lifecycle.
+The AstraForge Supply Platform manages business processes related to the complete order lifecycle.
 
 These processes include:
 
@@ -292,7 +292,7 @@ Teams could use business terminology and models without adopting formal DDD rule
 
 # 6. Decision
 
-The Enterprise Order Platform will adopt Domain-Driven Design as the primary approach for modeling business behavior and organizing business capabilities.
+The AstraForge Supply Platform will adopt Domain-Driven Design as the primary approach for modeling business behavior and organizing business capabilities.
 
 The platform will apply:
 
@@ -1148,7 +1148,7 @@ These belong to supporting or infrastructure concerns.
 
 The core domain is the business capability that provides the platform's primary value.
 
-For the Enterprise Order Platform, the core domain includes:
+For the AstraForge Supply Platform, the core domain includes:
 
 - order lifecycle
 - order rules
@@ -1595,10 +1595,10 @@ This ADR is related to:
 - Vaughn Vernon, *Domain-Driven Design Distilled*
 - Alberto Brandolini, Event Storming
 - Martin Fowler, Domain Model
-- Enterprise Order Platform domain overview
-- Enterprise Order Platform ubiquitous language
-- Enterprise Order Platform bounded contexts
-- Enterprise Order Platform context map
+- AstraForge Supply Platform domain overview
+- AstraForge Supply Platform ubiquitous language
+- AstraForge Supply Platform bounded contexts
+- AstraForge Supply Platform context map
 - ADR-001: Adopt Clean Architecture
 
 ---
@@ -1607,13 +1607,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved | Initial domain architecture baseline |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved | Initial domain architecture baseline |
 
 ---
 
 # 46. Decision Summary
 
-The Enterprise Order Platform adopts Domain-Driven Design as the primary method for modeling complex business behavior.
+The AstraForge Supply Platform adopts Domain-Driven Design as the primary method for modeling complex business behavior.
 
 The platform will use:
 
@@ -1655,4 +1655,4 @@ Business behavior must remain explicit, testable and independent from infrastruc
 
 Tactical DDD patterns will be applied according to actual domain complexity rather than as mandatory ceremony.
 
-This decision establishes the business-modeling foundation for the Enterprise Order Platform.
+This decision establishes the business-modeling foundation for the AstraForge Supply Platform.

@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Architecture Baseline and Architecture Governance Operating Model |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Enterprise Architecture, Governance, Compliance, Production Readiness |
 | Related Work Items | Architecture Baseline, Fitness Functions, Service Scorecard, Production Readiness |
 | Supersedes | None |
@@ -2882,7 +2882,7 @@ Particularly relevant decisions include:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial consolidated Enterprise Architecture Baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial consolidated Enterprise Architecture Baseline |
 
 ---
 

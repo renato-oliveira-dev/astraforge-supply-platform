@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Saga Pattern |
 | Status | Draft |
 | Version | 0.1.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines how distributed business transactions are coordinated within the Enterprise Order Platform.
+This document defines how distributed business transactions are coordinated within the AstraForge Supply Platform.
 
 The platform adopts the Saga Pattern to provide:
 
@@ -627,7 +627,7 @@ The platform adopts:
 
 # 28. Decision Summary
 
-The Enterprise Order Platform uses:
+The AstraForge Supply Platform uses:
 
 - Saga Pattern
 - Choreography

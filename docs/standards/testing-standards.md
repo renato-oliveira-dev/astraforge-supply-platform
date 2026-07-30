@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Testing Standards |
 | Status | Approved |
 | Version | 1.0.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the testing standards adopted by the Enterprise Order Platform.
+This document defines the testing standards adopted by the AstraForge Supply Platform.
 
 It establishes practices for:
 
@@ -1826,7 +1826,7 @@ Add `.as("...")` to AssertJ assertions; ArchUnit rules should use clear rule des
 static final ArchRule packagesShouldBeFreeOfCycles =
         slices()
                 .matching(
-                        "com.enterprise.orderplatform.(*).."
+                        "io.astraforge.supplyplatform.(*).."
                 )
                 .should()
                 .beFreeOfCycles();

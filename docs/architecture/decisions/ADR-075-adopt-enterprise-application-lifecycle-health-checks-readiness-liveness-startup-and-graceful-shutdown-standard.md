@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Application Lifecycle, Health Checks, Readiness, Liveness, Startup and Graceful Shutdown Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Application Lifecycle, Health Checks, Kubernetes Probes, Graceful Shutdown |
 | Related Work Items | Spring Boot Actuator, Kubernetes, Messaging, Outbox, Batch Jobs |
 | Supersedes | None |
@@ -2184,7 +2184,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial application lifecycle and Kubernetes health-probe baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial application lifecycle and Kubernetes health-probe baseline |
 
 ---
 

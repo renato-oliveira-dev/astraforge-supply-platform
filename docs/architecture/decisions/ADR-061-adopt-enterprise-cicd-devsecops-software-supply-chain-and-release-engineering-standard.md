@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise CI/CD, DevSecOps, Software Supply Chain and Release Engineering Standard |
 | Status | Accepted |
 | Date | 2026-07-25 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | CI/CD, DevSecOps, Supply Chain Security, Release Engineering |
 | Related Work Items | Gradle, SonarQube, JaCoCo, SAST, SCA, SBOM, Containers, Kubernetes, Flyway |
 | Supersedes | None |
@@ -2491,7 +2491,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-25 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise CI/CD, DevSecOps and release-engineering baseline |
+| 2026-07-25 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise CI/CD, DevSecOps and release-engineering baseline |
 
 ---
 

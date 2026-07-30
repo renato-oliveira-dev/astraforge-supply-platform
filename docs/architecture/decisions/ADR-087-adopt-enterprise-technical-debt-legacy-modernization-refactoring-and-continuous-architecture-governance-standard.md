@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Technical Debt, Legacy Modernization, Refactoring and Continuous Architecture Governance Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Architecture, Modernization, Refactoring, Technical Debt, Java |
 | Related Work Items | Java 21, Spring Boot, SonarQube, SAST, JaCoCo, Microservices, Legacy Modernization |
 | Supersedes | ADR-047, ADR-069 |
@@ -3076,7 +3076,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial technical debt, modernization and continuous architecture governance baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial technical debt, modernization and continuous architecture governance baseline |
 
 ---
 

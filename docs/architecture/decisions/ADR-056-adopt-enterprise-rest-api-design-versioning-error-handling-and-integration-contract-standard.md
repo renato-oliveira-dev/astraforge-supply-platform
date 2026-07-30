@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise REST API Design, Versioning, Error Handling and Integration Contract Standard |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | REST, HTTP, Spring Boot, OpenAPI, Integration Contracts |
 | Related Work Items | REST APIs, OpenAPI, Error Handling, Versioning, Contract Testing |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-REST APIs are one of the primary integration boundaries of the Enterprise Order Platform.
+REST APIs are one of the primary integration boundaries of the AstraForge Supply Platform.
 
 They connect:
 
@@ -2709,7 +2709,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise REST API and integration contract baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise REST API and integration contract baseline |
 
 ---
 

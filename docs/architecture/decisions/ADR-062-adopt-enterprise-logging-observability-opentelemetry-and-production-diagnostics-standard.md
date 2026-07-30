@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Logging, Observability, OpenTelemetry and Production Diagnostics Standard |
 | Status | Accepted |
 | Date | 2026-07-25 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Logging, Metrics, Tracing, OpenTelemetry, Production Diagnostics |
 | Related Work Items | SLF4J, Logback, Micrometer, OpenTelemetry, Actuator, Circuit Breaker, Kubernetes |
 | Supersedes | None |
@@ -2441,7 +2441,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-25 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise observability and production-diagnostics baseline |
+| 2026-07-25 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise observability and production-diagnostics baseline |
 
 ---
 

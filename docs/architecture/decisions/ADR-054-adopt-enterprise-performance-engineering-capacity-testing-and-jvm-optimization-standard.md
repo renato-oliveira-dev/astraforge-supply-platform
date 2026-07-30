@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Performance Engineering, Capacity Testing and JVM Optimization Standard |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Performance, JVM, Capacity, PostgreSQL, SQS, Redis, Java 21 |
 | Related Work Items | Performance Engineering, Virtual Threads, Database Optimization, Capacity Planning |
 | Supersedes | None |
@@ -2493,7 +2493,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise performance engineering and capacity baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise performance engineering and capacity baseline |
 
 ---
 

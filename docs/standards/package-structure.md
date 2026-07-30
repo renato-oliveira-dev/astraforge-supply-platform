@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Package Structure |
 | Status | Approved |
 | Version | 1.0.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the package organization adopted by the Enterprise Order Platform.
+This document defines the package organization adopted by the AstraForge Supply Platform.
 
 The package structure is based on:
 
@@ -59,7 +59,7 @@ The package structure should communicate the business domain.
 # 3. High-Level Structure
 
 ```
-com.enterprise.orderplatform
+io.astraforge.supplyplatform
 
 ├── application
 ├── domain

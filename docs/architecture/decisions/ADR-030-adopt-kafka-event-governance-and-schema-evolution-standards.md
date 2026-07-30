@@ -8,7 +8,7 @@
 | Title | Adopt Kafka Event Governance and Schema Evolution Standards |
 | Status | Superseded |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Apache Kafka, Event-Driven Architecture, Schema Governance, Integration |
 | Related Work Items | Kafka, Outbox, Event Contracts, Idempotency, Retry, DLQ, Replay, Schema Evolution |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform uses Apache Kafka for asynchronous integration between independently deployable services.
+The AstraForge Supply Platform uses Apache Kafka for asynchronous integration between independently deployable services.
 
 The architecture includes:
 
@@ -122,7 +122,7 @@ Primary drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts governed event-driven integration based on:
+The AstraForge Supply Platform adopts governed event-driven integration based on:
 
 ```text
 BUSINESS EVENT
@@ -3351,13 +3351,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial Kafka governance baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial Kafka governance baseline |
 
 ---
 
 # 331. Decision Summary
 
-The Enterprise Order Platform treats Kafka as a governed integration platform:
+The AstraForge Supply Platform treats Kafka as a governed integration platform:
 
 ```text
 DOMAIN TRANSACTION

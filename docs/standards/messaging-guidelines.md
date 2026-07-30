@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Messaging Guidelines |
 | Status | Active |
 | Version | 1.0.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-These guidelines define the implementation standard for asynchronous messaging in the Enterprise Order Platform.
+These guidelines define the implementation standard for asynchronous messaging in the AstraForge Supply Platform.
 
 The current baseline is **Amazon SQS**. Kafka-specific guidance is historical and MUST NOT be used for new platform implementation unless a new accepted ADR explicitly reintroduces Kafka for a defined use case.
 

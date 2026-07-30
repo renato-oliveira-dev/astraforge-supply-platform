@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise PostgreSQL Persistence, Transaction Management and Database Engineering Standard |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | PostgreSQL, JPA, Hibernate, Transactions, Flyway, Persistence Engineering |
 | Related Work Items | Persistence, Transactions, Database Performance, Schema Evolution, Flyway |
 | Supersedes | None |
@@ -2789,7 +2789,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial PostgreSQL persistence and database engineering baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial PostgreSQL persistence and database engineering baseline |
 
 ---
 

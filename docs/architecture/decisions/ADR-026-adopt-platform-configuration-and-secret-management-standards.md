@@ -8,7 +8,7 @@
 | Title | Adopt Platform Configuration and Secret Management Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Configuration Management, Secret Management, Spring Boot, Kubernetes, GitOps |
 | Related Work Items | Externalized Configuration, ConfigMaps, Secrets, Secret Manager, Workload Identity, Credential Rotation, GitOps |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform consists of distributed Java 21 and Spring Boot services deployed to Kubernetes.
+The AstraForge Supply Platform consists of distributed Java 21 and Spring Boot services deployed to Kubernetes.
 
 Application behavior depends on configuration such as:
 
@@ -128,7 +128,7 @@ Primary decision drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts an externalized, typed, validated and auditable configuration model based on:
+The AstraForge Supply Platform adopts an externalized, typed, validated and auditable configuration model based on:
 
 ```text
 Immutable Application Artifact
@@ -2970,13 +2970,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial configuration and secret-management baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial configuration and secret-management baseline |
 
 ---
 
 # 281. Decision Summary
 
-The Enterprise Order Platform adopts the following separation:
+The AstraForge Supply Platform adopts the following separation:
 
 ```text
 APPLICATION ARTIFACT

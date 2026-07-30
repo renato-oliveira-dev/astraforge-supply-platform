@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise API Performance, Data Retrieval, Pagination, Filtering, Sorting and Bulk Processing Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | API Performance, Queries, Pagination, Filtering, Sorting, Bulk Processing |
 | Related Work Items | Java 21, Spring Boot, Spring Data JPA, Hibernate, PostgreSQL, REST APIs |
 | Supersedes | None |
@@ -2367,7 +2367,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise API data retrieval and bulk-processing baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise API data retrieval and bulk-processing baseline |
 
 ---
 

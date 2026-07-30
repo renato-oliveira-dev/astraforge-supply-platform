@@ -8,7 +8,7 @@
 | Title | Adopt AI-Assisted Software Engineering and Responsible AI Development Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Generative AI, AI-Assisted Engineering, AI Agents, Responsible AI |
 | Related Work Items | AI Coding Assistants, Secure Coding, AI Agents, Code Review, SDLC Governance |
 | Supersedes | None |
@@ -698,7 +698,7 @@ AI must not silently alter valid business values to satisfy generic sanitization
 Example:
 
 ```text
-M&M
+Forge & Field
 ```
 
 must not be transformed into:
@@ -2364,7 +2364,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial AI-assisted engineering and responsible AI development baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial AI-assisted engineering and responsible AI development baseline |
 
 ---
 

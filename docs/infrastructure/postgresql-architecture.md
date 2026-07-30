@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | PostgreSQL Architecture |
 | Status | Draft |
 | Version | 0.1.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the persistence architecture adopted by the Enterprise Order Platform.
+This document defines the persistence architecture adopted by the AstraForge Supply Platform.
 
 It establishes:
 

@@ -8,7 +8,7 @@
 | Title | Adopt API Design, REST Contract and Compatibility Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | REST, HTTP, DTO, OpenAPI, Validation, Pagination, Compatibility |
 | Related Work Items | REST APIs, OpenAPI, DTOs, Validation, Pagination, Sorting, Error Handling |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform exposes APIs consumed by:
+The AstraForge Supply Platform exposes APIs consumed by:
 
 - web applications
 - mobile applications
@@ -105,7 +105,7 @@ Primary drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts resource-oriented REST APIs with explicit transport contracts.
+The AstraForge Supply Platform adopts resource-oriented REST APIs with explicit transport contracts.
 
 The canonical model is:
 
@@ -2640,7 +2640,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial REST API and compatibility baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial REST API and compatibility baseline |
 
 ---
 

@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Naming Conventions |
 | Status | Approved |
 | Version | 1.0.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the naming conventions adopted by the Enterprise Order Platform.
+This document defines the naming conventions adopted by the AstraForge Supply Platform.
 
 The objective is to establish a consistent vocabulary across:
 
@@ -224,21 +224,21 @@ Package names must:
 Good:
 
 ```text
-com.enterprise.orderplatform.domain.order
+io.astraforge.supplyplatform.domain.order
 
-com.enterprise.orderplatform.application.approval
+io.astraforge.supplyplatform.application.approval
 
-com.enterprise.orderplatform.infrastructure.persistence.order
+io.astraforge.supplyplatform.infrastructure.persistence.order
 ```
 
 Avoid:
 
 ```text
-com.enterprise.orderplatform.domain.Order
+io.astraforge.supplyplatform.domain.Order
 
-com.enterprise.orderplatform.application.order_services
+io.astraforge.supplyplatform.application.order_services
 
-com.enterprise.orderplatform.misc
+io.astraforge.supplyplatform.misc
 ```
 
 ---
@@ -2191,7 +2191,7 @@ Docker image names use lowercase kebab-case.
 Examples:
 
 ```text
-enterprise-order-platform
+astraforge-supply-platform
 
 order-service
 
@@ -2249,7 +2249,7 @@ app.kubernetes.io/name: order-service
 app.kubernetes.io/instance: order-service-prod
 app.kubernetes.io/version: 1.0.0
 app.kubernetes.io/component: api
-app.kubernetes.io/part-of: enterprise-order-platform
+app.kubernetes.io/part-of: astraforge-supply-platform
 app.kubernetes.io/managed-by: helm
 ```
 

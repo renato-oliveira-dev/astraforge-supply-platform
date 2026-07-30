@@ -8,7 +8,7 @@
 | Title | Adopt API Security Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | API Security, Authentication, Authorization and Application Security |
 | Related Work Items | OAuth 2.0, OpenID Connect, JWT, Keycloak, Spring Security, OWASP, SAST, DAST |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform exposes REST APIs and asynchronous integration capabilities across independently deployable services.
+The AstraForge Supply Platform exposes REST APIs and asynchronous integration capabilities across independently deployable services.
 
 The platform includes:
 
@@ -127,7 +127,7 @@ Primary decision drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts a defense-in-depth API security model based on:
+The AstraForge Supply Platform adopts a defense-in-depth API security model based on:
 
 ```text
 OAuth 2.0
@@ -936,7 +936,7 @@ Where a bounded set of values is expected, allowlist validation is preferred.
 Example:
 
 ```text
-segment ∈ {AUTO, MOTO, M&M}
+segment ∈ {AUTO, MOTO, Forge & Field}
 ```
 
 rather than accepting arbitrary strings and attempting to sanitize them later.
@@ -976,7 +976,7 @@ Security controls must not corrupt legitimate business data.
 For example:
 
 ```text
-M&M
+Forge & Field
 ```
 
 must not become:
@@ -3283,7 +3283,7 @@ The following are prohibited:
 - returning stack traces to clients
 - exposing downstream error payloads directly
 - using global HTML escaping as generic API security
-- corrupting legitimate business data such as `M&M`
+- corrupting legitimate business data such as `Forge & Field`
 - assuming SAST alone proves security
 - suppressing security findings without justification
 - allowing unlimited request or collection sizes
@@ -3617,7 +3617,7 @@ This ADR is related to:
 - Kubernetes Security Documentation
 - Amazon SQS Security Documentation
 - PostgreSQL Security Documentation
-- Enterprise Order Platform Security Standards
+- AstraForge Supply Platform Security Standards
 - ADR-018: Version Integration Event Contracts
 - ADR-019: Adopt Structured Logging
 - ADR-021: Adopt Zero-Downtime Deployment Practices
@@ -3629,13 +3629,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial API security architecture baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial API security architecture baseline |
 
 ---
 
 # 303. Decision Summary
 
-The Enterprise Order Platform adopts defense-in-depth API security based on:
+The AstraForge Supply Platform adopts defense-in-depth API security based on:
 
 ```text
 OAuth 2.0
@@ -3753,7 +3753,7 @@ or perform every operation.
 Security controls must preserve legitimate business information. Context-specific security remediation is mandatory; indiscriminate transformations that corrupt values such as:
 
 ```text
-M&M
+Forge & Field
 ```
 
 are prohibited.
@@ -3780,4 +3780,4 @@ Automated Verification
 Auditable Security Decisions
 ```
 
-as the security foundation for all Enterprise Order Platform APIs.
+as the security foundation for all AstraForge Supply Platform APIs.

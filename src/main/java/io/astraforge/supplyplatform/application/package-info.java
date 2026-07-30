@@ -1,4 +1,4 @@
 /**
  * Application use cases, commands, queries, and port contracts.
  */
-package com.enterprise.orderplatform.application;
+package io.astraforge.supplyplatform.application;

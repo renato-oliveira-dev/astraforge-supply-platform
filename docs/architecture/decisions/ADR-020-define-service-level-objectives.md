@@ -8,7 +8,7 @@
 | Title | Define Service-Level Objectives |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Reliability Engineering, Observability and Operations |
 | Related Work Items | SLO, SLI, Error Budgets, Reliability Governance |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform is a distributed business platform composed of independently deployable services.
+The AstraForge Supply Platform is a distributed business platform composed of independently deployable services.
 
 The architecture includes:
 
@@ -212,7 +212,7 @@ Delivery velocity
 
 # 9. Decision
 
-The Enterprise Order Platform adopts Service-Level Objectives as the standard mechanism for defining and governing production reliability.
+The AstraForge Supply Platform adopts Service-Level Objectives as the standard mechanism for defining and governing production reliability.
 
 Every production-critical service must define:
 
@@ -3220,8 +3220,8 @@ This ADR is related to:
 - Kubernetes Documentation
 - Amazon SQS Documentation
 - Resilience4j Documentation
-- Enterprise Order Platform Observability Architecture
-- Enterprise Order Platform Reliability Guidelines
+- AstraForge Supply Platform Observability Architecture
+- AstraForge Supply Platform Reliability Guidelines
 - ADR-014: Adopt OpenTelemetry for Distributed Observability
 - ADR-016: Adopt Resilience4j for Application Resilience
 - ADR-019: Adopt Structured Logging
@@ -3232,13 +3232,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved | Initial SLO and error-budget governance baseline |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved | Initial SLO and error-budget governance baseline |
 
 ---
 
 # 188. Decision Summary
 
-The Enterprise Order Platform adopts Service-Level Objectives as the standard mechanism for defining production reliability.
+The AstraForge Supply Platform adopts Service-Level Objectives as the standard mechanism for defining production reliability.
 
 The reliability model is:
 
@@ -3337,4 +3337,4 @@ Change Velocity
 
 while security, compliance, durability and data integrity remain independent non-negotiable concerns.
 
-This decision establishes a measurable reliability-engineering model for operating the Enterprise Order Platform at scale.
+This decision establishes a measurable reliability-engineering model for operating the AstraForge Supply Platform at scale.

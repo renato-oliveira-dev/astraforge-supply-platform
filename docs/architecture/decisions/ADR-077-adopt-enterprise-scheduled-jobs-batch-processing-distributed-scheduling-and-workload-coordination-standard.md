@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Scheduled Jobs, Batch Processing, Distributed Scheduling and Workload Coordination Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Scheduling, Batch Processing, Distributed Workloads, Job Coordination |
 | Related Work Items | Spring Batch, Kubernetes CronJob, Quartz, ShedLock, PostgreSQL, SQS, SQS |
 | Supersedes | None |
@@ -2591,7 +2591,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise scheduling and batch-processing baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise scheduling and batch-processing baseline |
 
 ---
 

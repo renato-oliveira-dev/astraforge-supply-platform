@@ -8,7 +8,7 @@
 | Title | Adopt Optimistic Locking for Concurrent Aggregate Updates |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Persistence, Transactions and Concurrency Control |
 | Related Work Items | Aggregate Consistency, Concurrent Commands and Transaction Safety |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform processes concurrent requests that may attempt to modify the same business aggregate.
+The AstraForge Supply Platform processes concurrent requests that may attempt to modify the same business aggregate.
 
 Examples include:
 
@@ -282,7 +282,7 @@ If no row is updated, a concurrent change occurred.
 
 # 6. Decision
 
-The Enterprise Order Platform adopts optimistic locking as the default concurrency-control strategy for mutable aggregates.
+The AstraForge Supply Platform adopts optimistic locking as the default concurrency-control strategy for mutable aggregates.
 
 JPA-managed aggregate roots must use a version field through `@Version`.
 
@@ -1204,7 +1204,7 @@ Example:
 
 ```json
 {
-  "type": "https://api.enterprise-order-platform.example/problems/concurrent-modification",
+  "type": "https://api.astraforge-supply-platform.example/problems/concurrent-modification",
   "title": "Concurrent modification",
   "status": 409,
   "detail": "The order was modified by another operation. Reload the resource and retry.",
@@ -2829,11 +2829,11 @@ This ADR is related to:
 - Spring Data JPA Documentation
 - Domain-Driven Design
 - Patterns of Enterprise Application Architecture
-- Enterprise Order Platform Persistence Guidelines
-- Enterprise Order Platform Testing Standards
-- Enterprise Order Platform Transactional Outbox Architecture
-- Enterprise Order Platform Saga Architecture
-- Enterprise Order Platform API Design Guidelines
+- AstraForge Supply Platform Persistence Guidelines
+- AstraForge Supply Platform Testing Standards
+- AstraForge Supply Platform Transactional Outbox Architecture
+- AstraForge Supply Platform Saga Architecture
+- AstraForge Supply Platform API Design Guidelines
 - ADR-005: Use PostgreSQL as the Primary Database
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-012: Adopt the Saga Pattern for Distributed Workflows
@@ -2845,13 +2845,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved | Initial aggregate concurrency-control baseline |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved | Initial aggregate concurrency-control baseline |
 
 ---
 
 # 140. Decision Summary
 
-The Enterprise Order Platform adopts optimistic locking as the default concurrency-control strategy for mutable aggregates.
+The AstraForge Supply Platform adopts optimistic locking as the default concurrency-control strategy for mutable aggregates.
 
 The platform standardizes on:
 

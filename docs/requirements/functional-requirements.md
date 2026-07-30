@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Functional Requirements |
 | Status | Draft |
 | Version | 0.1.0 |
@@ -12,7 +12,7 @@
 
 ## 1. Purpose
 
-This document defines the initial functional requirements for Enterprise Order Platform.
+This document defines the initial functional requirements for AstraForge Supply Platform.
 
 Each requirement has a unique identifier to support traceability across:
 

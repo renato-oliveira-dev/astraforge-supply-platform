@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Testing Strategy, Test Pyramid and Quality Engineering Standard |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Testing, Quality Engineering, JUnit 5, AssertJ, Mockito, Testcontainers |
 | Related Work Items | Unit Testing, Integration Testing, Contract Testing, Performance Testing, Coverage |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform contains business-critical services implemented primarily using:
+The AstraForge Supply Platform contains business-critical services implemented primarily using:
 
 ```text
 Java 21
@@ -2360,7 +2360,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise testing and quality engineering baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise testing and quality engineering baseline |
 
 ---
 

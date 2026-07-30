@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Hexagonal Architecture, Clean Architecture, Ports & Adapters and Module Boundary Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Architecture, Hexagonal Architecture, Clean Architecture, Ports & Adapters, Java |
 | Related Domains | Cart, Orders, Customers, Products, Workflow |
 | Supersedes | None |
@@ -3489,7 +3489,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial Hexagonal Architecture, Clean Architecture and Ports & Adapters governance baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial Hexagonal Architecture, Clean Architecture and Ports & Adapters governance baseline |
 
 ---
 

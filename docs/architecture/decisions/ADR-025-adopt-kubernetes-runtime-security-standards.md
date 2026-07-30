@@ -8,7 +8,7 @@
 | Title | Adopt Kubernetes Runtime Security Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Kubernetes, Runtime Security, Workload Security, Availability and Cluster Governance |
 | Related Work Items | Pod Security Standards, RBAC, NetworkPolicy, Workload Identity, Admission Control, Runtime Security |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform deploys containerized workloads to Kubernetes.
+The AstraForge Supply Platform deploys containerized workloads to Kubernetes.
 
 The application architecture already establishes standards for:
 
@@ -119,7 +119,7 @@ Primary decision drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts a Kubernetes runtime security baseline based on:
+The AstraForge Supply Platform adopts a Kubernetes runtime security baseline based on:
 
 ```text
 Pod Security Standards
@@ -2973,13 +2973,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial Kubernetes runtime security baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial Kubernetes runtime security baseline |
 
 ---
 
 # 272. Decision Summary
 
-The Enterprise Order Platform adopts a restricted Kubernetes runtime model.
+The AstraForge Supply Platform adopts a restricted Kubernetes runtime model.
 
 The complete workload trust chain becomes:
 

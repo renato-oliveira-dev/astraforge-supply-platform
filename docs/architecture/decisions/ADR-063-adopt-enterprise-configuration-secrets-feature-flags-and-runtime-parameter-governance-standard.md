@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Configuration Management, Secrets, Feature Flags and Runtime Parameter Governance Standard |
 | Status | Accepted |
 | Date | 2026-07-25 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Configuration, Secrets, Feature Flags, Runtime Parameters, Governance |
 | Related Work Items | Spring Boot, Kubernetes, AWS Secrets Manager, EKS, Feature Flags |
 | Supersedes | None |
@@ -2330,7 +2330,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-25 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise configuration, secrets and feature-management baseline |
+| 2026-07-25 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise configuration, secrets and feature-management baseline |
 
 ---
 

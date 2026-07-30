@@ -8,7 +8,7 @@
 | Title | Adopt Production Reliability, Incident Response and Operational Readiness Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Reliability, SRE, Incident Response, SLO, Disaster Recovery, Operational Readiness |
 | Related Work Items | Observability, Alerting, On-Call, Runbooks, Backup, Restore, Capacity, DR |
 | Supersedes | ADR-027 |
@@ -151,7 +151,7 @@ Primary drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts reliability engineering as part of normal software engineering.
+The AstraForge Supply Platform adopts reliability engineering as part of normal software engineering.
 
 The canonical production model is:
 
@@ -2510,7 +2510,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial production reliability and operational readiness baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial production reliability and operational readiness baseline |
 
 ---
 

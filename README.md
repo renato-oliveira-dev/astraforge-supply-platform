@@ -1,416 +1,172 @@
-# Enterprise Order Platform
+# AstraForge Supply Platform
 
-Enterprise-grade B2B Order Management Platform built with **Java 21**, **Spring Boot**, **Clean Architecture**, **Domain-Driven Design (DDD)**, and modern software engineering practices.
+A fictional industrial procurement and supply-orchestration platform built with **Java 21**, **Spring Boot**, **Clean Architecture**, **Domain-Driven Design (DDD)**, and production-oriented engineering practices.
 
-> A production-oriented backend project designed to demonstrate enterprise architecture, distributed systems, software quality, and modern Java development.
+> AstraForge is an original portfolio project. Its company, actors, data, workflows, policies, examples, and identifiers are fictional and are not derived from or affiliated with any employer, customer, or commercial software product.
 
 ---
 
 ## Project Status
 
-**Current Phase:** 🚀 Foundation Bootstrap
+**Current Phase:** Foundation Bootstrap
 
-The project follows an **Architecture First** approach.
-
-Before writing production code, the complete business domain, functional requirements, non-functional requirements, architectural decisions, and domain model are documented.
-
-This mirrors the software engineering process adopted by many enterprise organizations.
+The project follows an **Architecture First** approach. The architectural baseline is documented before production features are implemented, allowing code, tests, and delivery controls to be traced to explicit decisions.
 
 ---
 
-# Why This Project?
+## Business Scenario
 
-Most portfolio projects demonstrate how to build CRUD applications.
+AstraForge coordinates procurement of industrial maintenance supplies across distributed facilities.
 
-This project demonstrates how to design, document, and implement a production-grade enterprise backend system using modern engineering practices.
+A requesting facility creates a requisition for catalog items such as safety equipment, replacement components, tools, and consumables. The platform validates organizational eligibility, pricing, stock availability, approval policies, sourcing options, fulfillment constraints, and audit requirements before converting an approved requisition into a purchase order.
 
-The objective is to showcase not only coding skills, but also:
+The fictional domain includes:
 
-- Software Architecture
-- Domain Modeling
-- Engineering Decision Making
-- Scalability
-- Maintainability
-- Reliability
-- Security
-- Observability
+- requesting organizations and facilities;
+- supplier and catalog management;
+- requisition preparation;
+- purchase-order lifecycle management;
+- policy-based approvals;
+- inventory allocation;
+- shipment orchestration;
+- invoice reconciliation;
+- notifications and immutable audit history;
+- asynchronous integration events.
+
+No production data, proprietary source code, private endpoint, employer-specific identifier, or confidential business rule is included.
 
 ---
 
-# Business Overview
+## Engineering Objectives
 
-Enterprise Order Platform is a fictional B2B platform responsible for managing the complete lifecycle of enterprise orders.
+- Demonstrate enterprise backend engineering with Java 21 and Spring Boot
+- Apply Domain-Driven Design, Clean Architecture, and hexagonal boundaries
+- Build scalable REST APIs and event-driven integrations
+- Use automated architecture, quality, security, and repository-governance gates
+- Document architectural decisions and implementation constraints
+- Maintain an independently created, fictional portfolio domain
 
-The platform models realistic business scenarios including:
+---
 
-- Customer validation
-- Product validation
-- Pricing
-- Inventory reservation
-- Approval workflows
-- Order lifecycle
-- Event publishing
-- Audit history
+## Planned Business Capabilities
+
+- Organization and facility registry
+- Supplier management
+- Industrial catalog
+- Requisition management
+- Purchase-order management
+- Approval policy engine
+- Pricing and landed-cost calculation
+- Inventory allocation
+- Shipment orchestration
+- Invoice reconciliation
 - Notifications
-- External integrations
-
-Although fictional, every business rule is inspired by real enterprise systems.
-
----
-
-# Main Goals
-
-- Demonstrate enterprise backend engineering
-- Apply Java 21 and Spring Boot
-- Apply Domain-Driven Design
-- Implement Clean Architecture
-- Build scalable REST APIs
-- Apply Event-Driven Architecture
-- Implement production-quality testing
-- Document architectural decisions
-- Design resilient integrations
-- Build CI/CD pipelines
-- Demonstrate production-ready engineering practices
+- Audit trail
+- Integration-event publishing
 
 ---
 
-# Planned Business Capabilities
+## Technology Stack
 
-- Customer Management
-- Product Catalog
-- Order Management
-- Approval Workflow
-- Pricing Engine
-- Inventory Reservation
-- Shipment Management
-- Payment Tracking
-- Notifications
-- Audit Trail
-- Event Publishing
-
----
-
-# Technology Stack
-
-## Backend
-
+### Backend
 - Java 21
 - Spring Boot 4.1
-- Gradle 9.6
+- Gradle 9.6.1
 
-## Persistence
-
+### Data and Integration
 - PostgreSQL
 - Redis
 - Flyway
-
-## Messaging
-
 - Amazon SQS
 - Transactional Outbox Pattern
 
-## Security
+### Security and Quality
+- Spring Security and JWT
+- JUnit 5, Mockito, AssertJ, Testcontainers
+- JaCoCo and ArchUnit
+- SonarQube / SonarCloud
+- Dependency and secret scanning
 
-- Spring Security
-- JWT Authentication
-- Role-Based Access Control (RBAC)
-
-## Testing
-
-- JUnit 5
-- Mockito
-- AssertJ
-- Testcontainers
-- JaCoCo
-- ArchUnit
-
-## DevOps
-
-- Docker
-- Docker Compose
+### Delivery
+- Docker and Docker Compose
 - GitHub Actions
+- OpenAPI
+- Architecture Decision Records
+- Markdown and Mermaid
+
+---
+
+## Architectural Direction
+
+The system starts as a **modular monolith** and preserves boundaries that allow independently deployable services to emerge only when justified by operational or organizational needs.
+
+```text
+                        API Clients
+                            |
+                            v
+                      Inbound Adapters
+                            |
+                            v
+                    Application Use Cases
+                            |
+                            v
+                         Domain
+            (Aggregates, Policies, Value Objects)
+                            |
+                  +---------+---------+
+                  |                   |
+                  v                   v
+            Outbound Ports       Domain Events
+                  |
+                  v
+          Infrastructure Adapters
+          - PostgreSQL
+          - Redis
+          - Amazon SQS
+          - External systems
+```
+
+The domain remains independent of Spring, persistence, messaging, and transport details.
+
+---
 
 ## Documentation
 
-- OpenAPI
-- ADR (Architecture Decision Records)
-- Markdown
-- Mermaid Diagrams
+Documentation is maintained under `docs`.
 
-## Code Quality
-
-- SonarQube / SonarCloud
-- Spotless
-- Dependency Scanning
-
----
-
-# Architectural Direction
-
-The project starts as a **Modular Monolith**.
-
-The architecture is intentionally designed to evolve into independently deployable microservices if business requirements demand it.
-
-```
-                        Clients
-                           │
-                           ▼
-                    REST Controllers
-                           │
-                           ▼
-                   Application Layer
-                 (Use Cases / Services)
-                           │
-                           ▼
-                     Domain Layer
-        (Entities • Aggregates • Value Objects)
-                           │
-               ┌───────────┴───────────┐
-               ▼                       ▼
-        Outbound Ports          Domain Events
-               │
-               ▼
-      Infrastructure Adapters
-      ├── PostgreSQL
-      ├── Redis
-      ├── Amazon SQS
-      └── External APIs
-```
-
-### Architectural Principles
-
-- Dependency Inversion
-- SOLID
-- Domain-Driven Design
-- Clean Architecture
-- Hexagonal Architecture concepts
-- Explicit Business Rules
-- Event-Driven Integration
-
-The Domain Layer remains completely independent of Spring, databases, messaging frameworks, and infrastructure concerns.
-
----
-
-# Documentation
-
-Project documentation is maintained under the `docs` directory.
-
-```
-docs
-├── adr
-├── architecture
-├── domain
-└── requirements
-```
-
-## Available Documentation
-
-- ✅ Project Vision
-- ✅ Functional Requirements
-- ✅ Non-Functional Requirements
+- `docs/architecture/decisions`: ADR-001 through ADR-090
+- `docs/domain`: domain model and ubiquitous language
+- `docs/requirements`: product vision and requirements
+- `docs/standards`: engineering standards
+- `docs/governance`: originality, intellectual-property, and repository controls
 
 ## Implementation Status
 
-- ✅ ADR-001 through ADR-090 governance baseline
-- ✅ Java 21 and Spring Boot foundation
-- ✅ Gradle bootstrap automation
-- ✅ JaCoCo and ArchUnit quality gates
-- ⏳ Order domain implementation
+- ADR governance baseline complete
+- Java 21 and Spring Boot foundation complete
+- Gradle wrapper and CI quality gates complete
+- Project identity and fictional domain boundary established
+- Purchase-order domain implementation pending
 
 ## First Local Build
-
-Generate the official Gradle Wrapper once from PowerShell:
-
-```powershell
-.\scripts\bootstrap_gradle_wrapper.ps1
-```
-
-Then validate the project:
 
 ```powershell
 .\gradlew.bat clean check --no-daemon --stacktrace
 ```
 
-Commit the generated `gradlew`, `gradlew.bat`, and `gradle/wrapper` files together with the foundation bootstrap.
-- Architecture Decision Records
-- Security Architecture
-- Testing Strategy
-- Deployment Guide
-- Local Development Guide
+## Repository Governance
 
----
-
-# Engineering Principles
-
-This project follows a set of engineering principles inspired by production enterprise systems.
-
-- Business Rules First
-- Architecture Before Frameworks
-- Explicit Domain Language
-- Immutable Database Migrations
-- High Testability
-- Idempotent Operations
-- Eventual Consistency
-- Secure by Design
-- Observable by Default
-- Low Coupling
-- High Cohesion
-- Continuous Quality
-
----
-
-# Quality Targets
-
-| Metric | Target |
-|---------|---------|
-| Overall Coverage | ≥ 85% |
-| New Code Coverage | ≥ 90% |
-| Critical Domain Rules | 100% |
-| Blocker Issues | 0 |
-| Critical Issues | 0 |
-| Confirmed Vulnerabilities | 0 |
-| Code Duplication | < 3% |
-| Sonar Maintainability | A |
-| Sonar Reliability | A |
-| Sonar Security | A |
-
----
-
-# Planned Repository Structure
-
-```
-enterprise-order-platform
-│
-├── docs
-│   ├── adr
-│   ├── architecture
-│   ├── domain
-│   └── requirements
-│
-├── src
-│   ├── main
-│   └── test
-│
-├── .github
-│   └── workflows
-│
-├── compose.yaml
-├── Dockerfile
-├── build.gradle
-├── settings.gradle
-├── gradlew
-├── gradlew.bat
-├── LICENSE
-└── README.md
+```powershell
+.\gradlew.bat validateRepository
 ```
 
----
+Repository validation is implemented as a typed Java convention plugin in the
+`build-logic` included build. Line-ending validation uses `.gitattributes` as
+the source of truth, including LF for source files and CRLF for Windows batch
+scripts. No Python installation is required.
 
-# Development Roadmap
+## License and Independence
 
-## Phase 1 — Architecture
+The source code in this repository is published under the repository license. Third-party libraries retain their respective licenses.
 
-- [x] Vision
-- [x] Functional Requirements
-- [x] Non-Functional Requirements
-- [ ] Domain Model
-- [ ] Bounded Contexts
-- [ ] Context Map
-- [ ] Architecture Decisions
-
----
-
-## Phase 2 — Foundation
-
-- [ ] Spring Boot Project
-- [ ] PostgreSQL
-- [ ] Flyway
-- [ ] Docker
-- [ ] Docker Compose
-- [ ] Gradle
-- [ ] CI Pipeline
-
----
-
-## Phase 3 — Core Domain
-
-- [ ] Customers
-- [ ] Products
-- [ ] Orders
-- [ ] Pricing
-- [ ] Inventory
-- [ ] Audit
-
----
-
-## Phase 4 — Enterprise Features
-
-- [ ] Approval Workflow
-- [ ] Domain Events
-- [ ] Transactional Outbox
-- [ ] Amazon SQS Integration
-- [ ] Notifications
-
----
-
-## Phase 5 — Reliability
-
-- [ ] Redis Cache
-- [ ] Retry Policies
-- [ ] Circuit Breakers
-- [ ] Structured Logging
-- [ ] Correlation IDs
-- [ ] Metrics
-- [ ] Distributed Tracing
-
----
-
-## Phase 6 — Production Readiness
-
-- [ ] Performance Tests
-- [ ] Security Hardening
-- [ ] Deployment Guide
-- [ ] Cloud Architecture
-- [ ] Kubernetes Evaluation
-
----
-
-# Design Philosophy
-
-The goal of this repository is not to demonstrate how to use Spring Boot.
-
-The goal is to demonstrate how experienced software engineers design systems that remain maintainable as complexity grows.
-
-Every architectural decision will be documented.
-
-Every business rule will be explicit.
-
-Every trade-off will be justified.
-
----
-
-# Disclaimer
-
-This is a fictional project created exclusively for educational, architectural, and professional portfolio purposes.
-
-It contains **no proprietary code, business rules, documentation, credentials, data, or intellectual property** from any current or former employer or client.
-
----
-
-# License
-
-Licensed under the **Apache License 2.0**.
-
----
-
-# Author
-
-## Renato Oliveira
-
-Senior Software Engineer
-
-Backend Engineering • Java • Spring Boot • Distributed Systems • Clean Architecture • Domain-Driven Design • Software Modernization
-
----
-
-⭐ If you're interested in enterprise backend engineering, feel free to follow the project's evolution.
+AstraForge is a fictional name used solely for this portfolio project. See [`docs/governance/originality-and-ip-policy.md`](docs/governance/originality-and-ip-policy.md).

@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Resilience Engineering, Fault Tolerance and Graceful Degradation Standard |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Resilience, Fault Tolerance, Resilience4j, HTTP, SQS, Redis |
 | Related Work Items | Circuit Breaker, Retry, Timeout, Bulkhead, Idempotency, Graceful Degradation |
 | Supersedes | None |
@@ -2745,7 +2745,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise resilience and graceful degradation baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise resilience and graceful degradation baseline |
 
 ---
 

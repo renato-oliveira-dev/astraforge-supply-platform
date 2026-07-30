@@ -8,7 +8,7 @@
 | Title | Adopt CI/CD, Release and Deployment Governance Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | CI/CD, Git, Release, Deployment, Flyway, Rollback, Zero Downtime |
 | Related Work Items | Pipelines, Quality Gates, Release Management, Database Migration, Deployment |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform consists of independently deployable services using technologies such as:
+The AstraForge Supply Platform consists of independently deployable services using technologies such as:
 
 - Java 21
 - Spring Boot
@@ -2063,7 +2063,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial CI/CD, release and deployment governance baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial CI/CD, release and deployment governance baseline |
 
 ---
 

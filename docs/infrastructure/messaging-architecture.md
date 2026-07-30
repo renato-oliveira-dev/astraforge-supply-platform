@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Messaging Architecture |
 | Status | Active |
 | Version | 1.0.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the asynchronous messaging architecture of the Enterprise Order Platform under the current architectural baseline.
+This document defines the asynchronous messaging architecture of the AstraForge Supply Platform under the current architectural baseline.
 
 The platform uses **Amazon SQS** for queue-based asynchronous integration and the **Transactional Outbox Pattern** when a database state change and an integration event must be made reliable as one local transaction.
 

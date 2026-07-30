@@ -8,7 +8,7 @@
 | Title | Adopt Engineering Quality and Testing Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Testing, Quality Gates, JaCoCo, SonarQube, SAST, AssertJ, Mockito |
 | Related Work Items | Unit Tests, Integration Tests, Coverage, Security, CI/CD |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform contains business-critical services implemented primarily with:
+The AstraForge Supply Platform contains business-critical services implemented primarily with:
 
 - Java 21
 - Spring Boot
@@ -933,7 +933,7 @@ Do not alter valid domain data merely to silence a SAST finding.
 Changing:
 
 ```text
-M&M
+Forge & Field
 ```
 
 into:
@@ -2489,7 +2489,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial engineering quality baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial engineering quality baseline |
 
 ---
 

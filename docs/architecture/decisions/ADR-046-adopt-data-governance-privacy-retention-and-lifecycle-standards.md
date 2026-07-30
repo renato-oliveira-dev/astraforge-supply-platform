@@ -8,7 +8,7 @@
 | Title | Adopt Data Governance, Privacy, Retention and Lifecycle Standards |
 | Status | Superseded |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Data Governance, Privacy, LGPD, PII, Retention, Data Lifecycle |
 | Related Work Items | LGPD, Data Classification, Retention, Masking, Data Quality, Data Lineage |
 | Supersedes | ADR-029 |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform processes data across multiple services:
+The AstraForge Supply Platform processes data across multiple services:
 
 ```text
                    BUSINESS DATA
@@ -685,13 +685,13 @@ Security sanitization for logs/errors must not silently modify legitimate persis
 A valid business value such as:
 
 ```text
-M&M
+Forge & Field
 ```
 
 must remain:
 
 ```text
-M&M
+Forge & Field
 ```
 
 in business persistence and API contracts unless the contract explicitly requires another representation.
@@ -2250,7 +2250,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial data governance and privacy baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial data governance and privacy baseline |
 
 ---
 
@@ -2350,19 +2350,19 @@ but not automatically:
 For legitimate business values:
 
 ```text
-M&M
+Forge & Field
  |
  v
 BUSINESS VALUE
  |
  v
-PERSIST AS M&M
+PERSIST AS Forge & Field
 ```
 
 not:
 
 ```text
-M&M
+Forge & Field
  |
  v
 GENERIC HTML ESCAPE

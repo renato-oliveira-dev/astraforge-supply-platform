@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Code Review, Pull Request, Branching, Commit, CI/CD Quality Gates and Definition of Done Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Git, Pull Requests, CI/CD, Quality Engineering, DevSecOps |
 | Related Work Items | Java 21, Spring Boot, Gradle, SonarQube, SAST, SCA, JaCoCo, Flyway, OpenAPI |
 | Supersedes | ADR-069 |
@@ -2353,7 +2353,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise PR, CI/CD quality gate and Definition of Done baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise PR, CI/CD quality gate and Definition of Done baseline |
 
 ---
 

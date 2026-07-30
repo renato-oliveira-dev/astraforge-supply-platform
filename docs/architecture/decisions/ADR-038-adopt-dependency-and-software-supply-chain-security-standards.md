@@ -8,7 +8,7 @@
 | Title | Adopt Dependency and Software Supply Chain Security Standards |
 | Status | Superseded |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Dependencies, Gradle, SBOM, CVE, Containers, CI/CD, Supply Chain |
 | Related Work Items | Dependency Management, Vulnerability Scanning, SBOM, Containers, Build Security |
 | Supersedes | None |
@@ -118,7 +118,7 @@ Primary drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts controlled and reproducible dependency management across:
+The AstraForge Supply Platform adopts controlled and reproducible dependency management across:
 
 ```text
 SOURCE
@@ -2401,7 +2401,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial software supply-chain security baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial software supply-chain security baseline |
 
 ---
 

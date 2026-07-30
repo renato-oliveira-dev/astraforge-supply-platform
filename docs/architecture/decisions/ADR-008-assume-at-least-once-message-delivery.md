@@ -8,7 +8,7 @@
 | Title | Assume At-Least-Once Message Delivery |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Event-Driven Architecture |
 | Related Work Items | Reliable asynchronous communication |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform communicates with external bounded contexts through asynchronous integration events.
+The AstraForge Supply Platform communicates with external bounded contexts through asynchronous integration events.
 
 Examples include:
 
@@ -137,7 +137,7 @@ Disadvantages:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts **At-Least-Once** message delivery for every integration event.
+The AstraForge Supply Platform adopts **At-Least-Once** message delivery for every integration event.
 
 This means:
 
@@ -465,7 +465,7 @@ The decision is successful when:
 - Microservices Patterns — Chris Richardson
 - Amazon SQS Documentation
 - Transactional Outbox Pattern
-- Enterprise Order Platform Messaging Guidelines
+- AstraForge Supply Platform Messaging Guidelines
 
 ---
 
@@ -473,13 +473,13 @@ The decision is successful when:
 
 | Date | Reviewer | Result |
 |---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved |
 
 ---
 
 # 25. Decision Summary
 
-The Enterprise Order Platform explicitly adopts **At-Least-Once** delivery semantics.
+The AstraForge Supply Platform explicitly adopts **At-Least-Once** delivery semantics.
 
 The architecture assumes that:
 

@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Kafka Architecture |
 | Status | Superseded |
 | Superseded By | ADR-090 and `docs/infrastructure/sqs-architecture.md` |
@@ -13,7 +13,7 @@
 
 This document path is retained only to preserve historical links.
 
-Kafka is **not the current messaging baseline** for the Enterprise Order Platform.
+Kafka is **not the current messaging baseline** for the AstraForge Supply Platform.
 
 The current canonical messaging architecture is Amazon SQS with governed integration-event contracts, idempotent consumers, monitored DLQs, and Transactional Outbox where reliable state-plus-event publication is required.
 

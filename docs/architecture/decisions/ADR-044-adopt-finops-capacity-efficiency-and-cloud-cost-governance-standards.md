@@ -8,7 +8,7 @@
 | Title | Adopt FinOps, Capacity Efficiency and Cloud Cost Governance Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | FinOps, Cloud Cost, Capacity Planning, Kubernetes, AWS, PostgreSQL, SQS, Redis |
 | Related Work Items | Cost Allocation, Rightsizing, Autoscaling, Capacity Planning, Cloud Governance |
 | Supersedes | None |
@@ -2406,7 +2406,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial FinOps and capacity-efficiency baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial FinOps and capacity-efficiency baseline |
 
 ---
 

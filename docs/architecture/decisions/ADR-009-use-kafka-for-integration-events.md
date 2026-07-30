@@ -8,7 +8,7 @@
 | Title | Use Apache Kafka for Integration Events |
 | Status | Superseded |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Event-Driven Architecture |
 | Related Work Items | Asynchronous bounded-context integration |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform contains multiple bounded contexts that must exchange business information asynchronously.
+The AstraForge Supply Platform contains multiple bounded contexts that must exchange business information asynchronously.
 
 Examples of integration scenarios include:
 
@@ -260,7 +260,7 @@ Consumers could poll outbox or integration tables directly.
 
 # 6. Decision
 
-The Enterprise Order Platform will use Apache Kafka as its standard broker for asynchronous integration events.
+The AstraForge Supply Platform will use Apache Kafka as its standard broker for asynchronous integration events.
 
 Kafka will transport versioned business integration events between bounded contexts.
 
@@ -2944,10 +2944,10 @@ This ADR is related to:
 - Transactional Outbox Pattern
 - Enterprise Integration Patterns
 - Microservices Patterns
-- Enterprise Order Platform Messaging Architecture
-- Enterprise Order Platform Messaging Guidelines
-- Enterprise Order Platform Domain Events
-- Enterprise Order Platform Idempotency Guide
+- AstraForge Supply Platform Messaging Architecture
+- AstraForge Supply Platform Messaging Guidelines
+- AstraForge Supply Platform Domain Events
+- AstraForge Supply Platform Idempotency Guide
 - ADR-007: Adopt the Transactional Outbox Pattern
 - ADR-008: Assume At-Least-Once Message Delivery
 
@@ -2957,13 +2957,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved | Initial Kafka integration-event architecture baseline |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved | Initial Kafka integration-event architecture baseline |
 
 ---
 
 # 145. Decision Summary
 
-The Enterprise Order Platform adopts Apache Kafka as its standard asynchronous integration-event broker.
+The AstraForge Supply Platform adopts Apache Kafka as its standard asynchronous integration-event broker.
 
 Kafka provides:
 

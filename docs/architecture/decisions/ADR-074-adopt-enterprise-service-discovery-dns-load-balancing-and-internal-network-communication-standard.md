@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Service Discovery, DNS, Load Balancing and Internal Network Communication Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Service Discovery, DNS, Load Balancing, Internal Networking |
 | Related Work Items | Kubernetes, AWS, Spring Boot, HTTP Clients, Service Mesh, mTLS |
 | Supersedes | None |
@@ -2093,7 +2093,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise service discovery and internal network communication baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise service discovery and internal network communication baseline |
 
 ---
 

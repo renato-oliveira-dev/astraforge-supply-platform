@@ -8,7 +8,7 @@
 | Title | Use Flyway for Database Migrations |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Database Evolution |
 | Related Work Items | Initial platform architecture |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform requires a reliable, repeatable and auditable process for evolving PostgreSQL database schemas across all environments.
+The AstraForge Supply Platform requires a reliable, repeatable and auditable process for evolving PostgreSQL database schemas across all environments.
 
 The platform stores business-critical data related to:
 
@@ -249,7 +249,7 @@ The platform could build its own migration runner.
 
 # 6. Decision
 
-The Enterprise Order Platform will use Flyway as the exclusive database migration mechanism.
+The AstraForge Supply Platform will use Flyway as the exclusive database migration mechanism.
 
 Flyway will manage:
 
@@ -1986,8 +1986,8 @@ This ADR is related to:
 - PostgreSQL Locking Documentation
 - Spring Boot Flyway Integration Documentation
 - Testcontainers PostgreSQL Documentation
-- Enterprise Order Platform Flyway Migration Strategy
-- Enterprise Order Platform Persistence Guidelines
+- AstraForge Supply Platform Flyway Migration Strategy
+- AstraForge Supply Platform Persistence Guidelines
 - ADR-005: Use PostgreSQL as the Primary Database
 
 ---
@@ -1996,13 +1996,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved | Initial database migration baseline |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved | Initial database migration baseline |
 
 ---
 
 # 96. Decision Summary
 
-The Enterprise Order Platform adopts Flyway as its exclusive database migration mechanism.
+The AstraForge Supply Platform adopts Flyway as its exclusive database migration mechanism.
 
 All database changes must be:
 

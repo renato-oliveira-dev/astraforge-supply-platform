@@ -8,7 +8,7 @@
 | Title | Adopt Software Architecture Testing and Automated Fitness Functions Implementation Standard |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Architecture Testing, ArchUnit, Gradle, CI/CD, Automated Governance |
 | Related Work Items | ArchUnit, JaCoCo, SonarQube, SAST, Flyway, OpenAPI, Dependency Governance |
 | Supersedes | ADR-042 |
@@ -217,7 +217,7 @@ Architecture tests SHOULD reside in a clearly identifiable package.
 Example:
 
 ```text
-src/test/java/com/honda/orders/architecture
+src/test/java/io/astraforge/supplyplatform/architecture
 ```
 
 ---
@@ -270,7 +270,7 @@ Example:
 ```java
 private static final JavaClasses CLASSES =
         new ClassFileImporter()
-                .importPackages("com.honda.orders");
+                .importPackages("io.astraforge.supplyplatform");
 ```
 
 ---
@@ -2300,7 +2300,7 @@ This ADR implements and extends:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial executable architecture and fitness-function implementation baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial executable architecture and fitness-function implementation baseline |
 
 ---
 

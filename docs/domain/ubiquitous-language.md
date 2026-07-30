@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Ubiquitous Language |
 | Status | Draft |
 | Version | 0.1.0 |
@@ -12,7 +12,7 @@
 
 ## 1. Purpose
 
-This document defines the initial ubiquitous language used throughout Enterprise Order Platform.
+This document defines the initial ubiquitous language used throughout AstraForge Supply Platform.
 
 The goal is to establish a consistent business vocabulary shared across:
 

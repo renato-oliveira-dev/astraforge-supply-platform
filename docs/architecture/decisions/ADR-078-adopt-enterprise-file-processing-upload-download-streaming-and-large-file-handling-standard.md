@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise File Processing, Upload, Download, Streaming and Large File Handling Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | File Processing, Upload, Download, Streaming, Object Storage |
 | Related Work Items | S3, Spring Boot, Batch Processing, Security, Imports, Exports |
 | Supersedes | None |
@@ -2616,7 +2616,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise secure file-processing and large-file baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise secure file-processing and large-file baseline |
 
 ---
 

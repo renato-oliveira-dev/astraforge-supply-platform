@@ -1,0 +1,42 @@
+plugins {
+    id 'java-gradle-plugin'
+}
+
+group = 'io.astraforge.build'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+gradlePlugin {
+    plugins {
+        repositoryGovernance {
+            id = 'io.astraforge.repository-governance'
+            implementationClass = 'io.astraforge.build.governance.RepositoryGovernancePlugin'
+            displayName = 'AstraForge Repository Governance'
+            description = 'Validates repository originality, hygiene, ADRs, and line-ending policy.'
+        }
+    }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.13.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-Xlint:all']
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}

@@ -1,12 +1,12 @@
-package com.enterprise.orderplatform;
+package io.astraforge.supplyplatform;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class EnterpriseOrderPlatformApplication {
+public class AstraForgeSupplyPlatformApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(EnterpriseOrderPlatformApplication.class, args);
+        SpringApplication.run(AstraForgeSupplyPlatformApplication.class, args);
     }
 }

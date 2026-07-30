@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Event-Driven Architecture, Kafka Messaging and Transactional Outbox Standard |
 | Status | Superseded |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Event-Driven Architecture, Apache Kafka, Transactional Outbox, Messaging Governance |
 | Related Work Items | Kafka, Events, Outbox, Idempotency, Retry, DLQ, Replay |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform uses asynchronous messaging to integrate business capabilities across distributed services.
+The AstraForge Supply Platform uses asynchronous messaging to integrate business capabilities across distributed services.
 
 Typical flows include:
 
@@ -2528,7 +2528,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise event-driven architecture and Kafka messaging baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise event-driven architecture and Kafka messaging baseline |
 
 ---
 

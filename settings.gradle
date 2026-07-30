@@ -1,1 +1,9 @@
-rootProject.name = 'enterprise-order-platform'
+pluginManagement {
+    includeBuild('build-logic')
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'astraforge-supply-platform'

@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Domain-Driven Design, Service Boundaries, Clean Architecture and Modularization Standard |
 | Status | Accepted |
 | Date | 2026-07-25 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | DDD, Clean Architecture, Modularization, Service Boundaries |
 | Related Work Items | Java 21, Spring Boot, ArchUnit, Microservices, Refactoring |
 | Supersedes | None |
@@ -2528,7 +2528,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-25 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise DDD, modularization and service-boundary baseline |
+| 2026-07-25 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise DDD, modularization and service-boundary baseline |
 
 ---
 

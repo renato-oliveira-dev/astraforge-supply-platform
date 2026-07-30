@@ -8,7 +8,7 @@
 | Title | Adopt Architecture Governance and Technical Debt Management Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Architecture Governance, Technical Debt, Refactoring, ArchUnit, Ownership |
 | Related Work Items | ADR Governance, Technical Debt, Architecture Tests, Code Quality, Refactoring |
 | Supersedes | None |
@@ -2368,7 +2368,7 @@ This ADR is related to all architecture decisions in the platform and specifical
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial architecture governance and technical debt baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial architecture governance and technical debt baseline |
 
 ---
 

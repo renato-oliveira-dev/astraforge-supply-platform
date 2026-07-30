@@ -8,7 +8,7 @@
 | Title | Adopt Service Ownership, Platform Boundaries and Team Topology Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Service Ownership, Team Topologies, Platform Engineering, Domain Boundaries |
 | Related Work Items | CODEOWNERS, Service Catalog, Platform Engineering, API Ownership, SQS Ownership, Data Ownership |
 | Supersedes | None |
@@ -2396,7 +2396,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial service ownership and team topology baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial service ownership and team topology baseline |
 
 ---
 

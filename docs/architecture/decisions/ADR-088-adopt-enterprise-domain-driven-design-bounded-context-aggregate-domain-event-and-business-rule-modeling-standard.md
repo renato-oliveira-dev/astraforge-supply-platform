@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Domain-Driven Design, Bounded Context, Aggregate, Domain Event and Business Rule Modeling Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Domain-Driven Design, Domain Modeling, Microservices, Business Architecture |
 | Related Domains | Cart, Orders, Customers, Products, Workflow |
 | Supersedes | None |
@@ -3324,7 +3324,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise DDD and domain modeling governance baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise DDD and domain modeling governance baseline |
 
 ---
 

@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Code Review Guidelines |
 | Status | Approved |
 | Version | 1.0.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the code review standards adopted by the Enterprise Order Platform.
+This document defines the code review standards adopted by the AstraForge Supply Platform.
 
 The objectives of code review are to:
 

@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise AWS Cloud, Kubernetes, Container and Runtime Deployment Standard |
 | Status | Accepted |
 | Date | 2026-07-25 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | AWS, Kubernetes, Containers, Java 21, Spring Boot, Runtime Engineering |
 | Related Work Items | EKS, Docker, Kubernetes, IAM, IRSA, Autoscaling, Deployment, Production Readiness |
 | Supersedes | None |
@@ -2549,7 +2549,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-25 | Enterprise Order Platform Architecture Team | Approved | Initial AWS, Kubernetes, container and runtime deployment baseline |
+| 2026-07-25 | AstraForge Supply Platform Architecture Team | Approved | Initial AWS, Kubernetes, container and runtime deployment baseline |
 
 ---
 

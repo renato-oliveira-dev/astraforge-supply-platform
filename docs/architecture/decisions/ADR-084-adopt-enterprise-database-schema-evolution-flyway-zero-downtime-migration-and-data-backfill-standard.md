@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Database Schema Evolution, Flyway, Zero-Downtime Migration and Data Backfill Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | PostgreSQL, Flyway, Schema Evolution, Database Deployment |
 | Related Work Items | Flyway, PostgreSQL, Kubernetes, CI/CD, Zero-Downtime Deployment |
 | Supersedes | ADR-076 |
@@ -2640,7 +2640,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise Flyway and zero-downtime database migration baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise Flyway and zero-downtime database migration baseline |
 
 ---
 

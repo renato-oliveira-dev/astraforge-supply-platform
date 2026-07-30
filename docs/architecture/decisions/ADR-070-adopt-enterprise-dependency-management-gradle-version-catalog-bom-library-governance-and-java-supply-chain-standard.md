@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Dependency Management, Gradle, Version Catalog, BOM, Library Governance and Java Supply Chain Standard |
 | Status | Accepted |
 | Date | 2026-07-26 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Gradle, Dependencies, BOMs, Version Catalogs, Library Governance, Supply Chain |
 | Related Work Items | Java 21, Spring Boot, Gradle, SCA, SBOM, Dependency Security |
 | Supersedes | None |
@@ -290,7 +290,7 @@ Toolchains reduce dependency on the developer workstation's default JDK.
 
 The project baseline MUST explicitly define the supported Java version.
 
-For the Enterprise Order Platform:
+For the AstraForge Supply Platform:
 
 ```text
 Java 21
@@ -2219,7 +2219,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-26 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise Java dependency and library-governance baseline |
+| 2026-07-26 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise Java dependency and library-governance baseline |
 
 ---
 

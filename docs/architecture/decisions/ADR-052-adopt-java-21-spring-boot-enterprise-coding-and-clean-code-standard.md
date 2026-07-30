@@ -8,7 +8,7 @@
 | Title | Adopt Java 21 / Spring Boot Enterprise Coding and Clean Code Standard |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Java 21, Spring Boot, Clean Code, Maintainability, SonarQube |
 | Related Work Items | Java Modernization, Clean Code, Sonar, Testing, Architecture Fitness Functions |
 | Supersedes | None |
@@ -1269,7 +1269,7 @@ HTML escaping MUST NOT be applied indiscriminately to domain values.
 Valid business values such as:
 
 ```text
-M&M
+Forge & Field
 ```
 
 MUST remain semantically intact through domain and persistence processing unless the contract explicitly requires transformation.
@@ -2516,7 +2516,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial Java 21 / Spring Boot enterprise coding baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial Java 21 / Spring Boot enterprise coding baseline |
 
 ---
 

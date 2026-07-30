@@ -8,7 +8,7 @@
 | Title | Version Integration Event Contracts |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Messaging, Event Contracts and Evolution |
 | Related Work Items | SQS Integration, Event-Driven Architecture |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform is an event-driven system built around Amazon SQS.
+The AstraForge Supply Platform is an event-driven system built around Amazon SQS.
 
 Business events are exchanged between independent services such as:
 
@@ -128,7 +128,7 @@ Disadvantages:
 
 # 5. Decision
 
-The Enterprise Order Platform adopts **event contract versioning**.
+The AstraForge Supply Platform adopts **event contract versioning**.
 
 Every integration event must expose an explicit contract version.
 
@@ -444,13 +444,13 @@ The decision is successful when:
 
 | Date | Reviewer | Result |
 |---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved |
 
 ---
 
 # 32. Decision Summary
 
-The Enterprise Order Platform adopts explicit versioning for all integration-event contracts.
+The AstraForge Supply Platform adopts explicit versioning for all integration-event contracts.
 
 The platform standardizes on:
 

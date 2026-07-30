@@ -8,7 +8,7 @@
 | Title | Adopt Resilience4j for Application Resilience |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Resilience and Fault Tolerance |
 | Related Work Items | Platform Reliability |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform communicates with multiple internal and external dependencies.
+The AstraForge Supply Platform communicates with multiple internal and external dependencies.
 
 Examples include:
 
@@ -154,7 +154,7 @@ Disadvantages:
 
 # 5. Decision
 
-The Enterprise Order Platform adopts **Resilience4j** as the standard resilience framework.
+The AstraForge Supply Platform adopts **Resilience4j** as the standard resilience framework.
 
 The following modules are approved:
 
@@ -674,7 +674,7 @@ The decision is successful when:
 - Release It! – Michael T. Nygard
 - Enterprise Integration Patterns
 - Google SRE Workbook
-- Enterprise Order Platform Resilience Guide
+- AstraForge Supply Platform Resilience Guide
 
 ---
 
@@ -682,13 +682,13 @@ The decision is successful when:
 
 | Date | Reviewer | Result |
 |---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved |
 
 ---
 
 # 45. Decision Summary
 
-The Enterprise Order Platform adopts **Resilience4j** as its standard resilience framework.
+The AstraForge Supply Platform adopts **Resilience4j** as its standard resilience framework.
 
 The platform standardizes on:
 

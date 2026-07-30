@@ -8,7 +8,7 @@
 | Title | Adopt Enterprise Authentication, Authorization, OAuth2/OIDC, JWT and Service-to-Service Security Standard |
 | Status | Accepted |
 | Date | 2026-07-25 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Authentication, Authorization, Identity, OAuth2, OIDC, JWT, Service Security |
 | Related Work Items | Spring Security 6, Keycloak, OAuth2 Resource Server, JWT, AWS IAM, Kubernetes |
 | Supersedes | None |
@@ -578,9 +578,9 @@ AUTHENTICATED
       +
 ROLE = SUPERVISOR
       +
-SEGMENT = M&M
+SEGMENT = Forge & Field
       +
-RESOURCE.SEGMENT = M&M
+RESOURCE.SEGMENT = Forge & Field
       +
 RESOURCE.COMPANY IN ALLOWED COMPANIES
       =
@@ -768,7 +768,7 @@ Where business access is segment-specific, segment isolation MUST be explicitly 
 A payload containing:
 
 ```text
-segment = M&M
+segment = Forge & Field
 ```
 
 MUST NOT by itself prove that the caller is authorized for that segment.
@@ -2280,7 +2280,7 @@ This ADR extends and implements:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-25 | Enterprise Order Platform Architecture Team | Approved | Initial enterprise authentication and authorization baseline |
+| 2026-07-25 | AstraForge Supply Platform Architecture Team | Approved | Initial enterprise authentication and authorization baseline |
 
 ---
 
@@ -2379,13 +2379,13 @@ Segment isolation becomes:
 
 ```text
 REQUEST
-segment=M&M
+segment=Forge & Field
     |
     v
 AUTHENTICATED CALLER
     |
     v
-AUTHORIZED FOR M&M?
+AUTHORIZED FOR Forge & Field?
     |
   +-+-+
   |   |

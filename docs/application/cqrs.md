@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | CQRS |
 | Status | Draft |
 | Version | 0.1.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines how Command Query Responsibility Segregation (CQRS) is applied within the Enterprise Order Platform.
+This document defines how Command Query Responsibility Segregation (CQRS) is applied within the AstraForge Supply Platform.
 
 The platform adopts **logical CQRS**, separating write and read models while sharing the same transactional database.
 

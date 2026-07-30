@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Engineering Playbook |
 | Status | Approved |
 | Version | 1.0.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the daily engineering practices adopted by the Enterprise Order Platform.
+This document defines the daily engineering practices adopted by the AstraForge Supply Platform.
 
 It consolidates the platform standards into a practical guide for:
 
@@ -2434,7 +2434,7 @@ Every implementation must:
 
 # 127. Decision Summary
 
-The Enterprise Order Platform adopts:
+The AstraForge Supply Platform adopts:
 
 - Domain-Driven Design
 - Clean and Hexagonal Architecture

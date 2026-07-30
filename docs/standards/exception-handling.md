@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Exception Handling |
 | Status | Approved |
 | Version | 1.0.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the exception-handling standards adopted by the Enterprise Order Platform.
+This document defines the exception-handling standards adopted by the AstraForge Supply Platform.
 
 It establishes rules for:
 
@@ -101,10 +101,10 @@ Domain exceptions must:
 # 5. Domain Exception Example
 
 ```java
-package com.enterprise.orderplatform.domain.order.exception;
+package io.astraforge.supplyplatform.domain.order.exception;
 
-import com.enterprise.orderplatform.domain.order.valueobject.OrderId;
-import com.enterprise.orderplatform.domain.order.valueobject.OrderStatus;
+import io.astraforge.supplyplatform.domain.order.valueobject.OrderId;
+import io.astraforge.supplyplatform.domain.order.valueobject.OrderStatus;
 
 public final class InvalidOrderTransitionException
         extends DomainException {
@@ -153,7 +153,7 @@ A base domain exception may be used to identify domain-level failures.
 Example:
 
 ```java
-package com.enterprise.orderplatform.domain.shared.exception;
+package io.astraforge.supplyplatform.domain.shared.exception;
 
 public abstract class DomainException extends RuntimeException {
 
@@ -220,9 +220,9 @@ Not-found exceptions should identify the missing resource and its identifier.
 Example:
 
 ```java
-package com.enterprise.orderplatform.application.order.exception;
+package io.astraforge.supplyplatform.application.order.exception;
 
-import com.enterprise.orderplatform.domain.order.valueobject.OrderId;
+import io.astraforge.supplyplatform.domain.order.valueobject.OrderId;
 
 public final class OrderNotFoundException
         extends ApplicationException {
@@ -251,7 +251,7 @@ new RuntimeException("Not found");
 # 9. Base Application Exception
 
 ```java
-package com.enterprise.orderplatform.application.shared.exception;
+package io.astraforge.supplyplatform.application.shared.exception;
 
 public abstract class ApplicationException extends RuntimeException {
 
@@ -307,7 +307,7 @@ Infrastructure exceptions may represent:
 # 11. Infrastructure Exception Example
 
 ```java
-package com.enterprise.orderplatform.infrastructure.persistence.exception;
+package io.astraforge.supplyplatform.infrastructure.persistence.exception;
 
 public final class OrderPersistenceException
         extends InfrastructureException {
@@ -324,7 +324,7 @@ public final class OrderPersistenceException
 Base class:
 
 ```java
-package com.enterprise.orderplatform.infrastructure.shared.exception;
+package io.astraforge.supplyplatform.infrastructure.shared.exception;
 
 public abstract class InfrastructureException
         extends RuntimeException {

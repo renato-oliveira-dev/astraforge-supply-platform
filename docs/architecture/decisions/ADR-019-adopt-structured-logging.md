@@ -8,7 +8,7 @@
 | Title | Adopt Structured Logging |
 | Status | Accepted |
 | Date | 2026-07-23 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Observability, Operations and Security |
 | Related Work Items | Centralized Logging, Incident Diagnostics and Telemetry Governance |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform is a distributed system composed of multiple independently deployable services.
+The AstraForge Supply Platform is a distributed system composed of multiple independently deployable services.
 
 The platform includes:
 
@@ -224,7 +224,7 @@ Applications emit one structured JSON object per log event.
 
 # 6. Decision
 
-The Enterprise Order Platform adopts structured JSON logging as the standard production logging format.
+The AstraForge Supply Platform adopts structured JSON logging as the standard production logging format.
 
 Every application log event must be emitted as one complete JSON object.
 
@@ -3644,9 +3644,9 @@ This ADR is related to:
 - OWASP Logging Cheat Sheet
 - OWASP Application Logging Vocabulary
 - Brazilian General Data Protection Law
-- Enterprise Order Platform Logging Standards
-- Enterprise Order Platform Security Guidelines
-- Enterprise Order Platform Observability Architecture
+- AstraForge Supply Platform Logging Standards
+- AstraForge Supply Platform Security Guidelines
+- AstraForge Supply Platform Observability Architecture
 - ADR-014: Adopt OpenTelemetry for Distributed Observability
 - ADR-015: Deploy Workloads on Kubernetes
 - ADR-016: Adopt Resilience4j for Application Resilience
@@ -3657,13 +3657,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-23 | Enterprise Order Platform Architecture Team | Approved | Initial structured logging architecture baseline |
+| 2026-07-23 | AstraForge Supply Platform Architecture Team | Approved | Initial structured logging architecture baseline |
 
 ---
 
 # 204. Decision Summary
 
-The Enterprise Order Platform adopts structured JSON logging as the standard production logging model.
+The AstraForge Supply Platform adopts structured JSON logging as the standard production logging model.
 
 The platform standardizes on:
 
@@ -3755,4 +3755,4 @@ Security audit records
 Business audit records
 ```
 
-This decision establishes a consistent, secure and scalable logging foundation for diagnosing and operating the Enterprise Order Platform in distributed production environments.
+This decision establishes a consistent, secure and scalable logging foundation for diagnosing and operating the AstraForge Supply Platform in distributed production environments.

@@ -8,7 +8,7 @@
 | Title | Adopt API Gateway and Edge Architecture Standards |
 | Status | Superseded |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | API Gateway, Edge Security, Routing, Rate Limiting, Authentication |
 | Related Work Items | Gateway, JWT, Keycloak, CORS, Routing, Rate Limiting, Correlation |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform consists of independently deployable services exposed to:
+The AstraForge Supply Platform consists of independently deployable services exposed to:
 
 - web applications
 - mobile applications
@@ -121,7 +121,7 @@ Primary drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts:
+The AstraForge Supply Platform adopts:
 
 ```text
 CLIENT
@@ -308,7 +308,7 @@ Example:
 ```text
 User Profile = SUPERVISOR
 
-Order Segment = M&M
+Order Segment = Forge & Field
 
 Order Status = PENDING_SUPERVISOR
 ```
@@ -1583,7 +1583,7 @@ The gateway must not silently alter business values to make downstream validatio
 The gateway must not mutate domain strings such as:
 
 ```text
-M&M
+Forge & Field
 ```
 
 into:
@@ -2458,7 +2458,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial API Gateway and edge architecture baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial API Gateway and edge architecture baseline |
 
 ---
 

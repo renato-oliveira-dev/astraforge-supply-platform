@@ -1,4 +1,4 @@
-package com.enterprise.orderplatform.architecture;
+package io.astraforge.supplyplatform.architecture;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
@@ -10,7 +10,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 class ArchitectureBoundaryTest {
 
-    private static final String BASE_PACKAGE = "com.enterprise.orderplatform";
+    private static final String BASE_PACKAGE = "io.astraforge.supplyplatform";
 
     private final JavaClasses productionClasses = new ClassFileImporter()
             .withImportOption(new ImportOption.DoNotIncludeTests())

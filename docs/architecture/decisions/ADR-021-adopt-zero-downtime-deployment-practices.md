@@ -8,7 +8,7 @@
 | Title | Adopt Zero-Downtime Deployment Practices |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Deployment, Kubernetes, Database Evolution and Reliability |
 | Related Work Items | Kubernetes, CI/CD, Flyway, Rolling Updates, Graceful Shutdown |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform consists of independently deployable services running on Kubernetes.
+The AstraForge Supply Platform consists of independently deployable services running on Kubernetes.
 
 The platform includes:
 
@@ -135,7 +135,7 @@ Zero-downtime deployment is an architectural capability that minimizes user-visi
 
 # 5. Decision
 
-The Enterprise Order Platform adopts zero-downtime deployment practices as the standard production deployment model.
+The AstraForge Supply Platform adopts zero-downtime deployment practices as the standard production deployment model.
 
 The platform standardizes on:
 
@@ -3260,9 +3260,9 @@ This ADR is related to:
 - Google Site Reliability Engineering
 - Continuous Delivery
 - Expand and Contract Database Migration Pattern
-- Enterprise Order Platform Database Migration Standards
-- Enterprise Order Platform CI/CD Standards
-- Enterprise Order Platform Reliability Guidelines
+- AstraForge Supply Platform Database Migration Standards
+- AstraForge Supply Platform CI/CD Standards
+- AstraForge Supply Platform Reliability Guidelines
 - ADR-006: Use Flyway for Database Schema Evolution
 - ADR-018: Version Integration Event Contracts
 - ADR-020: Define Service-Level Objectives
@@ -3273,13 +3273,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial zero-downtime deployment architecture baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial zero-downtime deployment architecture baseline |
 
 ---
 
 # 211. Decision Summary
 
-The Enterprise Order Platform adopts zero-downtime deployment practices for routine production releases.
+The AstraForge Supply Platform adopts zero-downtime deployment practices for routine production releases.
 
 The standard deployment model is:
 
@@ -3415,4 +3415,4 @@ Messaging healthy
 Database healthy
 ```
 
-This decision establishes the deployment foundation required for frequent, independently deployable and operationally safe releases of the Enterprise Order Platform.
+This decision establishes the deployment foundation required for frequent, independently deployable and operationally safe releases of the AstraForge Supply Platform.

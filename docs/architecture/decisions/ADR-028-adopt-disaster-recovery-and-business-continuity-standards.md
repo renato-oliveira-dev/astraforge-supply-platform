@@ -8,7 +8,7 @@
 | Title | Adopt Disaster Recovery and Business Continuity Standards |
 | Status | Superseded |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Disaster Recovery, Business Continuity, Data Protection, Kubernetes, PostgreSQL, Kafka |
 | Related Work Items | RTO, RPO, Backup, Restore, PITR, Multi-AZ, Multi-Region, Failover, Failback, DR Testing |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-The Enterprise Order Platform supports business-critical ordering capabilities through a distributed architecture composed of:
+The AstraForge Supply Platform supports business-critical ordering capabilities through a distributed architecture composed of:
 
 - Java 21
 - Spring Boot
@@ -128,7 +128,7 @@ Primary drivers are:
 
 # 4. Decision
 
-The Enterprise Order Platform adopts a tiered Disaster Recovery model based on:
+The AstraForge Supply Platform adopts a tiered Disaster Recovery model based on:
 
 ```text
 Business Criticality
@@ -285,7 +285,7 @@ depending on enterprise architecture.
 
 Tier 1 represents critical business capabilities.
 
-For the Enterprise Order Platform this may include:
+For the AstraForge Supply Platform this may include:
 
 - order creation
 - order persistence
@@ -2760,13 +2760,13 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial Disaster Recovery and Business Continuity baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial Disaster Recovery and Business Continuity baseline |
 
 ---
 
 # 254. Decision Summary
 
-The Enterprise Order Platform distinguishes:
+The AstraForge Supply Platform distinguishes:
 
 ```text
 HIGH AVAILABILITY

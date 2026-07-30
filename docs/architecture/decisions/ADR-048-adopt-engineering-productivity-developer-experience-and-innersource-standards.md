@@ -8,7 +8,7 @@
 | Title | Adopt Engineering Productivity, Developer Experience and InnerSource Standards |
 | Status | Accepted |
 | Date | 2026-07-24 |
-| Decision Owners | Enterprise Order Platform Architecture Team |
+| Decision Owners | AstraForge Supply Platform Architecture Team |
 | Technical Area | Developer Experience, Platform Engineering, InnerSource, Engineering Productivity |
 | Related Work Items | Golden Paths, Service Templates, Gradle, Testcontainers, Self-Service, DORA |
 | Supersedes | None |
@@ -18,7 +18,7 @@
 
 # 1. Context
 
-As the Enterprise Order Platform grows, engineering productivity depends on more than individual developer capability.
+As the AstraForge Supply Platform grows, engineering productivity depends on more than individual developer capability.
 
 Teams repeatedly solve similar problems:
 
@@ -2744,7 +2744,7 @@ This ADR is related to:
 
 | Date | Reviewer | Result | Notes |
 |---|---|---|---|
-| 2026-07-24 | Enterprise Order Platform Architecture Team | Approved | Initial Developer Experience, Platform Engineering and InnerSource baseline |
+| 2026-07-24 | AstraForge Supply Platform Architecture Team | Approved | Initial Developer Experience, Platform Engineering and InnerSource baseline |
 
 ---
 

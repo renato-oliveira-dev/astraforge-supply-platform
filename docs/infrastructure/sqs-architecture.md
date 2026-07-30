@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Project | Enterprise Order Platform |
+| Project | AstraForge Supply Platform |
 | Document | Amazon SQS Architecture |
 | Status | Active |
 | Version | 1.0.0 |
@@ -14,7 +14,7 @@
 
 # 1. Purpose
 
-This document defines the concrete Amazon SQS infrastructure architecture used by the Enterprise Order Platform.
+This document defines the concrete Amazon SQS infrastructure architecture used by the AstraForge Supply Platform.
 
 SQS is an infrastructure adapter. Domain and application code MUST remain independent of AWS SDK types.
 
