@@ -358,7 +358,7 @@ Recommended fields include:
   "service": "orders-service",
   "serviceVersion": "1.8.2",
   "environment": "production",
-  "logger": "com.enterprise.orders.OrderApplicationService",
+  "logger": "io.astraforge.supplyplatform.orders.OrderApplicationService",
   "thread": "virtual-142",
   "message": "Order approved successfully",
   "operation": "order.approve",
@@ -503,7 +503,7 @@ The `logger` field should contain the logger category, normally the Java class n
 Example:
 
 ```text
-com.enterprise.orders.application.ApproveOrderService
+io.astraforge.supplyplatform.orders.application.ApproveOrderService
 ```
 
 The logger name supports diagnosis but must not be the primary business classification field.

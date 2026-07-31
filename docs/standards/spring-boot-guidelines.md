@@ -78,7 +78,7 @@ The application should be organized by architectural responsibility and business
 Recommended structure:
 
 ```text
-com.enterprise.orders
+io.astraforge.supplyplatform.orders
 ├── application
 ├── domain
 ├── infrastructure

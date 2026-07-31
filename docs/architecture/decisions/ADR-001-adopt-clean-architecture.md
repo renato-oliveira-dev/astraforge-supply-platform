@@ -814,7 +814,7 @@ The project should use business-capability-oriented packages.
 Recommended structure:
 
 ```text
-com.enterprise.orders
+io.astraforge.supplyplatform.orders
 ├── domain
 │   ├── model
 │   ├── event
