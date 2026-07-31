@@ -515,10 +515,10 @@ Example:
 
 ```java
 @SpringBootApplication
-public class OrderPlatformApplication {
+public class AstraForgeSupplyPlatformApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(OrderPlatformApplication.class, args);
+        SpringApplication.run(AstraForgeSupplyPlatformApplication.class, args);
     }
 }
 ```

@@ -144,13 +144,13 @@ Tests should mirror the production package structure.
 Example:
 
 ```text
-src/main/java/com/enterprise/orderplatform/application/order/CreateOrderService.java
+src/main/java/io/astraforge/supplyplatform/application/order/CreateOrderService.java
 ```
 
 Corresponding test:
 
 ```text
-src/test/java/com/enterprise/orderplatform/application/order/CreateOrderServiceTest.java
+src/test/java/io/astraforge/supplyplatform/application/order/CreateOrderServiceTest.java
 ```
 
 This improves discoverability and package-private access where appropriate.

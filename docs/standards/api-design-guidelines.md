@@ -1974,7 +1974,7 @@ External clients should provide a meaningful `User-Agent`.
 Example:
 
 ```text
-enterprise-order-portal/2.4.1
+astraforge-supply-portal/2.4.1
 ```
 
 Service-to-service clients may include:
