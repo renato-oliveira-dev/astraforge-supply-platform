@@ -14,6 +14,7 @@ import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationFailed;
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationRequested;
+import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationRetried;
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReserved;
 import io.astraforge.supplyplatform.domain.order.event.OrderFulfillmentStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderReadyForFulfillment;
@@ -26,6 +27,7 @@ import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemExc
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderFulfillmentNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderInventoryResultNotAllowedException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderInventoryRetryNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderProcessingNotAllowedException;
@@ -564,6 +566,35 @@ public final class Order {
     }
 
 
+
+    public void retryInventoryReservation(
+            UserId requestedBy,
+            Instant requestedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(requestedBy, "Requested by must not be null");
+        Objects.requireNonNull(requestedAt, "Requested at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requireInventoryFailed();
+
+        InventoryFailureReason previousFailureReason = inventoryFailureReason;
+        status = OrderStatus.INVENTORY_PENDING;
+        inventoryRequestedBy = requestedBy;
+        inventoryRequestedAt = requestedAt;
+        inventoryResultRecordedBy = null;
+        inventoryResultRecordedAt = null;
+        inventoryFailureReason = null;
+        touch(requestedAt);
+        registerEvent(new OrderInventoryReservationRetried(
+                UUID.randomUUID(),
+                id,
+                previousFailureReason,
+                version,
+                requestedBy,
+                requestedAt,
+                correlationId));
+    }
+
     public void prepareForFulfillment(
             UserId preparedBy,
             Instant preparedAt,
@@ -807,6 +838,14 @@ public final class Order {
         if (status != OrderStatus.FULFILLMENT_IN_PROGRESS) {
             throw new OrderCompletionNotAllowedException(
                     "Only a FULFILLMENT_IN_PROGRESS order can be completed");
+        }
+    }
+
+
+    private void requireInventoryFailed() {
+        if (status != OrderStatus.INVENTORY_FAILED) {
+            throw new OrderInventoryRetryNotAllowedException(
+                    "Inventory reservation can be retried only while the order is in INVENTORY_FAILED status");
         }
     }
 

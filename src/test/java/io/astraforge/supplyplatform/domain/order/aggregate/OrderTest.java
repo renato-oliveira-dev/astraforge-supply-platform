@@ -14,6 +14,7 @@ import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationFailed;
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationRequested;
+import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationRetried;
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReserved;
 import io.astraforge.supplyplatform.domain.order.event.OrderFulfillmentStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderReadyForFulfillment;
@@ -26,6 +27,7 @@ import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemExc
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderFulfillmentNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderInventoryResultNotAllowedException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderInventoryRetryNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCancellationNotAllowedException;
@@ -1345,6 +1347,87 @@ class OrderTest {
                 .hasMessage("Order cannot be cancelled from status COMPLETED");
     }
 
+
+    @Test
+    void testRetryInventoryReservationShouldReturnFailedOrderToPending() {
+        Order order = createInventoryFailedOrder();
+        order.pullDomainEvents();
+        Instant retriedAt = Instant.parse("2026-07-30T21:25:00Z");
+
+        order.retryInventoryReservation(
+                APPROVER_ID,
+                retriedAt,
+                CORRELATION_ID);
+
+        OrderInventoryReservationRetried event =
+                (OrderInventoryReservationRetried) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after inventory reservation retry")
+                .isEqualTo(OrderStatus.INVENTORY_PENDING);
+        assertThat(order.inventoryRequestedBy())
+                .as("inventory retry actor")
+                .contains(APPROVER_ID);
+        assertThat(order.inventoryRequestedAt())
+                .as("inventory retry timestamp")
+                .contains(retriedAt);
+        assertThat(order.inventoryResultRecordedBy())
+                .as("previous inventory result actor after retry")
+                .isEmpty();
+        assertThat(order.inventoryResultRecordedAt())
+                .as("previous inventory result timestamp after retry")
+                .isEmpty();
+        assertThat(order.inventoryFailureReason())
+                .as("active inventory failure reason after retry")
+                .isEmpty();
+        assertThat(order.version())
+                .as("aggregate version after inventory reservation retry")
+                .isEqualTo(9L);
+        assertThat(event.previousFailureReason().value())
+                .as("previous inventory failure preserved in retry event")
+                .isEqualTo("Insufficient stock at eligible facilities.");
+        assertThat(event.aggregateVersion())
+                .as("aggregate version in inventory retry event")
+                .isEqualTo(9L);
+    }
+
+    @Test
+    void testRetriedInventoryReservationShouldAcceptSuccessfulOutcome() {
+        Order order = createInventoryFailedOrder();
+        order.retryInventoryReservation(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:25:00Z"),
+                CORRELATION_ID);
+
+        order.confirmInventoryReservation(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:30:00Z"),
+                CORRELATION_ID);
+
+        assertThat(order.status())
+                .as("order status after successful retried reservation")
+                .isEqualTo(OrderStatus.INVENTORY_RESERVED);
+        assertThat(order.inventoryFailureReason())
+                .as("failure reason after successful retried reservation")
+                .isEmpty();
+        assertThat(order.version())
+                .as("aggregate version after successful retry outcome")
+                .isEqualTo(10L);
+    }
+
+    @Test
+    void testRetryInventoryReservationShouldRejectNonFailedOrder() {
+        Order order = createInventoryPendingOrder();
+
+        assertThatThrownBy(() -> order.retryInventoryReservation(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:25:00Z"),
+                CORRELATION_ID))
+                .as("inventory retry requires failed inventory status")
+                .isInstanceOf(OrderInventoryRetryNotAllowedException.class)
+                .hasMessage(
+                        "Inventory reservation can be retried only while the order is in INVENTORY_FAILED status");
+    }
+
     private static Order createOrder() {
         return Order.create(
                 ORDER_ID,
@@ -1394,6 +1477,18 @@ class OrderTest {
         order.completeFulfillment(
                 APPROVER_ID,
                 Instant.parse("2026-07-30T21:35:00Z"),
+                CORRELATION_ID);
+        return order;
+    }
+
+
+    private static Order createInventoryFailedOrder() {
+        Order order = createInventoryPendingOrder();
+        order.failInventoryReservation(
+                new InventoryFailureReason(
+                        "Insufficient stock at eligible facilities."),
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:20:00Z"),
                 CORRELATION_ID);
         return order;
     }
