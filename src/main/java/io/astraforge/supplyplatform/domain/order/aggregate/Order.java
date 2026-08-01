@@ -8,12 +8,14 @@ import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemRemoved;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
+import io.astraforge.supplyplatform.domain.order.event.OrderSubmitted;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemException;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderPricingIncompleteException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderSubmissionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerReference;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderId;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Currency;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public final class Order {
@@ -44,6 +47,8 @@ public final class Order {
     private final List<DomainEvent> domainEvents;
     private OrderStatus status;
     private Instant updatedAt;
+    private UserId submittedBy;
+    private Instant submittedAt;
     private long version;
 
     private Order(
@@ -222,6 +227,35 @@ public final class Order {
         return new OrderTotals(subtotal, discount, tax, subtotal.subtract(discount).add(tax));
     }
 
+
+    public void submit(
+            UserId submittedBy,
+            Instant submittedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(submittedBy, "Submitted by must not be null");
+        Objects.requireNonNull(submittedAt, "Submitted at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requireDraftForSubmission();
+        requireSubmissionReady();
+
+        OrderTotals orderTotals = totals();
+        this.status = OrderStatus.SUBMITTED;
+        this.submittedBy = submittedBy;
+        this.submittedAt = submittedAt;
+        touch(submittedAt);
+        registerEvent(new OrderSubmitted(
+                UUID.randomUUID(),
+                id,
+                customerReference.customerId(),
+                items.size(),
+                orderTotals,
+                version,
+                submittedBy,
+                submittedAt,
+                correlationId));
+    }
+
     public void removeItem(
             OrderItemId orderItemId,
             UserId removedBy,
@@ -273,6 +307,14 @@ public final class Order {
         return status;
     }
 
+    public Optional<UserId> submittedBy() {
+        return Optional.ofNullable(submittedBy);
+    }
+
+    public Optional<Instant> submittedAt() {
+        return Optional.ofNullable(submittedAt);
+    }
+
     public long version() {
         return version;
     }
@@ -289,6 +331,25 @@ public final class Order {
         List<DomainEvent> pendingEvents = List.copyOf(domainEvents);
         domainEvents.clear();
         return pendingEvents;
+    }
+
+
+    private void requireDraftForSubmission() {
+        if (status != OrderStatus.DRAFT) {
+            throw new OrderSubmissionNotAllowedException(
+                    "Only a DRAFT order can be submitted");
+        }
+    }
+
+    private void requireSubmissionReady() {
+        if (items.isEmpty()) {
+            throw new OrderSubmissionNotAllowedException(
+                    "An order must contain at least one item before submission");
+        }
+        if (!pricingComplete()) {
+            throw new OrderSubmissionNotAllowedException(
+                    "Every order item must be priced before submission");
+        }
     }
 
     private void requireEditable() {

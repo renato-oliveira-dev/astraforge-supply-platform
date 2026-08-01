@@ -8,11 +8,13 @@ import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemRemoved;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
+import io.astraforge.supplyplatform.domain.order.event.OrderSubmitted;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemException;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderPricingIncompleteException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderSubmissionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerReference;
@@ -471,6 +473,107 @@ class OrderTest {
         assertThat(order.domainEvents())
                 .as("no event is emitted for identical pricing")
                 .isEmpty();
+    }
+
+
+    @Test
+    void testSubmitShouldTransitionPricedDraftOrderAndRecordEvent() {
+        Order order = createPricedOrder();
+        order.pullDomainEvents();
+        Instant submittedAt = Instant.parse("2026-07-30T20:20:00Z");
+
+        order.submit(USER_ID, submittedAt, CORRELATION_ID);
+
+        OrderSubmitted event = (OrderSubmitted) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after submission")
+                .isEqualTo(OrderStatus.SUBMITTED);
+        assertThat(order.submittedBy())
+                .as("actor who submitted the order")
+                .contains(USER_ID);
+        assertThat(order.submittedAt())
+                .as("order submission timestamp")
+                .contains(submittedAt);
+        assertThat(order.updatedAt())
+                .as("aggregate update timestamp after submission")
+                .isEqualTo(submittedAt);
+        assertThat(order.version())
+                .as("aggregate version after submission")
+                .isEqualTo(3L);
+        assertThat(event.itemCount())
+                .as("submitted item count")
+                .isEqualTo(1);
+        assertThat(event.totals().total().amount())
+                .as("submitted order total snapshot")
+                .isEqualByComparingTo("216.00");
+        assertThat(event.aggregateVersion())
+                .as("aggregate version in the submission event")
+                .isEqualTo(3L);
+        assertThat(event.submittedBy())
+                .as("submission actor in the event")
+                .isEqualTo(USER_ID);
+        assertThat(event.occurredAt())
+                .as("submission occurrence timestamp")
+                .isEqualTo(submittedAt);
+    }
+
+    @Test
+    void testSubmitShouldRejectEmptyOrder() {
+        Order order = createOrderWithoutPendingEvents();
+
+        assertThatThrownBy(() -> order.submit(USER_ID, CHANGED_AT, CORRELATION_ID))
+                .as("empty order submission")
+                .isInstanceOf(OrderSubmissionNotAllowedException.class)
+                .hasMessage("An order must contain at least one item before submission");
+    }
+
+    @Test
+    void testSubmitShouldRejectOrderWithIncompletePricing() {
+        Order order = createOrderWithoutPendingEvents();
+        addItem(order, ITEM_ID, PRODUCT_ID);
+
+        assertThatThrownBy(() -> order.submit(USER_ID, CHANGED_AT, CORRELATION_ID))
+                .as("submission requires pricing for every item")
+                .isInstanceOf(OrderSubmissionNotAllowedException.class)
+                .hasMessage("Every order item must be priced before submission");
+    }
+
+    @Test
+    void testSubmitShouldRejectSecondSubmission() {
+        Order order = createPricedOrder();
+        order.submit(
+                USER_ID,
+                Instant.parse("2026-07-30T20:20:00Z"),
+                CORRELATION_ID);
+
+        assertThatThrownBy(() -> order.submit(
+                USER_ID,
+                Instant.parse("2026-07-30T20:25:00Z"),
+                CORRELATION_ID))
+                .as("order cannot be submitted twice")
+                .isInstanceOf(OrderSubmissionNotAllowedException.class)
+                .hasMessage("Only a DRAFT order can be submitted");
+    }
+
+    @Test
+    void testSubmittedOrderShouldRejectItemMutation() {
+        Order order = createPricedOrder();
+        order.submit(
+                USER_ID,
+                Instant.parse("2026-07-30T20:20:00Z"),
+                CORRELATION_ID);
+
+        assertThatThrownBy(() -> order.updateItemQuantity(
+                ITEM_ID,
+                quantity("3.000"),
+                USER_ID,
+                Instant.parse("2026-07-30T20:25:00Z"),
+                CORRELATION_ID))
+                .as("submitted order items are immutable")
+                .isInstanceOf(
+                        io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableException.class)
+                .hasMessage(
+                        "Order items can be changed only while the order is in DRAFT status");
     }
 
     private static Order createOrder() {
