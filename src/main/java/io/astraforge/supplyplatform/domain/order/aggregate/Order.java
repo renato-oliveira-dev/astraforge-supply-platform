@@ -14,6 +14,8 @@ import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidat
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationFailed;
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationRequested;
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReserved;
+import io.astraforge.supplyplatform.domain.order.event.OrderFulfillmentStarted;
+import io.astraforge.supplyplatform.domain.order.event.OrderReadyForFulfillment;
 import io.astraforge.supplyplatform.domain.order.event.OrderProcessingStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderRejected;
 import io.astraforge.supplyplatform.domain.order.event.OrderReviewRequested;
@@ -21,6 +23,7 @@ import io.astraforge.supplyplatform.domain.order.event.OrderRevisionStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderSubmitted;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemException;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderFulfillmentNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderInventoryResultNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableException;
@@ -87,6 +90,10 @@ public final class Order {
     private UserId inventoryResultRecordedBy;
     private Instant inventoryResultRecordedAt;
     private InventoryFailureReason inventoryFailureReason;
+    private UserId fulfillmentPreparedBy;
+    private Instant fulfillmentPreparedAt;
+    private UserId fulfillmentStartedBy;
+    private Instant fulfillmentStartedAt;
     private long version;
 
     private Order(
@@ -552,6 +559,58 @@ public final class Order {
                 correlationId));
     }
 
+
+    public void prepareForFulfillment(
+            UserId preparedBy,
+            Instant preparedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(preparedBy, "Prepared by must not be null");
+        Objects.requireNonNull(preparedAt, "Prepared at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requireFulfillmentStatus(
+                OrderStatus.INVENTORY_RESERVED,
+                "Only an INVENTORY_RESERVED order can be prepared for fulfillment");
+
+        status = OrderStatus.READY_FOR_FULFILLMENT;
+        fulfillmentPreparedBy = preparedBy;
+        fulfillmentPreparedAt = preparedAt;
+        touch(preparedAt);
+        registerEvent(new OrderReadyForFulfillment(
+                UUID.randomUUID(),
+                id,
+                items.size(),
+                version,
+                preparedBy,
+                preparedAt,
+                correlationId));
+    }
+
+    public void startFulfillment(
+            UserId startedBy,
+            Instant startedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(startedBy, "Started by must not be null");
+        Objects.requireNonNull(startedAt, "Started at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requireFulfillmentStatus(
+                OrderStatus.READY_FOR_FULFILLMENT,
+                "Only a READY_FOR_FULFILLMENT order can start fulfillment");
+
+        status = OrderStatus.FULFILLMENT_IN_PROGRESS;
+        fulfillmentStartedBy = startedBy;
+        fulfillmentStartedAt = startedAt;
+        touch(startedAt);
+        registerEvent(new OrderFulfillmentStarted(
+                UUID.randomUUID(),
+                id,
+                version,
+                startedBy,
+                startedAt,
+                correlationId));
+    }
+
     public void removeItem(
             OrderItemId orderItemId,
             UserId removedBy,
@@ -663,6 +722,22 @@ public final class Order {
         return Optional.ofNullable(inventoryFailureReason);
     }
 
+    public Optional<UserId> fulfillmentPreparedBy() {
+        return Optional.ofNullable(fulfillmentPreparedBy);
+    }
+
+    public Optional<Instant> fulfillmentPreparedAt() {
+        return Optional.ofNullable(fulfillmentPreparedAt);
+    }
+
+    public Optional<UserId> fulfillmentStartedBy() {
+        return Optional.ofNullable(fulfillmentStartedBy);
+    }
+
+    public Optional<Instant> fulfillmentStartedAt() {
+        return Optional.ofNullable(fulfillmentStartedAt);
+    }
+
     public long version() {
         return version;
     }
@@ -686,6 +761,16 @@ public final class Order {
 
 
 
+
+
+    private void requireFulfillmentStatus(
+            OrderStatus requiredStatus,
+            String message
+    ) {
+        if (status != requiredStatus) {
+            throw new OrderFulfillmentNotAllowedException(message);
+        }
+    }
 
     private void requireInventoryPending() {
         if (status != OrderStatus.INVENTORY_PENDING) {

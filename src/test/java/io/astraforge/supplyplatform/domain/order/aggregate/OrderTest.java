@@ -14,6 +14,8 @@ import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidat
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationFailed;
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationRequested;
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReserved;
+import io.astraforge.supplyplatform.domain.order.event.OrderFulfillmentStarted;
+import io.astraforge.supplyplatform.domain.order.event.OrderReadyForFulfillment;
 import io.astraforge.supplyplatform.domain.order.event.OrderProcessingStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderRejected;
 import io.astraforge.supplyplatform.domain.order.event.OrderReviewRequested;
@@ -21,6 +23,7 @@ import io.astraforge.supplyplatform.domain.order.event.OrderRevisionStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderSubmitted;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemException;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderFulfillmentNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderInventoryResultNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllowedException;
@@ -1149,6 +1152,116 @@ class OrderTest {
                         "Inventory result can be recorded only while the order is IN INVENTORY_PENDING status");
     }
 
+
+    @Test
+    void testPrepareForFulfillmentShouldTransitionReservedOrderAndRecordEvent() {
+        Order order = createInventoryReservedOrder();
+        order.pullDomainEvents();
+        Instant preparedAt = Instant.parse("2026-07-30T21:25:00Z");
+
+        order.prepareForFulfillment(
+                APPROVER_ID,
+                preparedAt,
+                CORRELATION_ID);
+
+        OrderReadyForFulfillment event =
+                (OrderReadyForFulfillment) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after fulfillment preparation")
+                .isEqualTo(OrderStatus.READY_FOR_FULFILLMENT);
+        assertThat(order.fulfillmentPreparedBy())
+                .as("fulfillment preparation actor")
+                .contains(APPROVER_ID);
+        assertThat(order.fulfillmentPreparedAt())
+                .as("fulfillment preparation timestamp")
+                .contains(preparedAt);
+        assertThat(order.version())
+                .as("aggregate version after fulfillment preparation")
+                .isEqualTo(9L);
+        assertThat(event.itemCount())
+                .as("item count in ready-for-fulfillment event")
+                .isEqualTo(1);
+        assertThat(event.aggregateVersion())
+                .as("aggregate version in ready-for-fulfillment event")
+                .isEqualTo(9L);
+    }
+
+    @Test
+    void testStartFulfillmentShouldTransitionReadyOrderAndRecordEvent() {
+        Order order = createReadyForFulfillmentOrder();
+        order.pullDomainEvents();
+        Instant startedAt = Instant.parse("2026-07-30T21:30:00Z");
+
+        order.startFulfillment(
+                APPROVER_ID,
+                startedAt,
+                CORRELATION_ID);
+
+        OrderFulfillmentStarted event =
+                (OrderFulfillmentStarted) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after fulfillment starts")
+                .isEqualTo(OrderStatus.FULFILLMENT_IN_PROGRESS);
+        assertThat(order.fulfillmentStartedBy())
+                .as("fulfillment start actor")
+                .contains(APPROVER_ID);
+        assertThat(order.fulfillmentStartedAt())
+                .as("fulfillment start timestamp")
+                .contains(startedAt);
+        assertThat(order.version())
+                .as("aggregate version after fulfillment starts")
+                .isEqualTo(10L);
+        assertThat(event.aggregateVersion())
+                .as("aggregate version in fulfillment-started event")
+                .isEqualTo(10L);
+        assertThat(event.startedBy())
+                .as("fulfillment start actor in event")
+                .isEqualTo(APPROVER_ID);
+    }
+
+    @Test
+    void testPrepareForFulfillmentShouldRejectInventoryPendingOrder() {
+        Order order = createInventoryPendingOrder();
+
+        assertThatThrownBy(() -> order.prepareForFulfillment(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:25:00Z"),
+                CORRELATION_ID))
+                .as("fulfillment preparation requires reserved inventory")
+                .isInstanceOf(OrderFulfillmentNotAllowedException.class)
+                .hasMessage(
+                        "Only an INVENTORY_RESERVED order can be prepared for fulfillment");
+    }
+
+    @Test
+    void testStartFulfillmentShouldRejectInventoryReservedOrder() {
+        Order order = createInventoryReservedOrder();
+
+        assertThatThrownBy(() -> order.startFulfillment(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:30:00Z"),
+                CORRELATION_ID))
+                .as("fulfillment start requires ready status")
+                .isInstanceOf(OrderFulfillmentNotAllowedException.class)
+                .hasMessage(
+                        "Only a READY_FOR_FULFILLMENT order can start fulfillment");
+    }
+
+    @Test
+    void testFulfillmentInProgressOrderShouldRejectCancellation() {
+        Order order = createFulfillmentInProgressOrder();
+
+        assertThatThrownBy(() -> order.cancel(
+                new CancellationReason("Late cancellation request."),
+                USER_ID,
+                Instant.parse("2026-07-30T21:35:00Z"),
+                CORRELATION_ID))
+                .as("fulfillment in progress order cancellation")
+                .isInstanceOf(OrderCancellationNotAllowedException.class)
+                .hasMessage(
+                        "Order cannot be cancelled from status FULFILLMENT_IN_PROGRESS");
+    }
+
     private static Order createOrder() {
         return Order.create(
                 ORDER_ID,
@@ -1190,6 +1303,34 @@ class OrderTest {
 
 
 
+
+
+    private static Order createFulfillmentInProgressOrder() {
+        Order order = createReadyForFulfillmentOrder();
+        order.startFulfillment(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:30:00Z"),
+                CORRELATION_ID);
+        return order;
+    }
+
+    private static Order createReadyForFulfillmentOrder() {
+        Order order = createInventoryReservedOrder();
+        order.prepareForFulfillment(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:25:00Z"),
+                CORRELATION_ID);
+        return order;
+    }
+
+    private static Order createInventoryReservedOrder() {
+        Order order = createInventoryPendingOrder();
+        order.confirmInventoryReservation(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:20:00Z"),
+                CORRELATION_ID);
+        return order;
+    }
 
     private static Order createInventoryPendingOrder() {
         Order order = createProcessingOrder();
