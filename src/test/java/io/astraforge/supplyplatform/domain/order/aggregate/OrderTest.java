@@ -11,6 +11,8 @@ import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemRemoved;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
+import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationRequested;
+import io.astraforge.supplyplatform.domain.order.event.OrderProcessingStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderRejected;
 import io.astraforge.supplyplatform.domain.order.event.OrderReviewRequested;
 import io.astraforge.supplyplatform.domain.order.event.OrderRevisionStarted;
@@ -22,6 +24,7 @@ import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllow
 import io.astraforge.supplyplatform.domain.order.exception.OrderCancellationNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderPricingIncompleteException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderProcessingNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderRevisionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderSubmissionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.valueobject.ApprovalComment;
@@ -937,6 +940,111 @@ class OrderTest {
                 .hasMessage("Only a DRAFT order can be submitted");
     }
 
+
+    @Test
+    void testStartProcessingShouldTransitionApprovedOrderAndRecordEvent() {
+        Order order = createApprovedOrder();
+        order.pullDomainEvents();
+        Instant startedAt = Instant.parse("2026-07-30T21:10:00Z");
+
+        order.startProcessing(APPROVER_ID, startedAt, CORRELATION_ID);
+
+        OrderProcessingStarted event =
+                (OrderProcessingStarted) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after processing starts")
+                .isEqualTo(OrderStatus.PROCESSING);
+        assertThat(order.processingStartedBy())
+                .as("processing start actor")
+                .contains(APPROVER_ID);
+        assertThat(order.processingStartedAt())
+                .as("processing start timestamp")
+                .contains(startedAt);
+        assertThat(order.version())
+                .as("aggregate version after processing starts")
+                .isEqualTo(6L);
+        assertThat(event.aggregateVersion())
+                .as("aggregate version in processing-started event")
+                .isEqualTo(6L);
+        assertThat(event.startedBy())
+                .as("processing start actor in domain event")
+                .isEqualTo(APPROVER_ID);
+    }
+
+    @Test
+    void testRequestInventoryReservationShouldTransitionProcessingOrder() {
+        Order order = createProcessingOrder();
+        order.pullDomainEvents();
+        Instant requestedAt = Instant.parse("2026-07-30T21:15:00Z");
+
+        order.requestInventoryReservation(
+                APPROVER_ID,
+                requestedAt,
+                CORRELATION_ID);
+
+        OrderInventoryReservationRequested event =
+                (OrderInventoryReservationRequested) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status while inventory reservation is pending")
+                .isEqualTo(OrderStatus.INVENTORY_PENDING);
+        assertThat(order.inventoryRequestedBy())
+                .as("inventory reservation request actor")
+                .contains(APPROVER_ID);
+        assertThat(order.inventoryRequestedAt())
+                .as("inventory reservation request timestamp")
+                .contains(requestedAt);
+        assertThat(order.version())
+                .as("aggregate version after inventory reservation request")
+                .isEqualTo(7L);
+        assertThat(event.itemCount())
+                .as("item count in inventory reservation event")
+                .isEqualTo(1);
+        assertThat(event.aggregateVersion())
+                .as("aggregate version in inventory reservation event")
+                .isEqualTo(7L);
+    }
+
+    @Test
+    void testStartProcessingShouldRejectNonApprovedOrder() {
+        Order order = createSubmittedOrder();
+
+        assertThatThrownBy(() -> order.startProcessing(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:10:00Z"),
+                CORRELATION_ID))
+                .as("processing requires an approved order")
+                .isInstanceOf(OrderProcessingNotAllowedException.class)
+                .hasMessage("Only an APPROVED order can start processing");
+    }
+
+    @Test
+    void testInventoryReservationRequestShouldRejectNonProcessingOrder() {
+        Order order = createApprovedOrder();
+
+        assertThatThrownBy(() -> order.requestInventoryReservation(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:15:00Z"),
+                CORRELATION_ID))
+                .as("inventory reservation requires processing status")
+                .isInstanceOf(OrderProcessingNotAllowedException.class)
+                .hasMessage(
+                        "Only a PROCESSING order can request inventory reservation");
+    }
+
+    @Test
+    void testProcessingOrderShouldNotAllowCancellation() {
+        Order order = createProcessingOrder();
+
+        assertThatThrownBy(() -> order.cancel(
+                new CancellationReason("Late cancellation attempt."),
+                USER_ID,
+                Instant.parse("2026-07-30T21:20:00Z"),
+                CORRELATION_ID))
+                .as("processing order cancellation")
+                .isInstanceOf(OrderCancellationNotAllowedException.class)
+                .hasMessage("Order cannot be cancelled from status PROCESSING");
+    }
+
     private static Order createOrder() {
         return Order.create(
                 ORDER_ID,
@@ -976,6 +1084,16 @@ class OrderTest {
 
 
 
+
+
+    private static Order createProcessingOrder() {
+        Order order = createApprovedOrder();
+        order.startProcessing(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:10:00Z"),
+                CORRELATION_ID);
+        return order;
+    }
 
     private static Order createApprovedOrder() {
         Order order = createPendingApprovalOrder();

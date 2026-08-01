@@ -11,6 +11,8 @@ import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemRemoved;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
+import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationRequested;
+import io.astraforge.supplyplatform.domain.order.event.OrderProcessingStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderRejected;
 import io.astraforge.supplyplatform.domain.order.event.OrderReviewRequested;
 import io.astraforge.supplyplatform.domain.order.event.OrderRevisionStarted;
@@ -19,6 +21,7 @@ import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemExc
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderProcessingNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCancellationNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
@@ -73,6 +76,10 @@ public final class Order {
     private UserId cancelledBy;
     private Instant cancelledAt;
     private CancellationReason cancellationReason;
+    private UserId processingStartedBy;
+    private Instant processingStartedAt;
+    private UserId inventoryRequestedBy;
+    private Instant inventoryRequestedAt;
     private long version;
 
     private Order(
@@ -433,6 +440,58 @@ public final class Order {
                 correlationId));
     }
 
+
+    public void startProcessing(
+            UserId startedBy,
+            Instant startedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(startedBy, "Started by must not be null");
+        Objects.requireNonNull(startedAt, "Started at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requireProcessingStatus(
+                OrderStatus.APPROVED,
+                "Only an APPROVED order can start processing");
+
+        status = OrderStatus.PROCESSING;
+        processingStartedBy = startedBy;
+        processingStartedAt = startedAt;
+        touch(startedAt);
+        registerEvent(new OrderProcessingStarted(
+                UUID.randomUUID(),
+                id,
+                version,
+                startedBy,
+                startedAt,
+                correlationId));
+    }
+
+    public void requestInventoryReservation(
+            UserId requestedBy,
+            Instant requestedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(requestedBy, "Requested by must not be null");
+        Objects.requireNonNull(requestedAt, "Requested at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requireProcessingStatus(
+                OrderStatus.PROCESSING,
+                "Only a PROCESSING order can request inventory reservation");
+
+        status = OrderStatus.INVENTORY_PENDING;
+        inventoryRequestedBy = requestedBy;
+        inventoryRequestedAt = requestedAt;
+        touch(requestedAt);
+        registerEvent(new OrderInventoryReservationRequested(
+                UUID.randomUUID(),
+                id,
+                items.size(),
+                version,
+                requestedBy,
+                requestedAt,
+                correlationId));
+    }
+
     public void removeItem(
             OrderItemId orderItemId,
             UserId removedBy,
@@ -516,6 +575,22 @@ public final class Order {
         return Optional.ofNullable(cancellationReason);
     }
 
+    public Optional<UserId> processingStartedBy() {
+        return Optional.ofNullable(processingStartedBy);
+    }
+
+    public Optional<Instant> processingStartedAt() {
+        return Optional.ofNullable(processingStartedAt);
+    }
+
+    public Optional<UserId> inventoryRequestedBy() {
+        return Optional.ofNullable(inventoryRequestedBy);
+    }
+
+    public Optional<Instant> inventoryRequestedAt() {
+        return Optional.ofNullable(inventoryRequestedAt);
+    }
+
     public long version() {
         return version;
     }
@@ -537,6 +612,16 @@ public final class Order {
 
 
 
+
+
+    private void requireProcessingStatus(
+            OrderStatus requiredStatus,
+            String message
+    ) {
+        if (status != requiredStatus) {
+            throw new OrderProcessingNotAllowedException(message);
+        }
+    }
 
     private void requireCancellable() {
         if (!CANCELLABLE_STATUSES.contains(status)) {
