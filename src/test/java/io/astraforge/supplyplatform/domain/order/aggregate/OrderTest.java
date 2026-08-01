@@ -11,7 +11,9 @@ import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemRemoved;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
+import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationFailed;
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationRequested;
+import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReserved;
 import io.astraforge.supplyplatform.domain.order.event.OrderProcessingStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderRejected;
 import io.astraforge.supplyplatform.domain.order.event.OrderReviewRequested;
@@ -19,6 +21,7 @@ import io.astraforge.supplyplatform.domain.order.event.OrderRevisionStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderSubmitted;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemException;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderInventoryResultNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCancellationNotAllowedException;
@@ -33,6 +36,7 @@ import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerReference;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderId;
+import io.astraforge.supplyplatform.domain.order.valueobject.InventoryFailureReason;
 import io.astraforge.supplyplatform.domain.order.valueobject.ItemPricing;
 import io.astraforge.supplyplatform.domain.order.valueobject.Money;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderTotals;
@@ -1045,6 +1049,106 @@ class OrderTest {
                 .hasMessage("Order cannot be cancelled from status PROCESSING");
     }
 
+
+    @Test
+    void testConfirmInventoryReservationShouldRecordSuccessfulOutcome() {
+        Order order = createInventoryPendingOrder();
+        order.pullDomainEvents();
+        Instant recordedAt = Instant.parse("2026-07-30T21:20:00Z");
+
+        order.confirmInventoryReservation(
+                APPROVER_ID,
+                recordedAt,
+                CORRELATION_ID);
+
+        OrderInventoryReserved event =
+                (OrderInventoryReserved) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after inventory reservation succeeds")
+                .isEqualTo(OrderStatus.INVENTORY_RESERVED);
+        assertThat(order.inventoryResultRecordedBy())
+                .as("inventory result actor")
+                .contains(APPROVER_ID);
+        assertThat(order.inventoryResultRecordedAt())
+                .as("inventory result timestamp")
+                .contains(recordedAt);
+        assertThat(order.inventoryFailureReason())
+                .as("successful inventory result has no failure reason")
+                .isEmpty();
+        assertThat(order.version())
+                .as("aggregate version after inventory reservation succeeds")
+                .isEqualTo(8L);
+        assertThat(event.itemCount())
+                .as("reserved item count in domain event")
+                .isEqualTo(1);
+        assertThat(event.aggregateVersion())
+                .as("aggregate version in inventory reserved event")
+                .isEqualTo(8L);
+    }
+
+    @Test
+    void testFailInventoryReservationShouldRecordFailureReason() {
+        Order order = createInventoryPendingOrder();
+        order.pullDomainEvents();
+        InventoryFailureReason reason =
+                new InventoryFailureReason("Insufficient stock at eligible facilities.");
+        Instant recordedAt = Instant.parse("2026-07-30T21:20:00Z");
+
+        order.failInventoryReservation(
+                reason,
+                APPROVER_ID,
+                recordedAt,
+                CORRELATION_ID);
+
+        OrderInventoryReservationFailed event =
+                (OrderInventoryReservationFailed) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after inventory reservation fails")
+                .isEqualTo(OrderStatus.INVENTORY_FAILED);
+        assertThat(order.inventoryFailureReason())
+                .as("inventory failure reason")
+                .contains(reason);
+        assertThat(event.reason())
+                .as("inventory failure reason in domain event")
+                .isEqualTo(reason);
+        assertThat(event.aggregateVersion())
+                .as("aggregate version in inventory failure event")
+                .isEqualTo(8L);
+    }
+
+    @Test
+    void testInventoryResultShouldRejectOrderOutsidePendingStatus() {
+        Order order = createProcessingOrder();
+
+        assertThatThrownBy(() -> order.confirmInventoryReservation(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:20:00Z"),
+                CORRELATION_ID))
+                .as("inventory result requires pending inventory status")
+                .isInstanceOf(OrderInventoryResultNotAllowedException.class)
+                .hasMessage(
+                        "Inventory result can be recorded only while the order is IN INVENTORY_PENDING status");
+    }
+
+    @Test
+    void testInventoryResultShouldRejectSecondOutcome() {
+        Order order = createInventoryPendingOrder();
+        order.confirmInventoryReservation(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:20:00Z"),
+                CORRELATION_ID);
+
+        assertThatThrownBy(() -> order.failInventoryReservation(
+                new InventoryFailureReason("Late conflicting result."),
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:21:00Z"),
+                CORRELATION_ID))
+                .as("inventory outcome can be recorded only once")
+                .isInstanceOf(OrderInventoryResultNotAllowedException.class)
+                .hasMessage(
+                        "Inventory result can be recorded only while the order is IN INVENTORY_PENDING status");
+    }
+
     private static Order createOrder() {
         return Order.create(
                 ORDER_ID,
@@ -1085,6 +1189,16 @@ class OrderTest {
 
 
 
+
+
+    private static Order createInventoryPendingOrder() {
+        Order order = createProcessingOrder();
+        order.requestInventoryReservation(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:15:00Z"),
+                CORRELATION_ID);
+        return order;
+    }
 
     private static Order createProcessingOrder() {
         Order order = createApprovedOrder();

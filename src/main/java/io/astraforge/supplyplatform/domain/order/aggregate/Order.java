@@ -11,7 +11,9 @@ import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemRemoved;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
+import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationFailed;
 import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReservationRequested;
+import io.astraforge.supplyplatform.domain.order.event.OrderInventoryReserved;
 import io.astraforge.supplyplatform.domain.order.event.OrderProcessingStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderRejected;
 import io.astraforge.supplyplatform.domain.order.event.OrderReviewRequested;
@@ -19,6 +21,7 @@ import io.astraforge.supplyplatform.domain.order.event.OrderRevisionStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderSubmitted;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemException;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderInventoryResultNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderProcessingNotAllowedException;
@@ -34,6 +37,7 @@ import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerReference;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderId;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderItemId;
+import io.astraforge.supplyplatform.domain.order.valueobject.InventoryFailureReason;
 import io.astraforge.supplyplatform.domain.order.valueobject.ItemPricing;
 import io.astraforge.supplyplatform.domain.order.valueobject.Money;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderTotals;
@@ -80,6 +84,9 @@ public final class Order {
     private Instant processingStartedAt;
     private UserId inventoryRequestedBy;
     private Instant inventoryRequestedAt;
+    private UserId inventoryResultRecordedBy;
+    private Instant inventoryResultRecordedAt;
+    private InventoryFailureReason inventoryFailureReason;
     private long version;
 
     private Order(
@@ -492,6 +499,59 @@ public final class Order {
                 correlationId));
     }
 
+
+    public void confirmInventoryReservation(
+            UserId recordedBy,
+            Instant recordedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(recordedBy, "Recorded by must not be null");
+        Objects.requireNonNull(recordedAt, "Recorded at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requireInventoryPending();
+
+        status = OrderStatus.INVENTORY_RESERVED;
+        inventoryResultRecordedBy = recordedBy;
+        inventoryResultRecordedAt = recordedAt;
+        inventoryFailureReason = null;
+        touch(recordedAt);
+        registerEvent(new OrderInventoryReserved(
+                UUID.randomUUID(),
+                id,
+                items.size(),
+                version,
+                recordedBy,
+                recordedAt,
+                correlationId));
+    }
+
+    public void failInventoryReservation(
+            InventoryFailureReason reason,
+            UserId recordedBy,
+            Instant recordedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(reason, "Inventory failure reason must not be null");
+        Objects.requireNonNull(recordedBy, "Recorded by must not be null");
+        Objects.requireNonNull(recordedAt, "Recorded at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requireInventoryPending();
+
+        status = OrderStatus.INVENTORY_FAILED;
+        inventoryResultRecordedBy = recordedBy;
+        inventoryResultRecordedAt = recordedAt;
+        inventoryFailureReason = reason;
+        touch(recordedAt);
+        registerEvent(new OrderInventoryReservationFailed(
+                UUID.randomUUID(),
+                id,
+                reason,
+                version,
+                recordedBy,
+                recordedAt,
+                correlationId));
+    }
+
     public void removeItem(
             OrderItemId orderItemId,
             UserId removedBy,
@@ -591,6 +651,18 @@ public final class Order {
         return Optional.ofNullable(inventoryRequestedAt);
     }
 
+    public Optional<UserId> inventoryResultRecordedBy() {
+        return Optional.ofNullable(inventoryResultRecordedBy);
+    }
+
+    public Optional<Instant> inventoryResultRecordedAt() {
+        return Optional.ofNullable(inventoryResultRecordedAt);
+    }
+
+    public Optional<InventoryFailureReason> inventoryFailureReason() {
+        return Optional.ofNullable(inventoryFailureReason);
+    }
+
     public long version() {
         return version;
     }
@@ -613,6 +685,14 @@ public final class Order {
 
 
 
+
+
+    private void requireInventoryPending() {
+        if (status != OrderStatus.INVENTORY_PENDING) {
+            throw new OrderInventoryResultNotAllowedException(
+                    "Inventory result can be recorded only while the order is IN INVENTORY_PENDING status");
+        }
+    }
 
     private void requireProcessingStatus(
             OrderStatus requiredStatus,
