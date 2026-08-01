@@ -12,6 +12,7 @@ import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
 import io.astraforge.supplyplatform.domain.order.event.OrderRejected;
 import io.astraforge.supplyplatform.domain.order.event.OrderReviewRequested;
+import io.astraforge.supplyplatform.domain.order.event.OrderRevisionStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderSubmitted;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemException;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
@@ -20,6 +21,7 @@ import io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableExcep
 import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderPricingIncompleteException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderRevisionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderSubmissionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.valueobject.ApprovalComment;
 import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
@@ -363,6 +365,31 @@ public final class Order {
                 correlationId));
     }
 
+
+    public void reopenForRevision(
+            UserId reopenedBy,
+            Instant reopenedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(reopenedBy, "Reopened by must not be null");
+        Objects.requireNonNull(reopenedAt, "Reopened at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requireReviewRequested();
+
+        ApprovalComment requestedChanges = decisionComment;
+        status = OrderStatus.DRAFT;
+        clearDecision();
+        touch(reopenedAt);
+        registerEvent(new OrderRevisionStarted(
+                UUID.randomUUID(),
+                id,
+                requestedChanges,
+                version,
+                reopenedBy,
+                reopenedAt,
+                correlationId));
+    }
+
     public void removeItem(
             OrderItemId orderItemId,
             UserId removedBy,
@@ -453,6 +480,20 @@ public final class Order {
     }
 
 
+
+
+    private void requireReviewRequested() {
+        if (status != OrderStatus.REVIEW_REQUESTED) {
+            throw new OrderRevisionNotAllowedException(
+                    "Only a REVIEW_REQUESTED order can be reopened for revision");
+        }
+    }
+
+    private void clearDecision() {
+        decisionBy = null;
+        decisionAt = null;
+        decisionComment = null;
+    }
 
     private void requirePendingApproval() {
         requireStatus(

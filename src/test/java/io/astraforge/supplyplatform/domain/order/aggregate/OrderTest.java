@@ -12,6 +12,7 @@ import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
 import io.astraforge.supplyplatform.domain.order.event.OrderRejected;
 import io.astraforge.supplyplatform.domain.order.event.OrderReviewRequested;
+import io.astraforge.supplyplatform.domain.order.event.OrderRevisionStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderSubmitted;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemException;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
@@ -19,6 +20,7 @@ import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundExce
 import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderPricingIncompleteException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderRevisionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderSubmissionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.valueobject.ApprovalComment;
 import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
@@ -724,6 +726,93 @@ class OrderTest {
                         "Only a PENDING_APPROVAL order can receive an approval decision");
     }
 
+
+    @Test
+    void testReopenForRevisionShouldReturnOrderToDraftAndRecordEvent() {
+        Order order = createReviewRequestedOrder();
+        order.pullDomainEvents();
+        Instant reopenedAt = Instant.parse("2026-07-30T20:35:00Z");
+
+        order.reopenForRevision(USER_ID, reopenedAt, CORRELATION_ID);
+
+        OrderRevisionStarted event =
+                (OrderRevisionStarted) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after reopening for revision")
+                .isEqualTo(OrderStatus.DRAFT);
+        assertThat(order.decisionBy())
+                .as("active approval decision actor after reopening")
+                .isEmpty();
+        assertThat(order.decisionAt())
+                .as("active approval decision timestamp after reopening")
+                .isEmpty();
+        assertThat(order.decisionComment())
+                .as("active approval decision comment after reopening")
+                .isEmpty();
+        assertThat(order.version())
+                .as("aggregate version after reopening")
+                .isEqualTo(6L);
+        assertThat(event.requestedChanges().value())
+                .as("requested changes preserved in revision event")
+                .isEqualTo("Confirm the requested quantity.");
+        assertThat(event.reopenedBy())
+                .as("revision actor in domain event")
+                .isEqualTo(USER_ID);
+        assertThat(event.aggregateVersion())
+                .as("aggregate version in revision event")
+                .isEqualTo(6L);
+    }
+
+    @Test
+    void testReopenedOrderShouldAllowItemChangesAndResubmission() {
+        Order order = createReviewRequestedOrder();
+        order.reopenForRevision(
+                USER_ID,
+                Instant.parse("2026-07-30T20:35:00Z"),
+                CORRELATION_ID);
+
+        order.updateItemQuantity(
+                ITEM_ID,
+                quantity("3.000"),
+                USER_ID,
+                Instant.parse("2026-07-30T20:40:00Z"),
+                CORRELATION_ID);
+        order.applyItemPricing(
+                ITEM_ID,
+                itemPricing("100.00", "10.00", "20.00"),
+                USER_ID,
+                Instant.parse("2026-07-30T20:45:00Z"),
+                CORRELATION_ID);
+        order.submit(
+                USER_ID,
+                Instant.parse("2026-07-30T20:50:00Z"),
+                CORRELATION_ID);
+
+        assertThat(order.status())
+                .as("revised order status after resubmission")
+                .isEqualTo(OrderStatus.SUBMITTED);
+        assertThat(order.items().getFirst().quantity())
+                .as("revised item quantity")
+                .isEqualTo(quantity("3.000"));
+        assertThat(order.submittedAt())
+                .as("latest submission timestamp")
+                .contains(Instant.parse("2026-07-30T20:50:00Z"));
+    }
+
+    @Test
+    void testReopenForRevisionShouldRejectInvalidSourceStatus() {
+        Order order = createSubmittedOrder();
+
+        assertThatThrownBy(() -> order.reopenForRevision(
+                USER_ID,
+                Instant.parse("2026-07-30T20:35:00Z"),
+                CORRELATION_ID))
+                .as("only review-requested orders can be reopened")
+                .isInstanceOf(OrderRevisionNotAllowedException.class)
+                .hasMessage(
+                        "Only a REVIEW_REQUESTED order can be reopened for revision");
+    }
+
     private static Order createOrder() {
         return Order.create(
                 ORDER_ID,
@@ -761,6 +850,17 @@ class OrderTest {
         return new Quantity(new BigDecimal(value));
     }
 
+
+
+    private static Order createReviewRequestedOrder() {
+        Order order = createPendingApprovalOrder();
+        order.requestReview(
+                new ApprovalComment("Confirm the requested quantity."),
+                APPROVER_ID,
+                Instant.parse("2026-07-30T20:30:00Z"),
+                CORRELATION_ID);
+        return order;
+    }
 
     private static Order createSubmittedOrder() {
         Order order = createPricedOrder();
