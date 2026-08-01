@@ -5,6 +5,7 @@ import io.astraforge.supplyplatform.domain.order.event.DomainEvent;
 import io.astraforge.supplyplatform.domain.order.event.OrderApprovalStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderApproved;
 import io.astraforge.supplyplatform.domain.order.event.OrderCancelled;
+import io.astraforge.supplyplatform.domain.order.event.OrderCompleted;
 import io.astraforge.supplyplatform.domain.order.event.OrderCreated;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemAdded;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
@@ -30,6 +31,7 @@ import io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableExcep
 import io.astraforge.supplyplatform.domain.order.exception.OrderProcessingNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCancellationNotAllowedException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderCompletionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderPricingIncompleteException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderRevisionNotAllowedException;
@@ -94,6 +96,8 @@ public final class Order {
     private Instant fulfillmentPreparedAt;
     private UserId fulfillmentStartedBy;
     private Instant fulfillmentStartedAt;
+    private UserId completedBy;
+    private Instant completedAt;
     private long version;
 
     private Order(
@@ -611,6 +615,33 @@ public final class Order {
                 correlationId));
     }
 
+
+    public void completeFulfillment(
+            UserId completedBy,
+            Instant completedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(completedBy, "Completed by must not be null");
+        Objects.requireNonNull(completedAt, "Completed at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requireCompletionAllowed();
+
+        OrderTotals orderTotals = totals();
+        status = OrderStatus.COMPLETED;
+        this.completedBy = completedBy;
+        this.completedAt = completedAt;
+        touch(completedAt);
+        registerEvent(new OrderCompleted(
+                UUID.randomUUID(),
+                id,
+                items.size(),
+                orderTotals,
+                version,
+                completedBy,
+                completedAt,
+                correlationId));
+    }
+
     public void removeItem(
             OrderItemId orderItemId,
             UserId removedBy,
@@ -738,6 +769,14 @@ public final class Order {
         return Optional.ofNullable(fulfillmentStartedAt);
     }
 
+    public Optional<UserId> completedBy() {
+        return Optional.ofNullable(completedBy);
+    }
+
+    public Optional<Instant> completedAt() {
+        return Optional.ofNullable(completedAt);
+    }
+
     public long version() {
         return version;
     }
@@ -762,6 +801,14 @@ public final class Order {
 
 
 
+
+
+    private void requireCompletionAllowed() {
+        if (status != OrderStatus.FULFILLMENT_IN_PROGRESS) {
+            throw new OrderCompletionNotAllowedException(
+                    "Only a FULFILLMENT_IN_PROGRESS order can be completed");
+        }
+    }
 
     private void requireFulfillmentStatus(
             OrderStatus requiredStatus,

@@ -5,6 +5,7 @@ import io.astraforge.supplyplatform.domain.order.event.DomainEvent;
 import io.astraforge.supplyplatform.domain.order.event.OrderApprovalStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderApproved;
 import io.astraforge.supplyplatform.domain.order.event.OrderCancelled;
+import io.astraforge.supplyplatform.domain.order.event.OrderCompleted;
 import io.astraforge.supplyplatform.domain.order.event.OrderCreated;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemAdded;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
@@ -28,6 +29,7 @@ import io.astraforge.supplyplatform.domain.order.exception.OrderInventoryResultN
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCancellationNotAllowedException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderCompletionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderPricingIncompleteException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderProcessingNotAllowedException;
@@ -1262,6 +1264,87 @@ class OrderTest {
                         "Order cannot be cancelled from status FULFILLMENT_IN_PROGRESS");
     }
 
+
+    @Test
+    void testCompleteFulfillmentShouldTransitionOrderAndRecordEvent() {
+        Order order = createFulfillmentInProgressOrder();
+        order.pullDomainEvents();
+        Instant completedAt = Instant.parse("2026-07-30T21:35:00Z");
+
+        order.completeFulfillment(
+                APPROVER_ID,
+                completedAt,
+                CORRELATION_ID);
+
+        OrderCompleted event = (OrderCompleted) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after fulfillment completion")
+                .isEqualTo(OrderStatus.COMPLETED);
+        assertThat(order.completedBy())
+                .as("fulfillment completion actor")
+                .contains(APPROVER_ID);
+        assertThat(order.completedAt())
+                .as("fulfillment completion timestamp")
+                .contains(completedAt);
+        assertThat(order.version())
+                .as("aggregate version after fulfillment completion")
+                .isEqualTo(11L);
+        assertThat(event.itemCount())
+                .as("completed order item count")
+                .isEqualTo(1);
+        assertThat(event.totals().total().amount())
+                .as("completed order total snapshot")
+                .isEqualByComparingTo("216.00");
+        assertThat(event.aggregateVersion())
+                .as("aggregate version in order-completed event")
+                .isEqualTo(11L);
+        assertThat(event.completedBy())
+                .as("completion actor in domain event")
+                .isEqualTo(APPROVER_ID);
+    }
+
+    @Test
+    void testCompleteFulfillmentShouldRejectReadyOrder() {
+        Order order = createReadyForFulfillmentOrder();
+
+        assertThatThrownBy(() -> order.completeFulfillment(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:35:00Z"),
+                CORRELATION_ID))
+                .as("completion requires fulfillment in progress")
+                .isInstanceOf(OrderCompletionNotAllowedException.class)
+                .hasMessage(
+                        "Only a FULFILLMENT_IN_PROGRESS order can be completed");
+    }
+
+    @Test
+    void testCompleteFulfillmentShouldRejectSecondCompletion() {
+        Order order = createCompletedOrder();
+
+        assertThatThrownBy(() -> order.completeFulfillment(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:40:00Z"),
+                CORRELATION_ID))
+                .as("completed order cannot be completed again")
+                .isInstanceOf(OrderCompletionNotAllowedException.class)
+                .hasMessage(
+                        "Only a FULFILLMENT_IN_PROGRESS order can be completed");
+    }
+
+    @Test
+    void testCompletedOrderShouldRejectCancellation() {
+        Order order = createCompletedOrder();
+
+        assertThatThrownBy(() -> order.cancel(
+                new CancellationReason("Late cancellation request."),
+                USER_ID,
+                Instant.parse("2026-07-30T21:40:00Z"),
+                CORRELATION_ID))
+                .as("completed order cancellation")
+                .isInstanceOf(OrderCancellationNotAllowedException.class)
+                .hasMessage("Order cannot be cancelled from status COMPLETED");
+    }
+
     private static Order createOrder() {
         return Order.create(
                 ORDER_ID,
@@ -1304,6 +1387,16 @@ class OrderTest {
 
 
 
+
+
+    private static Order createCompletedOrder() {
+        Order order = createFulfillmentInProgressOrder();
+        order.completeFulfillment(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:35:00Z"),
+                CORRELATION_ID);
+        return order;
+    }
 
     private static Order createFulfillmentInProgressOrder() {
         Order order = createReadyForFulfillmentOrder();
