@@ -4,6 +4,7 @@ import io.astraforge.supplyplatform.domain.order.entity.OrderItem;
 import io.astraforge.supplyplatform.domain.order.event.DomainEvent;
 import io.astraforge.supplyplatform.domain.order.event.OrderApprovalStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderApproved;
+import io.astraforge.supplyplatform.domain.order.event.OrderCancelled;
 import io.astraforge.supplyplatform.domain.order.event.OrderCreated;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemAdded;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
@@ -19,11 +20,13 @@ import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductExcep
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllowedException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderCancellationNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderPricingIncompleteException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderRevisionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderSubmissionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.valueobject.ApprovalComment;
+import io.astraforge.supplyplatform.domain.order.valueobject.CancellationReason;
 import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerReference;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderId;
@@ -37,6 +40,7 @@ import io.astraforge.supplyplatform.domain.order.valueobject.UserId;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Currency;
 import java.util.Objects;
@@ -46,6 +50,12 @@ import java.util.UUID;
 public final class Order {
 
     private static final long INITIAL_VERSION = 0L;
+    private static final EnumSet<OrderStatus> CANCELLABLE_STATUSES = EnumSet.of(
+            OrderStatus.DRAFT,
+            OrderStatus.SUBMITTED,
+            OrderStatus.PENDING_APPROVAL,
+            OrderStatus.REVIEW_REQUESTED,
+            OrderStatus.APPROVED);
 
     private final OrderId id;
     private final CustomerReference customerReference;
@@ -60,6 +70,9 @@ public final class Order {
     private UserId decisionBy;
     private Instant decisionAt;
     private ApprovalComment decisionComment;
+    private UserId cancelledBy;
+    private Instant cancelledAt;
+    private CancellationReason cancellationReason;
     private long version;
 
     private Order(
@@ -390,6 +403,36 @@ public final class Order {
                 correlationId));
     }
 
+
+    public void cancel(
+            CancellationReason reason,
+            UserId cancelledBy,
+            Instant cancelledAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(reason, "Cancellation reason must not be null");
+        Objects.requireNonNull(cancelledBy, "Cancelled by must not be null");
+        Objects.requireNonNull(cancelledAt, "Cancelled at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requireCancellable();
+
+        OrderStatus previousStatus = status;
+        status = OrderStatus.CANCELLED;
+        this.cancelledBy = cancelledBy;
+        this.cancelledAt = cancelledAt;
+        this.cancellationReason = reason;
+        touch(cancelledAt);
+        registerEvent(new OrderCancelled(
+                UUID.randomUUID(),
+                id,
+                previousStatus,
+                reason,
+                version,
+                cancelledBy,
+                cancelledAt,
+                correlationId));
+    }
+
     public void removeItem(
             OrderItemId orderItemId,
             UserId removedBy,
@@ -461,6 +504,18 @@ public final class Order {
         return Optional.ofNullable(decisionComment);
     }
 
+    public Optional<UserId> cancelledBy() {
+        return Optional.ofNullable(cancelledBy);
+    }
+
+    public Optional<Instant> cancelledAt() {
+        return Optional.ofNullable(cancelledAt);
+    }
+
+    public Optional<CancellationReason> cancellationReason() {
+        return Optional.ofNullable(cancellationReason);
+    }
+
     public long version() {
         return version;
     }
@@ -481,6 +536,14 @@ public final class Order {
 
 
 
+
+
+    private void requireCancellable() {
+        if (!CANCELLABLE_STATUSES.contains(status)) {
+            throw new OrderCancellationNotAllowedException(
+                    "Order cannot be cancelled from status " + status);
+        }
+    }
 
     private void requireReviewRequested() {
         if (status != OrderStatus.REVIEW_REQUESTED) {

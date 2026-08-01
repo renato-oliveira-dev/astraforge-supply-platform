@@ -4,6 +4,7 @@ import io.astraforge.supplyplatform.domain.order.entity.OrderItem;
 import io.astraforge.supplyplatform.domain.order.event.DomainEvent;
 import io.astraforge.supplyplatform.domain.order.event.OrderApprovalStarted;
 import io.astraforge.supplyplatform.domain.order.event.OrderApproved;
+import io.astraforge.supplyplatform.domain.order.event.OrderCancelled;
 import io.astraforge.supplyplatform.domain.order.event.OrderCreated;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemAdded;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
@@ -18,11 +19,13 @@ import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemExc
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllowedException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderCancellationNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderPricingIncompleteException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderRevisionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderSubmissionNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.valueobject.ApprovalComment;
+import io.astraforge.supplyplatform.domain.order.valueobject.CancellationReason;
 import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerReference;
@@ -813,6 +816,127 @@ class OrderTest {
                         "Only a REVIEW_REQUESTED order can be reopened for revision");
     }
 
+
+    @Test
+    void testCancelShouldCancelDraftOrderAndRecordEvent() {
+        Order order = createOrderWithoutPendingEvents();
+        CancellationReason reason =
+                new CancellationReason("Request is no longer required.");
+        Instant cancelledAt = Instant.parse("2026-07-30T21:00:00Z");
+
+        order.cancel(reason, USER_ID, cancelledAt, CORRELATION_ID);
+
+        OrderCancelled event = (OrderCancelled) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after cancellation")
+                .isEqualTo(OrderStatus.CANCELLED);
+        assertThat(order.cancelledBy())
+                .as("cancellation actor")
+                .contains(USER_ID);
+        assertThat(order.cancelledAt())
+                .as("cancellation timestamp")
+                .contains(cancelledAt);
+        assertThat(order.cancellationReason())
+                .as("cancellation reason")
+                .contains(reason);
+        assertThat(event.previousStatus())
+                .as("status before cancellation")
+                .isEqualTo(OrderStatus.DRAFT);
+        assertThat(event.reason())
+                .as("cancellation reason in domain event")
+                .isEqualTo(reason);
+        assertThat(event.aggregateVersion())
+                .as("aggregate version in cancellation event")
+                .isEqualTo(1L);
+    }
+
+    @Test
+    void testCancelShouldAllowApprovedOrderBeforeProcessing() {
+        Order order = createApprovedOrder();
+        order.pullDomainEvents();
+
+        order.cancel(
+                new CancellationReason("Facility budget was withdrawn."),
+                APPROVER_ID,
+                Instant.parse("2026-07-30T21:05:00Z"),
+                CORRELATION_ID);
+
+        assertThat(order.status())
+                .as("approved order can be cancelled before processing")
+                .isEqualTo(OrderStatus.CANCELLED);
+        assertThat(order.version())
+                .as("aggregate version after approved order cancellation")
+                .isEqualTo(6L);
+    }
+
+    @Test
+    void testCancelShouldRejectRejectedOrder() {
+        Order order = createPendingApprovalOrder();
+        order.reject(
+                new ApprovalComment("The request exceeds the available budget."),
+                APPROVER_ID,
+                Instant.parse("2026-07-30T20:30:00Z"),
+                CORRELATION_ID);
+
+        assertThatThrownBy(() -> order.cancel(
+                new CancellationReason("Requester asked to cancel."),
+                USER_ID,
+                Instant.parse("2026-07-30T21:00:00Z"),
+                CORRELATION_ID))
+                .as("rejected order cancellation")
+                .isInstanceOf(OrderCancellationNotAllowedException.class)
+                .hasMessage("Order cannot be cancelled from status REJECTED");
+    }
+
+    @Test
+    void testCancelShouldRejectSecondCancellation() {
+        Order order = createOrderWithoutPendingEvents();
+        order.cancel(
+                new CancellationReason("Request is no longer required."),
+                USER_ID,
+                Instant.parse("2026-07-30T21:00:00Z"),
+                CORRELATION_ID);
+
+        assertThatThrownBy(() -> order.cancel(
+                new CancellationReason("Second cancellation attempt."),
+                USER_ID,
+                Instant.parse("2026-07-30T21:01:00Z"),
+                CORRELATION_ID))
+                .as("order cannot be cancelled twice")
+                .isInstanceOf(OrderCancellationNotAllowedException.class)
+                .hasMessage("Order cannot be cancelled from status CANCELLED");
+    }
+
+    @Test
+    void testCancelledOrderShouldRejectItemChangesAndSubmission() {
+        Order order = createPricedOrder();
+        order.cancel(
+                new CancellationReason("Procurement request was withdrawn."),
+                USER_ID,
+                Instant.parse("2026-07-30T21:00:00Z"),
+                CORRELATION_ID);
+
+        assertThatThrownBy(() -> order.updateItemQuantity(
+                ITEM_ID,
+                quantity("3.000"),
+                USER_ID,
+                Instant.parse("2026-07-30T21:05:00Z"),
+                CORRELATION_ID))
+                .as("cancelled order items are immutable")
+                .isInstanceOf(
+                        io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableException.class)
+                .hasMessage(
+                        "Order items can be changed only while the order is in DRAFT status");
+
+        assertThatThrownBy(() -> order.submit(
+                USER_ID,
+                Instant.parse("2026-07-30T21:10:00Z"),
+                CORRELATION_ID))
+                .as("cancelled order cannot be submitted")
+                .isInstanceOf(OrderSubmissionNotAllowedException.class)
+                .hasMessage("Only a DRAFT order can be submitted");
+    }
+
     private static Order createOrder() {
         return Order.create(
                 ORDER_ID,
@@ -851,6 +975,16 @@ class OrderTest {
     }
 
 
+
+
+    private static Order createApprovedOrder() {
+        Order order = createPendingApprovalOrder();
+        order.approve(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T20:30:00Z"),
+                CORRELATION_ID);
+        return order;
+    }
 
     private static Order createReviewRequestedOrder() {
         Order order = createPendingApprovalOrder();
