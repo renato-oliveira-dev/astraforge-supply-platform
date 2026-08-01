@@ -44,6 +44,11 @@ public record Money(BigDecimal amount, Currency currency) implements Comparable<
         return new Money(amount.multiply(quantity.value()), currency);
     }
 
+    public Money percentageOf(Percentage percentage) {
+        Objects.requireNonNull(percentage, "Percentage must not be null");
+        return new Money(amount.multiply(percentage.asMultiplier()), currency);
+    }
+
     public boolean isZero() {
         return amount.signum() == 0;
     }

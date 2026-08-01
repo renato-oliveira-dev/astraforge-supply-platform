@@ -1,6 +1,9 @@
 package io.astraforge.supplyplatform.domain.order.entity;
 
+import io.astraforge.supplyplatform.domain.order.valueobject.ItemPricing;
+import io.astraforge.supplyplatform.domain.order.valueobject.Money;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderItemId;
+import io.astraforge.supplyplatform.domain.order.valueobject.Percentage;
 import io.astraforge.supplyplatform.domain.order.valueobject.ProductId;
 import io.astraforge.supplyplatform.domain.order.valueobject.ProductReference;
 import io.astraforge.supplyplatform.domain.order.valueobject.ProductSnapshot;
@@ -8,6 +11,7 @@ import io.astraforge.supplyplatform.domain.order.valueobject.Quantity;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,6 +59,37 @@ class OrderItemTest {
                 .isEqualTo(newQuantity);
     }
 
+
+    @Test
+    void testApplyPricingShouldExposePricing() {
+        OrderItem item = OrderItem.create(ITEM_ID, productSnapshot(), quantity("2.000"));
+        ItemPricing pricing = pricing();
+
+        item.applyPricing(pricing);
+
+        assertThat(item.pricing())
+                .as("pricing assigned to the order item")
+                .contains(pricing);
+    }
+
+    @Test
+    void testInvalidatePricingShouldClearExistingPricing() {
+        OrderItem item = OrderItem.create(ITEM_ID, productSnapshot(), quantity("2.000"));
+        item.applyPricing(pricing());
+
+        boolean invalidated = item.invalidatePricing();
+
+        assertThat(invalidated)
+                .as("existing pricing invalidation result")
+                .isTrue();
+        assertThat(item.pricing())
+                .as("pricing removed from the order item")
+                .isEmpty();
+        assertThat(item.invalidatePricing())
+                .as("repeated pricing invalidation result")
+                .isFalse();
+    }
+
     private static ProductSnapshot productSnapshot() {
         return new ProductSnapshot(
                 new ProductReference(PRODUCT_ID),
@@ -65,5 +100,12 @@ class OrderItemTest {
 
     private static Quantity quantity(String value) {
         return new Quantity(new BigDecimal(value));
+    }
+
+    private static ItemPricing pricing() {
+        return new ItemPricing(
+                new Money(new BigDecimal("10.00"), Currency.getInstance("BRL")),
+                new Percentage(new BigDecimal("0.0000")),
+                new Percentage(new BigDecimal("0.0000")));
     }
 }

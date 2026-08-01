@@ -6,13 +6,21 @@ import io.astraforge.supplyplatform.domain.order.event.OrderCreated;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemAdded;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemRemoved;
+import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
+import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemException;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderPricingIncompleteException;
 import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerReference;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderId;
+import io.astraforge.supplyplatform.domain.order.valueobject.ItemPricing;
+import io.astraforge.supplyplatform.domain.order.valueobject.Money;
+import io.astraforge.supplyplatform.domain.order.valueobject.OrderTotals;
+import io.astraforge.supplyplatform.domain.order.valueobject.Percentage;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderItemId;
 import io.astraforge.supplyplatform.domain.order.valueobject.ProductId;
 import io.astraforge.supplyplatform.domain.order.valueobject.ProductReference;
@@ -23,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
 
@@ -317,6 +326,153 @@ class OrderTest {
                 .isEmpty();
     }
 
+
+    @Test
+    void testApplyItemPricingShouldPriceItemAndCalculateOrderTotals() {
+        Order order = createOrderWithoutPendingEvents();
+        order.addItem(
+                ITEM_ID,
+                productSnapshot(PRODUCT_ID, "SKU-001"),
+                quantity("2.000"),
+                USER_ID,
+                CHANGED_AT,
+                CORRELATION_ID);
+        order.pullDomainEvents();
+        ItemPricing pricing = itemPricing("100.00", "10.0000", "20.0000");
+        Instant pricedAt = Instant.parse("2026-07-30T20:10:00Z");
+
+        order.applyItemPricing(ITEM_ID, pricing, USER_ID, pricedAt, CORRELATION_ID);
+
+        OrderItem item = order.items().getFirst();
+        OrderTotals totals = order.totals();
+        OrderItemPriced event = (OrderItemPriced) order.domainEvents().getFirst();
+        assertThat(item.pricing())
+                .as("pricing applied to the order item")
+                .contains(pricing);
+        assertThat(order.pricingComplete())
+                .as("order pricing completeness")
+                .isTrue();
+        assertThat(totals.subtotal().amount())
+                .as("order subtotal")
+                .isEqualByComparingTo("200.00");
+        assertThat(totals.discount().amount())
+                .as("order discount")
+                .isEqualByComparingTo("20.00");
+        assertThat(totals.tax().amount())
+                .as("order tax")
+                .isEqualByComparingTo("36.00");
+        assertThat(totals.total().amount())
+                .as("order final total")
+                .isEqualByComparingTo("216.00");
+        assertThat(event.pricing())
+                .as("pricing recorded by the domain event")
+                .isEqualTo(pricing);
+    }
+
+    @Test
+    void testUpdateItemQuantityShouldInvalidateExistingPricing() {
+        Order order = createPricedOrder();
+        order.pullDomainEvents();
+        Instant changedAt = Instant.parse("2026-07-30T20:15:00Z");
+
+        order.updateItemQuantity(
+                ITEM_ID,
+                quantity("3.000"),
+                USER_ID,
+                changedAt,
+                CORRELATION_ID);
+
+        assertThat(order.items().getFirst().pricing())
+                .as("item pricing invalidated after quantity change")
+                .isEmpty();
+        assertThat(order.pricingComplete())
+                .as("order pricing becomes incomplete after quantity change")
+                .isFalse();
+        assertThat(order.domainEvents())
+                .as("quantity change and pricing invalidation events")
+                .hasSize(2)
+                .anySatisfy(event -> assertThat(event)
+                        .as("pricing invalidation event")
+                        .isInstanceOf(OrderItemPricingInvalidated.class));
+    }
+
+    @Test
+    void testTotalsShouldRejectOrderWithUnpricedItem() {
+        Order order = createOrderWithoutPendingEvents();
+        order.addItem(
+                ITEM_ID,
+                productSnapshot(PRODUCT_ID, "SKU-001"),
+                quantity("1.000"),
+                USER_ID,
+                CHANGED_AT,
+                CORRELATION_ID);
+
+        assertThatThrownBy(order::totals)
+                .as("order totals require complete pricing")
+                .isInstanceOf(OrderPricingIncompleteException.class)
+                .hasMessage("Order totals require pricing for every order item");
+    }
+
+    @Test
+    void testApplyItemPricingShouldRejectCurrencyDifferentFromExistingItems() {
+        Order order = createOrderWithoutPendingEvents();
+        order.addItem(
+                ITEM_ID,
+                productSnapshot(PRODUCT_ID, "SKU-001"),
+                quantity("1.000"),
+                USER_ID,
+                CHANGED_AT,
+                CORRELATION_ID);
+        order.addItem(
+                SECOND_ITEM_ID,
+                productSnapshot(SECOND_PRODUCT_ID, "SKU-002"),
+                quantity("1.000"),
+                USER_ID,
+                CHANGED_AT.plusSeconds(1),
+                CORRELATION_ID);
+        order.applyItemPricing(
+                ITEM_ID,
+                itemPricing("10.00", "0.0000", "0.0000"),
+                USER_ID,
+                CHANGED_AT.plusSeconds(2),
+                CORRELATION_ID);
+
+        assertThatThrownBy(() -> order.applyItemPricing(
+                SECOND_ITEM_ID,
+                new ItemPricing(
+                        new Money(new BigDecimal("12.00"), Currency.getInstance("USD")),
+                        percentage("0.0000"),
+                        percentage("0.0000")),
+                USER_ID,
+                CHANGED_AT.plusSeconds(3),
+                CORRELATION_ID))
+                .as("all priced order items require the same currency")
+                .isInstanceOf(OrderCurrencyMismatchException.class)
+                .hasMessage("All order items must use the same currency");
+    }
+
+    @Test
+    void testApplySamePricingShouldBeIdempotent() {
+        Order order = createPricedOrder();
+        order.pullDomainEvents();
+        long versionBefore = order.version();
+        ItemPricing existingPricing = order.items().getFirst().pricing().orElseThrow();
+
+        order.applyItemPricing(
+                ITEM_ID,
+                existingPricing,
+                USER_ID,
+                CHANGED_AT.plusSeconds(30),
+                CORRELATION_ID);
+
+        assertThat(order.version())
+                .as("aggregate version remains unchanged for identical pricing")
+                .isEqualTo(versionBefore);
+        assertThat(order.domainEvents())
+                .as("no event is emitted for identical pricing")
+                .isEmpty();
+    }
+
     private static Order createOrder() {
         return Order.create(
                 ORDER_ID,
@@ -352,5 +508,38 @@ class OrderTest {
 
     private static Quantity quantity(String value) {
         return new Quantity(new BigDecimal(value));
+    }
+
+    private static Order createPricedOrder() {
+        Order order = createOrderWithoutPendingEvents();
+        order.addItem(
+                ITEM_ID,
+                productSnapshot(PRODUCT_ID, "SKU-001"),
+                quantity("2.000"),
+                USER_ID,
+                CHANGED_AT,
+                CORRELATION_ID);
+        order.applyItemPricing(
+                ITEM_ID,
+                itemPricing("100.00", "10.0000", "20.0000"),
+                USER_ID,
+                CHANGED_AT.plusSeconds(1),
+                CORRELATION_ID);
+        return order;
+    }
+
+    private static ItemPricing itemPricing(
+            String unitPrice,
+            String discount,
+            String tax
+    ) {
+        return new ItemPricing(
+                new Money(new BigDecimal(unitPrice), Currency.getInstance("BRL")),
+                percentage(discount),
+                percentage(tax));
+    }
+
+    private static Percentage percentage(String value) {
+        return new Percentage(new BigDecimal(value));
     }
 }

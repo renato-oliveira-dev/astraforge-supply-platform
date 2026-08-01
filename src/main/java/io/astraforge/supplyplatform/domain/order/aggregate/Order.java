@@ -6,14 +6,21 @@ import io.astraforge.supplyplatform.domain.order.event.OrderCreated;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemAdded;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemRemoved;
+import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
+import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemException;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderPricingIncompleteException;
 import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerReference;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderId;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderItemId;
+import io.astraforge.supplyplatform.domain.order.valueobject.ItemPricing;
+import io.astraforge.supplyplatform.domain.order.valueobject.Money;
+import io.astraforge.supplyplatform.domain.order.valueobject.OrderTotals;
 import io.astraforge.supplyplatform.domain.order.valueobject.ProductSnapshot;
 import io.astraforge.supplyplatform.domain.order.valueobject.Quantity;
 import io.astraforge.supplyplatform.domain.order.valueobject.UserId;
@@ -21,6 +28,7 @@ import io.astraforge.supplyplatform.domain.order.valueobject.UserId;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Currency;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -131,6 +139,7 @@ public final class Order {
         }
 
         Quantity previousQuantity = item.changeQuantity(newQuantity);
+        boolean pricingInvalidated = item.invalidatePricing();
         touch(changedAt);
         registerEvent(new OrderItemQuantityChanged(
                 UUID.randomUUID(),
@@ -143,6 +152,74 @@ public final class Order {
                 changedBy,
                 changedAt,
                 correlationId));
+        if (pricingInvalidated) {
+            registerEvent(new OrderItemPricingInvalidated(
+                    UUID.randomUUID(),
+                    id,
+                    item.id(),
+                    version,
+                    changedBy,
+                    changedAt,
+                    correlationId));
+        }
+    }
+
+    public void applyItemPricing(
+            OrderItemId orderItemId,
+            ItemPricing pricing,
+            UserId pricedBy,
+            Instant pricedAt,
+            CorrelationId correlationId
+    ) {
+        requireEditable();
+        Objects.requireNonNull(orderItemId, "Order item ID must not be null");
+        Objects.requireNonNull(pricing, "Item pricing must not be null");
+        Objects.requireNonNull(pricedBy, "Priced by must not be null");
+        Objects.requireNonNull(pricedAt, "Priced at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+
+        OrderItem item = findItem(orderItemId);
+        requireCompatibleCurrency(pricing);
+        if (item.pricing().filter(pricing::equals).isPresent()) {
+            return;
+        }
+
+        item.applyPricing(pricing);
+        touch(pricedAt);
+        registerEvent(new OrderItemPriced(
+                UUID.randomUUID(),
+                id,
+                item.id(),
+                pricing,
+                version,
+                pricedBy,
+                pricedAt,
+                correlationId));
+    }
+
+    public boolean pricingComplete() {
+        return !items.isEmpty() && items.stream().allMatch(item -> item.pricing().isPresent());
+    }
+
+    public OrderTotals totals() {
+        if (!pricingComplete()) {
+            throw new OrderPricingIncompleteException(
+                    "Order totals require pricing for every order item");
+        }
+
+        Currency currency = items.getFirst().pricing().orElseThrow().unitPrice().currency();
+        Money subtotal = Money.zero(currency);
+        Money discount = Money.zero(currency);
+        Money tax = Money.zero(currency);
+
+        for (OrderItem item : items) {
+            ItemPricing pricing = item.pricing().orElseThrow();
+            subtotal = subtotal.add(pricing.subtotal(item.quantity()));
+            discount = discount.add(pricing.discount(item.quantity()));
+            tax = tax.add(pricing.tax(item.quantity()));
+        }
+
+        return new OrderTotals(subtotal, discount, tax, subtotal.subtract(discount).add(tax));
     }
 
     public void removeItem(
@@ -234,6 +311,18 @@ public final class Order {
         if (duplicated) {
             throw new DuplicateProductException("Product already exists in the order");
         }
+    }
+
+    private void requireCompatibleCurrency(ItemPricing pricing) {
+        items.stream()
+                .flatMap(item -> item.pricing().stream())
+                .map(existingPricing -> existingPricing.unitPrice().currency())
+                .findFirst()
+                .filter(existingCurrency -> !existingCurrency.equals(pricing.unitPrice().currency()))
+                .ifPresent(existingCurrency -> {
+                    throw new OrderCurrencyMismatchException(
+                            "All order items must use the same currency");
+                });
     }
 
     private OrderItem findItem(OrderItemId orderItemId) {

@@ -71,4 +71,16 @@ class MoneyTest {
                 .as("money multiplied by quantity")
                 .isEqualByComparingTo("24.70");
     }
+
+    @Test
+    void testPercentageOfShouldCalculatePercentageUsingMoneyRounding() {
+        Money base = new Money(new BigDecimal("99.99"), BRL);
+        Percentage percentage = new Percentage(new BigDecimal("12.5000"));
+
+        Money result = base.percentageOf(percentage);
+
+        assertThat(result.amount())
+                .as("percentage calculated from monetary value")
+                .isEqualByComparingTo("12.50");
+    }
 }
