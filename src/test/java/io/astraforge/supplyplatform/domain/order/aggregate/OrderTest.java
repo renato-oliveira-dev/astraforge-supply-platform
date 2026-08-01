@@ -2,19 +2,25 @@ package io.astraforge.supplyplatform.domain.order.aggregate;
 
 import io.astraforge.supplyplatform.domain.order.entity.OrderItem;
 import io.astraforge.supplyplatform.domain.order.event.DomainEvent;
+import io.astraforge.supplyplatform.domain.order.event.OrderApprovalStarted;
+import io.astraforge.supplyplatform.domain.order.event.OrderApproved;
 import io.astraforge.supplyplatform.domain.order.event.OrderCreated;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemAdded;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemRemoved;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
+import io.astraforge.supplyplatform.domain.order.event.OrderRejected;
+import io.astraforge.supplyplatform.domain.order.event.OrderReviewRequested;
 import io.astraforge.supplyplatform.domain.order.event.OrderSubmitted;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemException;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderPricingIncompleteException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderSubmissionNotAllowedException;
+import io.astraforge.supplyplatform.domain.order.valueobject.ApprovalComment;
 import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerReference;
@@ -48,6 +54,8 @@ class OrderTest {
             new CustomerId(UUID.fromString("20000000-0000-0000-0000-000000000002"));
     private static final UserId USER_ID =
             new UserId(UUID.fromString("30000000-0000-0000-0000-000000000003"));
+    private static final UserId APPROVER_ID =
+            new UserId(UUID.fromString("30000000-0000-0000-0000-000000000013"));
     private static final ProductId PRODUCT_ID =
             new ProductId(UUID.fromString("40000000-0000-0000-0000-000000000004"));
     private static final ProductId SECOND_PRODUCT_ID =
@@ -576,6 +584,146 @@ class OrderTest {
                         "Order items can be changed only while the order is in DRAFT status");
     }
 
+
+    @Test
+    void testStartApprovalShouldTransitionSubmittedOrderAndRecordEvent() {
+        Order order = createSubmittedOrder();
+        order.pullDomainEvents();
+        Instant startedAt = Instant.parse("2026-07-30T20:25:00Z");
+
+        order.startApproval(APPROVER_ID, startedAt, CORRELATION_ID);
+
+        OrderApprovalStarted event =
+                (OrderApprovalStarted) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after approval starts")
+                .isEqualTo(OrderStatus.PENDING_APPROVAL);
+        assertThat(order.version())
+                .as("aggregate version after approval starts")
+                .isEqualTo(4L);
+        assertThat(event.startedBy())
+                .as("approval start actor")
+                .isEqualTo(APPROVER_ID);
+        assertThat(event.aggregateVersion())
+                .as("aggregate version in approval-started event")
+                .isEqualTo(4L);
+    }
+
+    @Test
+    void testApproveShouldTransitionPendingOrderAndRecordTotalsSnapshot() {
+        Order order = createPendingApprovalOrder();
+        order.pullDomainEvents();
+        Instant approvedAt = Instant.parse("2026-07-30T20:30:00Z");
+
+        order.approve(APPROVER_ID, approvedAt, CORRELATION_ID);
+
+        OrderApproved event = (OrderApproved) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after approval")
+                .isEqualTo(OrderStatus.APPROVED);
+        assertThat(order.decisionBy())
+                .as("approval decision actor")
+                .contains(APPROVER_ID);
+        assertThat(order.decisionAt())
+                .as("approval decision timestamp")
+                .contains(approvedAt);
+        assertThat(order.decisionComment())
+                .as("approved order has no mandatory decision comment")
+                .isEmpty();
+        assertThat(event.totals().total().amount())
+                .as("approved order total snapshot")
+                .isEqualByComparingTo("216.00");
+        assertThat(event.aggregateVersion())
+                .as("aggregate version in approved event")
+                .isEqualTo(5L);
+    }
+
+    @Test
+    void testRejectShouldRequireCommentAndRecordDecision() {
+        Order order = createPendingApprovalOrder();
+        order.pullDomainEvents();
+        ApprovalComment comment =
+                new ApprovalComment("Budget allocation is not available.");
+        Instant rejectedAt = Instant.parse("2026-07-30T20:30:00Z");
+
+        order.reject(
+                comment,
+                APPROVER_ID,
+                rejectedAt,
+                CORRELATION_ID);
+
+        OrderRejected event = (OrderRejected) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after rejection")
+                .isEqualTo(OrderStatus.REJECTED);
+        assertThat(order.decisionComment())
+                .as("rejection explanation")
+                .contains(comment);
+        assertThat(event.comment())
+                .as("rejection comment in domain event")
+                .isEqualTo(comment);
+        assertThat(event.rejectedBy())
+                .as("rejection actor in domain event")
+                .isEqualTo(APPROVER_ID);
+    }
+
+    @Test
+    void testRequestReviewShouldRecordRequiredChanges() {
+        Order order = createPendingApprovalOrder();
+        order.pullDomainEvents();
+        ApprovalComment comment =
+                new ApprovalComment("Confirm the requested quantity.");
+        Instant requestedAt = Instant.parse("2026-07-30T20:30:00Z");
+
+        order.requestReview(
+                comment,
+                APPROVER_ID,
+                requestedAt,
+                CORRELATION_ID);
+
+        OrderReviewRequested event =
+                (OrderReviewRequested) order.domainEvents().getFirst();
+        assertThat(order.status())
+                .as("order status after review request")
+                .isEqualTo(OrderStatus.REVIEW_REQUESTED);
+        assertThat(order.decisionBy())
+                .as("review request actor")
+                .contains(APPROVER_ID);
+        assertThat(order.decisionComment())
+                .as("requested review explanation")
+                .contains(comment);
+        assertThat(event.comment())
+                .as("review comment in domain event")
+                .isEqualTo(comment);
+    }
+
+    @Test
+    void testApprovalShouldRejectInvalidSourceStatus() {
+        Order draftOrder = createPricedOrder();
+
+        assertThatThrownBy(() -> draftOrder.startApproval(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T20:25:00Z"),
+                CORRELATION_ID))
+                .as("approval cannot start from draft")
+                .isInstanceOf(OrderApprovalNotAllowedException.class)
+                .hasMessage("Only a SUBMITTED order can start approval");
+    }
+
+    @Test
+    void testDecisionShouldRejectOrderOutsidePendingApproval() {
+        Order submittedOrder = createSubmittedOrder();
+
+        assertThatThrownBy(() -> submittedOrder.approve(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T20:30:00Z"),
+                CORRELATION_ID))
+                .as("approval decision requires pending approval status")
+                .isInstanceOf(OrderApprovalNotAllowedException.class)
+                .hasMessage(
+                        "Only a PENDING_APPROVAL order can receive an approval decision");
+    }
+
     private static Order createOrder() {
         return Order.create(
                 ORDER_ID,
@@ -611,6 +759,25 @@ class OrderTest {
 
     private static Quantity quantity(String value) {
         return new Quantity(new BigDecimal(value));
+    }
+
+
+    private static Order createSubmittedOrder() {
+        Order order = createPricedOrder();
+        order.submit(
+                USER_ID,
+                Instant.parse("2026-07-30T20:20:00Z"),
+                CORRELATION_ID);
+        return order;
+    }
+
+    private static Order createPendingApprovalOrder() {
+        Order order = createSubmittedOrder();
+        order.startApproval(
+                APPROVER_ID,
+                Instant.parse("2026-07-30T20:25:00Z"),
+                CORRELATION_ID);
+        return order;
     }
 
     private static Order createPricedOrder() {

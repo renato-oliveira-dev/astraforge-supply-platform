@@ -2,20 +2,26 @@ package io.astraforge.supplyplatform.domain.order.aggregate;
 
 import io.astraforge.supplyplatform.domain.order.entity.OrderItem;
 import io.astraforge.supplyplatform.domain.order.event.DomainEvent;
+import io.astraforge.supplyplatform.domain.order.event.OrderApprovalStarted;
+import io.astraforge.supplyplatform.domain.order.event.OrderApproved;
 import io.astraforge.supplyplatform.domain.order.event.OrderCreated;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemAdded;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemQuantityChanged;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemRemoved;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPriced;
 import io.astraforge.supplyplatform.domain.order.event.OrderItemPricingInvalidated;
+import io.astraforge.supplyplatform.domain.order.event.OrderRejected;
+import io.astraforge.supplyplatform.domain.order.event.OrderReviewRequested;
 import io.astraforge.supplyplatform.domain.order.event.OrderSubmitted;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateOrderItemException;
 import io.astraforge.supplyplatform.domain.order.exception.DuplicateProductException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderItemNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderCurrencyMismatchException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderPricingIncompleteException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderSubmissionNotAllowedException;
+import io.astraforge.supplyplatform.domain.order.valueobject.ApprovalComment;
 import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
 import io.astraforge.supplyplatform.domain.order.valueobject.CustomerReference;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderId;
@@ -49,6 +55,9 @@ public final class Order {
     private Instant updatedAt;
     private UserId submittedBy;
     private Instant submittedAt;
+    private UserId decisionBy;
+    private Instant decisionAt;
+    private ApprovalComment decisionComment;
     private long version;
 
     private Order(
@@ -256,6 +265,104 @@ public final class Order {
                 correlationId));
     }
 
+
+    public void startApproval(
+            UserId startedBy,
+            Instant startedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(startedBy, "Started by must not be null");
+        Objects.requireNonNull(startedAt, "Started at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requireStatus(
+                OrderStatus.SUBMITTED,
+                "Only a SUBMITTED order can start approval");
+
+        status = OrderStatus.PENDING_APPROVAL;
+        touch(startedAt);
+        registerEvent(new OrderApprovalStarted(
+                UUID.randomUUID(),
+                id,
+                version,
+                startedBy,
+                startedAt,
+                correlationId));
+    }
+
+    public void approve(
+            UserId approvedBy,
+            Instant approvedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(approvedBy, "Approved by must not be null");
+        Objects.requireNonNull(approvedAt, "Approved at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requirePendingApproval();
+
+        OrderTotals orderTotals = totals();
+        status = OrderStatus.APPROVED;
+        recordDecision(approvedBy, approvedAt, null);
+        touch(approvedAt);
+        registerEvent(new OrderApproved(
+                UUID.randomUUID(),
+                id,
+                orderTotals,
+                version,
+                approvedBy,
+                approvedAt,
+                correlationId));
+    }
+
+    public void reject(
+            ApprovalComment comment,
+            UserId rejectedBy,
+            Instant rejectedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(comment, "Rejection comment must not be null");
+        Objects.requireNonNull(rejectedBy, "Rejected by must not be null");
+        Objects.requireNonNull(rejectedAt, "Rejected at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requirePendingApproval();
+
+        status = OrderStatus.REJECTED;
+        recordDecision(rejectedBy, rejectedAt, comment);
+        touch(rejectedAt);
+        registerEvent(new OrderRejected(
+                UUID.randomUUID(),
+                id,
+                comment,
+                version,
+                rejectedBy,
+                rejectedAt,
+                correlationId));
+    }
+
+    public void requestReview(
+            ApprovalComment comment,
+            UserId requestedBy,
+            Instant requestedAt,
+            CorrelationId correlationId
+    ) {
+        Objects.requireNonNull(comment, "Review comment must not be null");
+        Objects.requireNonNull(requestedBy, "Requested by must not be null");
+        Objects.requireNonNull(requestedAt, "Requested at must not be null");
+        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        requirePendingApproval();
+
+        status = OrderStatus.REVIEW_REQUESTED;
+        recordDecision(requestedBy, requestedAt, comment);
+        touch(requestedAt);
+        registerEvent(new OrderReviewRequested(
+                UUID.randomUUID(),
+                id,
+                comment,
+                version,
+                requestedBy,
+                requestedAt,
+                correlationId));
+    }
+
     public void removeItem(
             OrderItemId orderItemId,
             UserId removedBy,
@@ -315,6 +422,18 @@ public final class Order {
         return Optional.ofNullable(submittedAt);
     }
 
+    public Optional<UserId> decisionBy() {
+        return Optional.ofNullable(decisionBy);
+    }
+
+    public Optional<Instant> decisionAt() {
+        return Optional.ofNullable(decisionAt);
+    }
+
+    public Optional<ApprovalComment> decisionComment() {
+        return Optional.ofNullable(decisionComment);
+    }
+
     public long version() {
         return version;
     }
@@ -333,6 +452,29 @@ public final class Order {
         return pendingEvents;
     }
 
+
+
+    private void requirePendingApproval() {
+        requireStatus(
+                OrderStatus.PENDING_APPROVAL,
+                "Only a PENDING_APPROVAL order can receive an approval decision");
+    }
+
+    private void requireStatus(OrderStatus requiredStatus, String message) {
+        if (status != requiredStatus) {
+            throw new OrderApprovalNotAllowedException(message);
+        }
+    }
+
+    private void recordDecision(
+            UserId decidedBy,
+            Instant decidedAt,
+            ApprovalComment comment
+    ) {
+        decisionBy = decidedBy;
+        decisionAt = decidedAt;
+        decisionComment = comment;
+    }
 
     private void requireDraftForSubmission() {
         if (status != OrderStatus.DRAFT) {
