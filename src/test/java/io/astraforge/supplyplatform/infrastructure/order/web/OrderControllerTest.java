@@ -4,6 +4,7 @@ import io.astraforge.supplyplatform.application.order.port.in.AddOrderItemUseCas
 import io.astraforge.supplyplatform.application.order.port.in.ApplyOrderItemPricingUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.CreateOrderUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.RemoveOrderItemUseCase;
+import io.astraforge.supplyplatform.application.order.port.in.SubmitOrderUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.UpdateOrderItemQuantityUseCase;
 import io.astraforge.supplyplatform.application.order.usecase.AddOrderItemCommand;
 import io.astraforge.supplyplatform.application.order.usecase.AddOrderItemResult;
@@ -13,6 +14,8 @@ import io.astraforge.supplyplatform.application.order.usecase.CreateOrderCommand
 import io.astraforge.supplyplatform.application.order.usecase.CreateOrderResult;
 import io.astraforge.supplyplatform.application.order.usecase.RemoveOrderItemCommand;
 import io.astraforge.supplyplatform.application.order.usecase.RemoveOrderItemResult;
+import io.astraforge.supplyplatform.application.order.usecase.SubmitOrderCommand;
+import io.astraforge.supplyplatform.application.order.usecase.SubmitOrderResult;
 import io.astraforge.supplyplatform.application.order.usecase.UpdateOrderItemQuantityCommand;
 import io.astraforge.supplyplatform.application.order.usecase.UpdateOrderItemQuantityResult;
 import io.astraforge.supplyplatform.domain.order.aggregate.OrderStatus;
@@ -229,6 +232,38 @@ class OrderControllerTest {
                         UPDATED_AT));
     }
 
+
+    @Test
+    void testSubmitShouldDelegateCommandAndReturnOk() {
+        ControllerFixture fixture = new ControllerFixture();
+        SubmitOrderRequest request = new SubmitOrderRequest(
+                USER_ID,
+                " correlation-submit-order-rest-001 ");
+
+        ResponseEntity<SubmitOrderResponse> response =
+                fixture.controller().submit(ORDER_ID, request);
+
+        assertThat(fixture.submitOrderUseCase().command())
+                .as("submit order command delegated by controller")
+                .isEqualTo(new SubmitOrderCommand(
+                        ORDER_ID,
+                        USER_ID,
+                        "correlation-submit-order-rest-001"));
+        assertThat(response.getStatusCode().value())
+                .as("submit order HTTP status")
+                .isEqualTo(200);
+        assertThat(response.getBody())
+                .as("submit order response")
+                .isEqualTo(new SubmitOrderResponse(
+                        ORDER_ID,
+                        OrderStatus.SUBMITTED,
+                        1,
+                        new BigDecimal("216.00"),
+                        BRL,
+                        3,
+                        UPDATED_AT));
+    }
+
     @Test
     void testConstructorShouldRejectNullDependencies() {
         ControllerFixture fixture = new ControllerFixture();
@@ -238,7 +273,8 @@ class OrderControllerTest {
                 fixture.addItemUseCase(),
                 fixture.updateQuantityUseCase(),
                 fixture.removeItemUseCase(),
-                fixture.applyPricingUseCase()))
+                fixture.applyPricingUseCase(),
+                fixture.submitOrderUseCase()))
                 .as("null create order use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Create order use case must not be null");
@@ -247,7 +283,8 @@ class OrderControllerTest {
                 null,
                 fixture.updateQuantityUseCase(),
                 fixture.removeItemUseCase(),
-                fixture.applyPricingUseCase()))
+                fixture.applyPricingUseCase(),
+                fixture.submitOrderUseCase()))
                 .as("null add order item use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Add order item use case must not be null");
@@ -256,7 +293,8 @@ class OrderControllerTest {
                 fixture.addItemUseCase(),
                 null,
                 fixture.removeItemUseCase(),
-                fixture.applyPricingUseCase()))
+                fixture.applyPricingUseCase(),
+                fixture.submitOrderUseCase()))
                 .as("null update quantity use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage(
@@ -266,7 +304,8 @@ class OrderControllerTest {
                 fixture.addItemUseCase(),
                 fixture.updateQuantityUseCase(),
                 null,
-                fixture.applyPricingUseCase()))
+                fixture.applyPricingUseCase(),
+                fixture.submitOrderUseCase()))
                 .as("null remove item use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Remove order item use case must not be null");
@@ -279,6 +318,16 @@ class OrderControllerTest {
                 .as("null apply pricing use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Apply order item pricing use case must not be null");
+        assertThatThrownBy(() -> new OrderController(
+                fixture.createUseCase(),
+                fixture.addItemUseCase(),
+                fixture.updateQuantityUseCase(),
+                fixture.removeItemUseCase(),
+                fixture.applyPricingUseCase(),
+                null))
+                .as("null submit order use case")
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Submit order use case must not be null");
     }
 
     private record ControllerFixture(
@@ -287,6 +336,7 @@ class OrderControllerTest {
             CapturingUpdateQuantityUseCase updateQuantityUseCase,
             CapturingRemoveOrderItemUseCase removeItemUseCase,
             CapturingApplyPricingUseCase applyPricingUseCase,
+            CapturingSubmitOrderUseCase submitOrderUseCase,
             OrderController controller
     ) {
 
@@ -296,7 +346,8 @@ class OrderControllerTest {
                     new CapturingAddOrderItemUseCase(),
                     new CapturingUpdateQuantityUseCase(),
                     new CapturingRemoveOrderItemUseCase(),
-                    new CapturingApplyPricingUseCase());
+                    new CapturingApplyPricingUseCase(),
+                    new CapturingSubmitOrderUseCase());
         }
 
         private ControllerFixture(
@@ -304,7 +355,8 @@ class OrderControllerTest {
                 CapturingAddOrderItemUseCase addItemUseCase,
                 CapturingUpdateQuantityUseCase updateQuantityUseCase,
                 CapturingRemoveOrderItemUseCase removeItemUseCase,
-                CapturingApplyPricingUseCase applyPricingUseCase
+                CapturingApplyPricingUseCase applyPricingUseCase,
+                CapturingSubmitOrderUseCase submitOrderUseCase
         ) {
             this(
                     createUseCase,
@@ -312,12 +364,14 @@ class OrderControllerTest {
                     updateQuantityUseCase,
                     removeItemUseCase,
                     applyPricingUseCase,
+                    submitOrderUseCase,
                     new OrderController(
                             createUseCase,
                             addItemUseCase,
                             updateQuantityUseCase,
                             removeItemUseCase,
-                            applyPricingUseCase));
+                            applyPricingUseCase,
+                            submitOrderUseCase));
         }
     }
 
@@ -440,6 +494,32 @@ class OrderControllerTest {
         }
 
         private ApplyOrderItemPricingCommand command() {
+            return command.get();
+        }
+    }
+
+
+
+    private static final class CapturingSubmitOrderUseCase
+            implements SubmitOrderUseCase {
+
+        private final AtomicReference<SubmitOrderCommand> command =
+                new AtomicReference<>();
+
+        @Override
+        public SubmitOrderResult submit(SubmitOrderCommand command) {
+            this.command.set(command);
+            return new SubmitOrderResult(
+                    ORDER_ID,
+                    OrderStatus.SUBMITTED,
+                    1,
+                    new BigDecimal("216.00"),
+                    BRL,
+                    3,
+                    UPDATED_AT);
+        }
+
+        private SubmitOrderCommand command() {
             return command.get();
         }
     }
