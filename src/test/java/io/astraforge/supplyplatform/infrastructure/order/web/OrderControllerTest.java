@@ -1,11 +1,14 @@
 package io.astraforge.supplyplatform.infrastructure.order.web;
 
 import io.astraforge.supplyplatform.application.order.port.in.AddOrderItemUseCase;
+import io.astraforge.supplyplatform.application.order.port.in.ApplyOrderItemPricingUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.CreateOrderUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.RemoveOrderItemUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.UpdateOrderItemQuantityUseCase;
 import io.astraforge.supplyplatform.application.order.usecase.AddOrderItemCommand;
 import io.astraforge.supplyplatform.application.order.usecase.AddOrderItemResult;
+import io.astraforge.supplyplatform.application.order.usecase.ApplyOrderItemPricingCommand;
+import io.astraforge.supplyplatform.application.order.usecase.ApplyOrderItemPricingResult;
 import io.astraforge.supplyplatform.application.order.usecase.CreateOrderCommand;
 import io.astraforge.supplyplatform.application.order.usecase.CreateOrderResult;
 import io.astraforge.supplyplatform.application.order.usecase.RemoveOrderItemCommand;
@@ -19,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Currency;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -37,6 +41,7 @@ class OrderControllerTest {
             UUID.fromString("30000000-0000-0000-0000-000000000001");
     private static final UUID PRODUCT_ID =
             UUID.fromString("40000000-0000-0000-0000-000000000001");
+    private static final Currency BRL = Currency.getInstance("BRL");
     private static final Instant CREATED_AT =
             Instant.parse("2026-08-03T13:00:00Z");
     private static final Instant UPDATED_AT =
@@ -178,6 +183,52 @@ class OrderControllerTest {
                         UPDATED_AT));
     }
 
+
+    @Test
+    void testApplyPricingShouldDelegateCommandAndReturnOk() {
+        ControllerFixture fixture = new ControllerFixture();
+        ApplyOrderItemPricingRequest request =
+                new ApplyOrderItemPricingRequest(
+                        new BigDecimal("100.00"),
+                        "BRL",
+                        new BigDecimal("10.0000"),
+                        new BigDecimal("20.0000"),
+                        USER_ID,
+                        " correlation-price-item-rest-001 ");
+
+        ResponseEntity<ApplyOrderItemPricingResponse> response =
+                fixture.controller().applyPricing(
+                        ORDER_ID,
+                        ORDER_ITEM_ID,
+                        request);
+
+        assertThat(fixture.applyPricingUseCase().command())
+                .as("apply pricing command delegated by controller")
+                .isEqualTo(new ApplyOrderItemPricingCommand(
+                        ORDER_ID,
+                        ORDER_ITEM_ID,
+                        new BigDecimal("100.00"),
+                        BRL,
+                        new BigDecimal("10.0000"),
+                        new BigDecimal("20.0000"),
+                        USER_ID,
+                        "correlation-price-item-rest-001"));
+        assertThat(response.getStatusCode().value())
+                .as("apply pricing HTTP status")
+                .isEqualTo(200);
+        assertThat(response.getBody())
+                .as("apply pricing response")
+                .isEqualTo(new ApplyOrderItemPricingResponse(
+                        ORDER_ID,
+                        ORDER_ITEM_ID,
+                        new BigDecimal("216.00"),
+                        BRL,
+                        true,
+                        OrderStatus.DRAFT,
+                        2,
+                        UPDATED_AT));
+    }
+
     @Test
     void testConstructorShouldRejectNullDependencies() {
         ControllerFixture fixture = new ControllerFixture();
@@ -186,7 +237,8 @@ class OrderControllerTest {
                 null,
                 fixture.addItemUseCase(),
                 fixture.updateQuantityUseCase(),
-                fixture.removeItemUseCase()))
+                fixture.removeItemUseCase(),
+                fixture.applyPricingUseCase()))
                 .as("null create order use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Create order use case must not be null");
@@ -194,7 +246,8 @@ class OrderControllerTest {
                 fixture.createUseCase(),
                 null,
                 fixture.updateQuantityUseCase(),
-                fixture.removeItemUseCase()))
+                fixture.removeItemUseCase(),
+                fixture.applyPricingUseCase()))
                 .as("null add order item use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Add order item use case must not be null");
@@ -202,7 +255,8 @@ class OrderControllerTest {
                 fixture.createUseCase(),
                 fixture.addItemUseCase(),
                 null,
-                fixture.removeItemUseCase()))
+                fixture.removeItemUseCase(),
+                fixture.applyPricingUseCase()))
                 .as("null update quantity use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage(
@@ -211,10 +265,20 @@ class OrderControllerTest {
                 fixture.createUseCase(),
                 fixture.addItemUseCase(),
                 fixture.updateQuantityUseCase(),
-                null))
+                null,
+                fixture.applyPricingUseCase()))
                 .as("null remove item use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Remove order item use case must not be null");
+        assertThatThrownBy(() -> new OrderController(
+                fixture.createUseCase(),
+                fixture.addItemUseCase(),
+                fixture.updateQuantityUseCase(),
+                fixture.removeItemUseCase(),
+                null))
+                .as("null apply pricing use case")
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Apply order item pricing use case must not be null");
     }
 
     private record ControllerFixture(
@@ -222,6 +286,7 @@ class OrderControllerTest {
             CapturingAddOrderItemUseCase addItemUseCase,
             CapturingUpdateQuantityUseCase updateQuantityUseCase,
             CapturingRemoveOrderItemUseCase removeItemUseCase,
+            CapturingApplyPricingUseCase applyPricingUseCase,
             OrderController controller
     ) {
 
@@ -230,25 +295,29 @@ class OrderControllerTest {
                     new CapturingCreateOrderUseCase(),
                     new CapturingAddOrderItemUseCase(),
                     new CapturingUpdateQuantityUseCase(),
-                    new CapturingRemoveOrderItemUseCase());
+                    new CapturingRemoveOrderItemUseCase(),
+                    new CapturingApplyPricingUseCase());
         }
 
         private ControllerFixture(
                 CapturingCreateOrderUseCase createUseCase,
                 CapturingAddOrderItemUseCase addItemUseCase,
                 CapturingUpdateQuantityUseCase updateQuantityUseCase,
-                CapturingRemoveOrderItemUseCase removeItemUseCase
+                CapturingRemoveOrderItemUseCase removeItemUseCase,
+                CapturingApplyPricingUseCase applyPricingUseCase
         ) {
             this(
                     createUseCase,
                     addItemUseCase,
                     updateQuantityUseCase,
                     removeItemUseCase,
+                    applyPricingUseCase,
                     new OrderController(
                             createUseCase,
                             addItemUseCase,
                             updateQuantityUseCase,
-                            removeItemUseCase));
+                            removeItemUseCase,
+                            applyPricingUseCase));
         }
     }
 
@@ -346,4 +415,33 @@ class OrderControllerTest {
             return command.get();
         }
     }
+
+
+    private static final class CapturingApplyPricingUseCase
+            implements ApplyOrderItemPricingUseCase {
+
+        private final AtomicReference<ApplyOrderItemPricingCommand> command =
+                new AtomicReference<>();
+
+        @Override
+        public ApplyOrderItemPricingResult applyPricing(
+                ApplyOrderItemPricingCommand command
+        ) {
+            this.command.set(command);
+            return new ApplyOrderItemPricingResult(
+                    ORDER_ID,
+                    ORDER_ITEM_ID,
+                    new BigDecimal("216.00"),
+                    BRL,
+                    true,
+                    OrderStatus.DRAFT,
+                    2,
+                    UPDATED_AT);
+        }
+
+        private ApplyOrderItemPricingCommand command() {
+            return command.get();
+        }
+    }
+
 }

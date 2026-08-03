@@ -1,10 +1,12 @@
 package io.astraforge.supplyplatform.infrastructure.order.web;
 
 import io.astraforge.supplyplatform.application.order.port.in.AddOrderItemUseCase;
+import io.astraforge.supplyplatform.application.order.port.in.ApplyOrderItemPricingUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.CreateOrderUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.RemoveOrderItemUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.UpdateOrderItemQuantityUseCase;
 import io.astraforge.supplyplatform.application.order.usecase.AddOrderItemResult;
+import io.astraforge.supplyplatform.application.order.usecase.ApplyOrderItemPricingResult;
 import io.astraforge.supplyplatform.application.order.usecase.CreateOrderResult;
 import io.astraforge.supplyplatform.application.order.usecase.RemoveOrderItemResult;
 import io.astraforge.supplyplatform.application.order.usecase.UpdateOrderItemQuantityResult;
@@ -12,8 +14,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,12 +34,14 @@ public final class OrderController {
     private final AddOrderItemUseCase addOrderItemUseCase;
     private final UpdateOrderItemQuantityUseCase updateQuantityUseCase;
     private final RemoveOrderItemUseCase removeOrderItemUseCase;
+    private final ApplyOrderItemPricingUseCase applyPricingUseCase;
 
     public OrderController(
             CreateOrderUseCase createOrderUseCase,
             AddOrderItemUseCase addOrderItemUseCase,
             UpdateOrderItemQuantityUseCase updateQuantityUseCase,
-            RemoveOrderItemUseCase removeOrderItemUseCase
+            RemoveOrderItemUseCase removeOrderItemUseCase,
+            ApplyOrderItemPricingUseCase applyPricingUseCase
     ) {
         this.createOrderUseCase = Objects.requireNonNull(
                 createOrderUseCase,
@@ -51,6 +55,9 @@ public final class OrderController {
         this.removeOrderItemUseCase = Objects.requireNonNull(
                 removeOrderItemUseCase,
                 "Remove order item use case must not be null");
+        this.applyPricingUseCase = Objects.requireNonNull(
+                applyPricingUseCase,
+                "Apply order item pricing use case must not be null");
     }
 
     @PostMapping
@@ -60,8 +67,6 @@ public final class OrderController {
     ) {
         CreateOrderResult result = createOrderUseCase.create(
                 OrderWebMapper.toCommand(request));
-        CreateOrderResponse response =
-                OrderWebMapper.toResponse(result);
         URI location = uriBuilder
                 .path("/api/v1/orders/{orderId}")
                 .buildAndExpand(result.orderId())
@@ -70,7 +75,7 @@ public final class OrderController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .location(location)
-                .body(response);
+                .body(OrderWebMapper.toResponse(result));
     }
 
     @PostMapping("/{orderId}/items")
@@ -81,8 +86,6 @@ public final class OrderController {
     ) {
         AddOrderItemResult result = addOrderItemUseCase.addItem(
                 OrderWebMapper.toCommand(orderId, request));
-        AddOrderItemResponse response =
-                OrderWebMapper.toResponse(result);
         URI location = uriBuilder
                 .path("/api/v1/orders/{orderId}/items/{orderItemId}")
                 .buildAndExpand(
@@ -93,7 +96,7 @@ public final class OrderController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .location(location)
-                .body(response);
+                .body(OrderWebMapper.toResponse(result));
     }
 
     @PatchMapping("/{orderId}/items/{orderItemId}/quantity")
@@ -109,8 +112,7 @@ public final class OrderController {
                                 orderItemId,
                                 request));
 
-        return ResponseEntity.ok(
-                OrderWebMapper.toResponse(result));
+        return ResponseEntity.ok(OrderWebMapper.toResponse(result));
     }
 
     @DeleteMapping("/{orderId}/items/{orderItemId}")
@@ -126,7 +128,22 @@ public final class OrderController {
                                 orderItemId,
                                 request));
 
-        return ResponseEntity.ok(
-                OrderWebMapper.toResponse(result));
+        return ResponseEntity.ok(OrderWebMapper.toResponse(result));
+    }
+
+    @PatchMapping("/{orderId}/items/{orderItemId}/pricing")
+    public ResponseEntity<ApplyOrderItemPricingResponse> applyPricing(
+            @PathVariable UUID orderId,
+            @PathVariable UUID orderItemId,
+            @Valid @RequestBody ApplyOrderItemPricingRequest request
+    ) {
+        ApplyOrderItemPricingResult result =
+                applyPricingUseCase.applyPricing(
+                        OrderWebMapper.toCommand(
+                                orderId,
+                                orderItemId,
+                                request));
+
+        return ResponseEntity.ok(OrderWebMapper.toResponse(result));
     }
 }

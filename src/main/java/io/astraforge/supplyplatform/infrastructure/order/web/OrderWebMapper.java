@@ -2,6 +2,8 @@ package io.astraforge.supplyplatform.infrastructure.order.web;
 
 import io.astraforge.supplyplatform.application.order.usecase.AddOrderItemCommand;
 import io.astraforge.supplyplatform.application.order.usecase.AddOrderItemResult;
+import io.astraforge.supplyplatform.application.order.usecase.ApplyOrderItemPricingCommand;
+import io.astraforge.supplyplatform.application.order.usecase.ApplyOrderItemPricingResult;
 import io.astraforge.supplyplatform.application.order.usecase.CreateOrderCommand;
 import io.astraforge.supplyplatform.application.order.usecase.CreateOrderResult;
 import io.astraforge.supplyplatform.application.order.usecase.RemoveOrderItemCommand;
@@ -9,6 +11,7 @@ import io.astraforge.supplyplatform.application.order.usecase.RemoveOrderItemRes
 import io.astraforge.supplyplatform.application.order.usecase.UpdateOrderItemQuantityCommand;
 import io.astraforge.supplyplatform.application.order.usecase.UpdateOrderItemQuantityResult;
 
+import java.util.Currency;
 import java.util.UUID;
 
 final class OrderWebMapper {
@@ -63,6 +66,22 @@ final class OrderWebMapper {
                 request.correlationId());
     }
 
+    static ApplyOrderItemPricingCommand toCommand(
+            UUID orderId,
+            UUID orderItemId,
+            ApplyOrderItemPricingRequest request
+    ) {
+        return new ApplyOrderItemPricingCommand(
+                orderId,
+                orderItemId,
+                request.unitPrice(),
+                Currency.getInstance(request.currency()),
+                request.discountPercentage(),
+                request.taxPercentage(),
+                request.pricedBy(),
+                request.correlationId());
+    }
+
     static CreateOrderResponse toResponse(CreateOrderResult result) {
         return new CreateOrderResponse(
                 result.orderId(),
@@ -102,6 +121,20 @@ final class OrderWebMapper {
                 result.removedOrderItemId(),
                 result.status(),
                 result.itemCount(),
+                result.version(),
+                result.updatedAt());
+    }
+
+    static ApplyOrderItemPricingResponse toResponse(
+            ApplyOrderItemPricingResult result
+    ) {
+        return new ApplyOrderItemPricingResponse(
+                result.orderId(),
+                result.orderItemId(),
+                result.itemTotal(),
+                result.currency(),
+                result.pricingComplete(),
+                result.status(),
                 result.version(),
                 result.updatedAt());
     }

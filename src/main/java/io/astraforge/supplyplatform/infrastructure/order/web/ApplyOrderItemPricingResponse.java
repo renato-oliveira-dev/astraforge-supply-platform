@@ -1,0 +1,36 @@
+package io.astraforge.supplyplatform.infrastructure.order.web;
+
+import io.astraforge.supplyplatform.domain.order.aggregate.OrderStatus;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Currency;
+import java.util.Objects;
+import java.util.UUID;
+
+public record ApplyOrderItemPricingResponse(
+        UUID orderId,
+        UUID orderItemId,
+        BigDecimal itemTotal,
+        Currency currency,
+        boolean pricingComplete,
+        OrderStatus status,
+        long version,
+        Instant updatedAt
+) {
+
+    public ApplyOrderItemPricingResponse {
+        Objects.requireNonNull(orderId, "Order ID must not be null");
+        Objects.requireNonNull(
+                orderItemId,
+                "Order item ID must not be null");
+        Objects.requireNonNull(itemTotal, "Item total must not be null");
+        Objects.requireNonNull(currency, "Currency must not be null");
+        Objects.requireNonNull(status, "Order status must not be null");
+        if (version <= 0) {
+            throw new IllegalArgumentException(
+                    "Order version must be greater than zero");
+        }
+        Objects.requireNonNull(updatedAt, "Updated at must not be null");
+    }
+}
