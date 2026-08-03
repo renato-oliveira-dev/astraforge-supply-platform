@@ -1,0 +1,70 @@
+package io.astraforge.supplyplatform.application.order.usecase;
+
+import java.math.BigDecimal;
+import java.util.Currency;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+
+public record OrderItemDetailsResult(
+        UUID orderItemId,
+        UUID productId,
+        String sku,
+        String productName,
+        String unitOfMeasure,
+        BigDecimal quantity,
+        Optional<BigDecimal> unitPrice,
+        Optional<BigDecimal> discountPercentage,
+        Optional<BigDecimal> taxPercentage,
+        Optional<BigDecimal> total,
+        Optional<Currency> currency
+) {
+
+    public OrderItemDetailsResult {
+        Objects.requireNonNull(
+                orderItemId,
+                "Order item ID must not be null");
+        Objects.requireNonNull(productId, "Product ID must not be null");
+        sku = normalizeRequired(sku, "Product SKU");
+        productName = normalizeRequired(
+                productName,
+                "Product name");
+        unitOfMeasure = normalizeRequired(
+                unitOfMeasure,
+                "Unit of measure");
+        Objects.requireNonNull(quantity, "Quantity must not be null");
+        unitPrice = requireOptional(unitPrice, "Unit price");
+        discountPercentage = requireOptional(
+                discountPercentage,
+                "Discount percentage");
+        taxPercentage = requireOptional(
+                taxPercentage,
+                "Tax percentage");
+        total = requireOptional(total, "Item total");
+        currency = requireOptional(currency, "Currency");
+    }
+
+    public boolean priced() {
+        return unitPrice.isPresent();
+    }
+
+    private static String normalizeRequired(
+            String value,
+            String fieldName
+    ) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(
+                    fieldName + " must not be blank");
+        }
+        return value.trim();
+    }
+
+    private static <T> Optional<T> requireOptional(
+            Optional<T> value,
+            String fieldName
+    ) {
+        return Objects.requireNonNull(
+                value,
+                fieldName + " must not be null");
+    }
+}
