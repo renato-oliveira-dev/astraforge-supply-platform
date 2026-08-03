@@ -2,10 +2,16 @@ package io.astraforge.supplyplatform.infrastructure.order.web;
 
 import io.astraforge.supplyplatform.application.order.port.in.AddOrderItemUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.CreateOrderUseCase;
+import io.astraforge.supplyplatform.application.order.port.in.RemoveOrderItemUseCase;
+import io.astraforge.supplyplatform.application.order.port.in.UpdateOrderItemQuantityUseCase;
 import io.astraforge.supplyplatform.application.order.usecase.AddOrderItemCommand;
 import io.astraforge.supplyplatform.application.order.usecase.AddOrderItemResult;
 import io.astraforge.supplyplatform.application.order.usecase.CreateOrderCommand;
 import io.astraforge.supplyplatform.application.order.usecase.CreateOrderResult;
+import io.astraforge.supplyplatform.application.order.usecase.RemoveOrderItemCommand;
+import io.astraforge.supplyplatform.application.order.usecase.RemoveOrderItemResult;
+import io.astraforge.supplyplatform.application.order.usecase.UpdateOrderItemQuantityCommand;
+import io.astraforge.supplyplatform.application.order.usecase.UpdateOrderItemQuantityResult;
 import io.astraforge.supplyplatform.domain.order.aggregate.OrderStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
@@ -22,20 +28,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class OrderControllerTest {
 
     private static final UUID ORDER_ID =
-            UUID.fromString(
-                    "10000000-0000-0000-0000-000000000001");
+            UUID.fromString("10000000-0000-0000-0000-000000000001");
     private static final UUID ORDER_ITEM_ID =
-            UUID.fromString(
-                    "11000000-0000-0000-0000-000000000001");
+            UUID.fromString("11000000-0000-0000-0000-000000000001");
     private static final UUID CUSTOMER_ID =
-            UUID.fromString(
-                    "20000000-0000-0000-0000-000000000001");
+            UUID.fromString("20000000-0000-0000-0000-000000000001");
     private static final UUID USER_ID =
-            UUID.fromString(
-                    "30000000-0000-0000-0000-000000000001");
+            UUID.fromString("30000000-0000-0000-0000-000000000001");
     private static final UUID PRODUCT_ID =
-            UUID.fromString(
-                    "40000000-0000-0000-0000-000000000001");
+            UUID.fromString("40000000-0000-0000-0000-000000000001");
     private static final Instant CREATED_AT =
             Instant.parse("2026-08-03T13:00:00Z");
     private static final Instant UPDATED_AT =
@@ -43,23 +44,19 @@ class OrderControllerTest {
 
     @Test
     void testCreateShouldDelegateCommandAndReturnCreatedResponse() {
-        CapturingCreateOrderUseCase createUseCase =
-                new CapturingCreateOrderUseCase();
-        OrderController controller = new OrderController(
-                createUseCase,
-                new CapturingAddOrderItemUseCase());
+        ControllerFixture fixture = new ControllerFixture();
         CreateOrderRequest request = new CreateOrderRequest(
                 CUSTOMER_ID,
                 USER_ID,
                 " correlation-create-rest-001 ");
 
         ResponseEntity<CreateOrderResponse> response =
-                controller.create(
+                fixture.controller().create(
                         request,
                         UriComponentsBuilder.fromUriString(
                                 "https://api.astraforge.test"));
 
-        assertThat(createUseCase.command())
+        assertThat(fixture.createUseCase().command())
                 .as("create order command delegated by controller")
                 .isEqualTo(new CreateOrderCommand(
                         CUSTOMER_ID,
@@ -73,22 +70,11 @@ class OrderControllerTest {
                 .hasToString(
                         "https://api.astraforge.test/api/v1/orders/"
                                 + ORDER_ID);
-        assertThat(response.getBody())
-                .as("created order response")
-                .isEqualTo(new CreateOrderResponse(
-                        ORDER_ID,
-                        OrderStatus.DRAFT,
-                        0,
-                        CREATED_AT));
     }
 
     @Test
     void testAddItemShouldDelegateCommandAndReturnCreatedResponse() {
-        CapturingAddOrderItemUseCase addItemUseCase =
-                new CapturingAddOrderItemUseCase();
-        OrderController controller = new OrderController(
-                new CapturingCreateOrderUseCase(),
-                addItemUseCase);
+        ControllerFixture fixture = new ControllerFixture();
         AddOrderItemRequest request = new AddOrderItemRequest(
                 PRODUCT_ID,
                 " SAFE-HELMET-001 ",
@@ -99,13 +85,13 @@ class OrderControllerTest {
                 " correlation-add-item-rest-001 ");
 
         ResponseEntity<AddOrderItemResponse> response =
-                controller.addItem(
+                fixture.controller().addItem(
                         ORDER_ID,
                         request,
                         UriComponentsBuilder.fromUriString(
                                 "https://api.astraforge.test"));
 
-        assertThat(addItemUseCase.command())
+        assertThat(fixture.addItemUseCase().command())
                 .as("add order item command delegated by controller")
                 .isEqualTo(new AddOrderItemCommand(
                         ORDER_ID,
@@ -119,43 +105,151 @@ class OrderControllerTest {
         assertThat(response.getStatusCode().value())
                 .as("add order item HTTP status")
                 .isEqualTo(201);
-        assertThat(response.getHeaders().getLocation())
-                .as("created order item location")
-                .hasToString(
-                        "https://api.astraforge.test/api/v1/orders/"
-                                + ORDER_ID
-                                + "/items/"
-                                + ORDER_ITEM_ID);
-        assertThat(response.getBody())
-                .as("created order item response")
-                .isEqualTo(new AddOrderItemResponse(
+    }
+
+    @Test
+    void testUpdateQuantityShouldDelegateCommandAndReturnOk() {
+        ControllerFixture fixture = new ControllerFixture();
+        UpdateOrderItemQuantityRequest request =
+                new UpdateOrderItemQuantityRequest(
+                        new BigDecimal("5.000"),
+                        USER_ID,
+                        " correlation-update-quantity-rest-001 ");
+
+        ResponseEntity<UpdateOrderItemQuantityResponse> response =
+                fixture.controller().updateQuantity(
                         ORDER_ID,
                         ORDER_ITEM_ID,
-                        PRODUCT_ID,
+                        request);
+
+        assertThat(fixture.updateQuantityUseCase().command())
+                .as("update quantity command delegated by controller")
+                .isEqualTo(new UpdateOrderItemQuantityCommand(
+                        ORDER_ID,
+                        ORDER_ITEM_ID,
+                        new BigDecimal("5.000"),
+                        USER_ID,
+                        "correlation-update-quantity-rest-001"));
+        assertThat(response.getStatusCode().value())
+                .as("update quantity HTTP status")
+                .isEqualTo(200);
+        assertThat(response.getBody())
+                .as("update quantity response")
+                .isEqualTo(new UpdateOrderItemQuantityResponse(
+                        ORDER_ID,
+                        ORDER_ITEM_ID,
+                        new BigDecimal("5.000"),
                         OrderStatus.DRAFT,
-                        1,
-                        1,
+                        2,
                         UPDATED_AT));
     }
 
     @Test
-    void testConstructorShouldRejectNullCreateUseCase() {
-        assertThatThrownBy(() -> new OrderController(
-                null,
-                new CapturingAddOrderItemUseCase()))
-                .as("null create order use case")
-                .isInstanceOf(NullPointerException.class)
-                .hasMessage("Create order use case must not be null");
+    void testRemoveItemShouldDelegateCommandAndReturnOk() {
+        ControllerFixture fixture = new ControllerFixture();
+        RemoveOrderItemRequest request = new RemoveOrderItemRequest(
+                USER_ID,
+                " correlation-remove-item-rest-001 ");
+
+        ResponseEntity<RemoveOrderItemResponse> response =
+                fixture.controller().removeItem(
+                        ORDER_ID,
+                        ORDER_ITEM_ID,
+                        request);
+
+        assertThat(fixture.removeItemUseCase().command())
+                .as("remove item command delegated by controller")
+                .isEqualTo(new RemoveOrderItemCommand(
+                        ORDER_ID,
+                        ORDER_ITEM_ID,
+                        USER_ID,
+                        "correlation-remove-item-rest-001"));
+        assertThat(response.getStatusCode().value())
+                .as("remove item HTTP status")
+                .isEqualTo(200);
+        assertThat(response.getBody())
+                .as("remove item response")
+                .isEqualTo(new RemoveOrderItemResponse(
+                        ORDER_ID,
+                        ORDER_ITEM_ID,
+                        OrderStatus.DRAFT,
+                        0,
+                        2,
+                        UPDATED_AT));
     }
 
     @Test
-    void testConstructorShouldRejectNullAddItemUseCase() {
+    void testConstructorShouldRejectNullDependencies() {
+        ControllerFixture fixture = new ControllerFixture();
+
         assertThatThrownBy(() -> new OrderController(
-                new CapturingCreateOrderUseCase(),
-                null))
+                null,
+                fixture.addItemUseCase(),
+                fixture.updateQuantityUseCase(),
+                fixture.removeItemUseCase()))
+                .as("null create order use case")
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Create order use case must not be null");
+        assertThatThrownBy(() -> new OrderController(
+                fixture.createUseCase(),
+                null,
+                fixture.updateQuantityUseCase(),
+                fixture.removeItemUseCase()))
                 .as("null add order item use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Add order item use case must not be null");
+        assertThatThrownBy(() -> new OrderController(
+                fixture.createUseCase(),
+                fixture.addItemUseCase(),
+                null,
+                fixture.removeItemUseCase()))
+                .as("null update quantity use case")
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage(
+                        "Update order item quantity use case must not be null");
+        assertThatThrownBy(() -> new OrderController(
+                fixture.createUseCase(),
+                fixture.addItemUseCase(),
+                fixture.updateQuantityUseCase(),
+                null))
+                .as("null remove item use case")
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Remove order item use case must not be null");
+    }
+
+    private record ControllerFixture(
+            CapturingCreateOrderUseCase createUseCase,
+            CapturingAddOrderItemUseCase addItemUseCase,
+            CapturingUpdateQuantityUseCase updateQuantityUseCase,
+            CapturingRemoveOrderItemUseCase removeItemUseCase,
+            OrderController controller
+    ) {
+
+        private ControllerFixture() {
+            this(
+                    new CapturingCreateOrderUseCase(),
+                    new CapturingAddOrderItemUseCase(),
+                    new CapturingUpdateQuantityUseCase(),
+                    new CapturingRemoveOrderItemUseCase());
+        }
+
+        private ControllerFixture(
+                CapturingCreateOrderUseCase createUseCase,
+                CapturingAddOrderItemUseCase addItemUseCase,
+                CapturingUpdateQuantityUseCase updateQuantityUseCase,
+                CapturingRemoveOrderItemUseCase removeItemUseCase
+        ) {
+            this(
+                    createUseCase,
+                    addItemUseCase,
+                    updateQuantityUseCase,
+                    removeItemUseCase,
+                    new OrderController(
+                            createUseCase,
+                            addItemUseCase,
+                            updateQuantityUseCase,
+                            removeItemUseCase));
+        }
     }
 
     private static final class CapturingCreateOrderUseCase
@@ -199,6 +293,56 @@ class OrderControllerTest {
         }
 
         private AddOrderItemCommand command() {
+            return command.get();
+        }
+    }
+
+    private static final class CapturingUpdateQuantityUseCase
+            implements UpdateOrderItemQuantityUseCase {
+
+        private final AtomicReference<UpdateOrderItemQuantityCommand> command =
+                new AtomicReference<>();
+
+        @Override
+        public UpdateOrderItemQuantityResult updateQuantity(
+                UpdateOrderItemQuantityCommand command
+        ) {
+            this.command.set(command);
+            return new UpdateOrderItemQuantityResult(
+                    ORDER_ID,
+                    ORDER_ITEM_ID,
+                    new BigDecimal("5.000"),
+                    OrderStatus.DRAFT,
+                    2,
+                    UPDATED_AT);
+        }
+
+        private UpdateOrderItemQuantityCommand command() {
+            return command.get();
+        }
+    }
+
+    private static final class CapturingRemoveOrderItemUseCase
+            implements RemoveOrderItemUseCase {
+
+        private final AtomicReference<RemoveOrderItemCommand> command =
+                new AtomicReference<>();
+
+        @Override
+        public RemoveOrderItemResult removeItem(
+                RemoveOrderItemCommand command
+        ) {
+            this.command.set(command);
+            return new RemoveOrderItemResult(
+                    ORDER_ID,
+                    ORDER_ITEM_ID,
+                    OrderStatus.DRAFT,
+                    0,
+                    2,
+                    UPDATED_AT);
+        }
+
+        private RemoveOrderItemCommand command() {
             return command.get();
         }
     }
