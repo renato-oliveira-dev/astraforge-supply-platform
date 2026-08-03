@@ -5,6 +5,7 @@ import io.astraforge.supplyplatform.application.order.port.in.ApplyOrderItemPric
 import io.astraforge.supplyplatform.application.order.port.in.CreateOrderUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.RemoveOrderItemUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.SubmitOrderUseCase;
+import io.astraforge.supplyplatform.application.order.port.in.StartOrderApprovalUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.UpdateOrderItemQuantityUseCase;
 import io.astraforge.supplyplatform.application.order.usecase.AddOrderItemCommand;
 import io.astraforge.supplyplatform.application.order.usecase.AddOrderItemResult;
@@ -16,6 +17,8 @@ import io.astraforge.supplyplatform.application.order.usecase.RemoveOrderItemCom
 import io.astraforge.supplyplatform.application.order.usecase.RemoveOrderItemResult;
 import io.astraforge.supplyplatform.application.order.usecase.SubmitOrderCommand;
 import io.astraforge.supplyplatform.application.order.usecase.SubmitOrderResult;
+import io.astraforge.supplyplatform.application.order.usecase.StartOrderApprovalCommand;
+import io.astraforge.supplyplatform.application.order.usecase.StartOrderApprovalResult;
 import io.astraforge.supplyplatform.application.order.usecase.UpdateOrderItemQuantityCommand;
 import io.astraforge.supplyplatform.application.order.usecase.UpdateOrderItemQuantityResult;
 import io.astraforge.supplyplatform.domain.order.aggregate.OrderStatus;
@@ -264,70 +267,85 @@ class OrderControllerTest {
                         UPDATED_AT));
     }
 
+
+    @Test
+    void testStartApprovalShouldDelegateCommandAndReturnOk() {
+        ControllerFixture fixture = new ControllerFixture();
+        StartOrderApprovalRequest request =
+                new StartOrderApprovalRequest(
+                        USER_ID,
+                        " correlation-start-approval-rest-001 ");
+
+        ResponseEntity<StartOrderApprovalResponse> response =
+                fixture.controller().startApproval(ORDER_ID, request);
+
+        assertThat(fixture.startApprovalUseCase().command())
+                .as("start approval command delegated by controller")
+                .isEqualTo(new StartOrderApprovalCommand(
+                        ORDER_ID,
+                        USER_ID,
+                        "correlation-start-approval-rest-001"));
+        assertThat(response.getStatusCode().value())
+                .as("start approval HTTP status")
+                .isEqualTo(200);
+        assertThat(response.getBody())
+                .as("start approval response")
+                .isEqualTo(new StartOrderApprovalResponse(
+                        ORDER_ID,
+                        OrderStatus.PENDING_APPROVAL,
+                        4,
+                        UPDATED_AT));
+    }
+
     @Test
     void testConstructorShouldRejectNullDependencies() {
         ControllerFixture fixture = new ControllerFixture();
 
-        assertThatThrownBy(() -> new OrderController(
-                null,
-                fixture.addItemUseCase(),
-                fixture.updateQuantityUseCase(),
-                fixture.removeItemUseCase(),
-                fixture.applyPricingUseCase(),
-                fixture.submitOrderUseCase()))
+        assertThatThrownBy(() -> fixture.builder()
+                .withoutCreateUseCase()
+                .build())
                 .as("null create order use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Create order use case must not be null");
-        assertThatThrownBy(() -> new OrderController(
-                fixture.createUseCase(),
-                null,
-                fixture.updateQuantityUseCase(),
-                fixture.removeItemUseCase(),
-                fixture.applyPricingUseCase(),
-                fixture.submitOrderUseCase()))
+        assertThatThrownBy(() -> fixture.builder()
+                .withoutAddItemUseCase()
+                .build())
                 .as("null add order item use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Add order item use case must not be null");
-        assertThatThrownBy(() -> new OrderController(
-                fixture.createUseCase(),
-                fixture.addItemUseCase(),
-                null,
-                fixture.removeItemUseCase(),
-                fixture.applyPricingUseCase(),
-                fixture.submitOrderUseCase()))
+        assertThatThrownBy(() -> fixture.builder()
+                .withoutUpdateQuantityUseCase()
+                .build())
                 .as("null update quantity use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage(
                         "Update order item quantity use case must not be null");
-        assertThatThrownBy(() -> new OrderController(
-                fixture.createUseCase(),
-                fixture.addItemUseCase(),
-                fixture.updateQuantityUseCase(),
-                null,
-                fixture.applyPricingUseCase(),
-                fixture.submitOrderUseCase()))
+        assertThatThrownBy(() -> fixture.builder()
+                .withoutRemoveItemUseCase()
+                .build())
                 .as("null remove item use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Remove order item use case must not be null");
-        assertThatThrownBy(() -> new OrderController(
-                fixture.createUseCase(),
-                fixture.addItemUseCase(),
-                fixture.updateQuantityUseCase(),
-                fixture.removeItemUseCase(),
-                null))
+        assertThatThrownBy(() -> fixture.builder()
+                .withoutApplyPricingUseCase()
+                .build())
                 .as("null apply pricing use case")
                 .isInstanceOf(NullPointerException.class)
-                .hasMessage("Apply order item pricing use case must not be null");
-        assertThatThrownBy(() -> new OrderController(
-                fixture.createUseCase(),
-                fixture.addItemUseCase(),
-                fixture.updateQuantityUseCase(),
-                fixture.removeItemUseCase(),
-                fixture.applyPricingUseCase(),
-                null))
+                .hasMessage(
+                        "Apply order item pricing use case must not be null");
+        assertThatThrownBy(() -> fixture.builder()
+                .withoutSubmitOrderUseCase()
+                .build())
                 .as("null submit order use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Submit order use case must not be null");
+        assertThatThrownBy(() -> fixture.builder()
+                .withoutStartApprovalUseCase()
+                .build())
+                .as("null start approval use case")
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage(
+                        "Start order approval use case must not be null");
     }
 
     private record ControllerFixture(
@@ -337,6 +355,7 @@ class OrderControllerTest {
             CapturingRemoveOrderItemUseCase removeItemUseCase,
             CapturingApplyPricingUseCase applyPricingUseCase,
             CapturingSubmitOrderUseCase submitOrderUseCase,
+            CapturingStartApprovalUseCase startApprovalUseCase,
             OrderController controller
     ) {
 
@@ -347,7 +366,8 @@ class OrderControllerTest {
                     new CapturingUpdateQuantityUseCase(),
                     new CapturingRemoveOrderItemUseCase(),
                     new CapturingApplyPricingUseCase(),
-                    new CapturingSubmitOrderUseCase());
+                    new CapturingSubmitOrderUseCase(),
+                    new CapturingStartApprovalUseCase());
         }
 
         private ControllerFixture(
@@ -356,7 +376,8 @@ class OrderControllerTest {
                 CapturingUpdateQuantityUseCase updateQuantityUseCase,
                 CapturingRemoveOrderItemUseCase removeItemUseCase,
                 CapturingApplyPricingUseCase applyPricingUseCase,
-                CapturingSubmitOrderUseCase submitOrderUseCase
+                CapturingSubmitOrderUseCase submitOrderUseCase,
+                CapturingStartApprovalUseCase startApprovalUseCase
         ) {
             this(
                     createUseCase,
@@ -365,13 +386,101 @@ class OrderControllerTest {
                     removeItemUseCase,
                     applyPricingUseCase,
                     submitOrderUseCase,
+                    startApprovalUseCase,
                     new OrderController(
                             createUseCase,
                             addItemUseCase,
                             updateQuantityUseCase,
                             removeItemUseCase,
                             applyPricingUseCase,
-                            submitOrderUseCase));
+                            submitOrderUseCase,
+                            startApprovalUseCase));
+        }
+
+        private ControllerBuilder builder() {
+            return new ControllerBuilder(
+                    createUseCase,
+                    addItemUseCase,
+                    updateQuantityUseCase,
+                    removeItemUseCase,
+                    applyPricingUseCase,
+                    submitOrderUseCase,
+                    startApprovalUseCase);
+        }
+    }
+
+    private static final class ControllerBuilder {
+
+        private CreateOrderUseCase createUseCase;
+        private AddOrderItemUseCase addItemUseCase;
+        private UpdateOrderItemQuantityUseCase updateQuantityUseCase;
+        private RemoveOrderItemUseCase removeItemUseCase;
+        private ApplyOrderItemPricingUseCase applyPricingUseCase;
+        private SubmitOrderUseCase submitOrderUseCase;
+        private StartOrderApprovalUseCase startApprovalUseCase;
+
+        private ControllerBuilder(
+                CreateOrderUseCase createUseCase,
+                AddOrderItemUseCase addItemUseCase,
+                UpdateOrderItemQuantityUseCase updateQuantityUseCase,
+                RemoveOrderItemUseCase removeItemUseCase,
+                ApplyOrderItemPricingUseCase applyPricingUseCase,
+                SubmitOrderUseCase submitOrderUseCase,
+                StartOrderApprovalUseCase startApprovalUseCase
+        ) {
+            this.createUseCase = createUseCase;
+            this.addItemUseCase = addItemUseCase;
+            this.updateQuantityUseCase = updateQuantityUseCase;
+            this.removeItemUseCase = removeItemUseCase;
+            this.applyPricingUseCase = applyPricingUseCase;
+            this.submitOrderUseCase = submitOrderUseCase;
+            this.startApprovalUseCase = startApprovalUseCase;
+        }
+
+        private ControllerBuilder withoutCreateUseCase() {
+            createUseCase = null;
+            return this;
+        }
+
+        private ControllerBuilder withoutAddItemUseCase() {
+            addItemUseCase = null;
+            return this;
+        }
+
+        private ControllerBuilder withoutUpdateQuantityUseCase() {
+            updateQuantityUseCase = null;
+            return this;
+        }
+
+        private ControllerBuilder withoutRemoveItemUseCase() {
+            removeItemUseCase = null;
+            return this;
+        }
+
+        private ControllerBuilder withoutApplyPricingUseCase() {
+            applyPricingUseCase = null;
+            return this;
+        }
+
+        private ControllerBuilder withoutSubmitOrderUseCase() {
+            submitOrderUseCase = null;
+            return this;
+        }
+
+        private ControllerBuilder withoutStartApprovalUseCase() {
+            startApprovalUseCase = null;
+            return this;
+        }
+
+        private OrderController build() {
+            return new OrderController(
+                    createUseCase,
+                    addItemUseCase,
+                    updateQuantityUseCase,
+                    removeItemUseCase,
+                    applyPricingUseCase,
+                    submitOrderUseCase,
+                    startApprovalUseCase);
         }
     }
 
@@ -520,6 +629,31 @@ class OrderControllerTest {
         }
 
         private SubmitOrderCommand command() {
+            return command.get();
+        }
+    }
+
+
+
+    private static final class CapturingStartApprovalUseCase
+            implements StartOrderApprovalUseCase {
+
+        private final AtomicReference<StartOrderApprovalCommand> command =
+                new AtomicReference<>();
+
+        @Override
+        public StartOrderApprovalResult startApproval(
+                StartOrderApprovalCommand command
+        ) {
+            this.command.set(command);
+            return new StartOrderApprovalResult(
+                    ORDER_ID,
+                    OrderStatus.PENDING_APPROVAL,
+                    4,
+                    UPDATED_AT);
+        }
+
+        private StartOrderApprovalCommand command() {
             return command.get();
         }
     }

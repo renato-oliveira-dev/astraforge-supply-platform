@@ -5,12 +5,14 @@ import io.astraforge.supplyplatform.application.order.port.in.ApplyOrderItemPric
 import io.astraforge.supplyplatform.application.order.port.in.CreateOrderUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.RemoveOrderItemUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.SubmitOrderUseCase;
+import io.astraforge.supplyplatform.application.order.port.in.StartOrderApprovalUseCase;
 import io.astraforge.supplyplatform.application.order.port.in.UpdateOrderItemQuantityUseCase;
 import io.astraforge.supplyplatform.application.order.usecase.AddOrderItemResult;
 import io.astraforge.supplyplatform.application.order.usecase.ApplyOrderItemPricingResult;
 import io.astraforge.supplyplatform.application.order.usecase.CreateOrderResult;
 import io.astraforge.supplyplatform.application.order.usecase.RemoveOrderItemResult;
 import io.astraforge.supplyplatform.application.order.usecase.SubmitOrderResult;
+import io.astraforge.supplyplatform.application.order.usecase.StartOrderApprovalResult;
 import io.astraforge.supplyplatform.application.order.usecase.UpdateOrderItemQuantityResult;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -38,6 +40,7 @@ public final class OrderController {
     private final RemoveOrderItemUseCase removeOrderItemUseCase;
     private final ApplyOrderItemPricingUseCase applyPricingUseCase;
     private final SubmitOrderUseCase submitOrderUseCase;
+    private final StartOrderApprovalUseCase startApprovalUseCase;
 
     public OrderController(
             CreateOrderUseCase createOrderUseCase,
@@ -45,7 +48,8 @@ public final class OrderController {
             UpdateOrderItemQuantityUseCase updateQuantityUseCase,
             RemoveOrderItemUseCase removeOrderItemUseCase,
             ApplyOrderItemPricingUseCase applyPricingUseCase,
-            SubmitOrderUseCase submitOrderUseCase
+            SubmitOrderUseCase submitOrderUseCase,
+            StartOrderApprovalUseCase startApprovalUseCase
     ) {
         this.createOrderUseCase = Objects.requireNonNull(
                 createOrderUseCase,
@@ -65,6 +69,9 @@ public final class OrderController {
         this.submitOrderUseCase = Objects.requireNonNull(
                 submitOrderUseCase,
                 "Submit order use case must not be null");
+        this.startApprovalUseCase = Objects.requireNonNull(
+                startApprovalUseCase,
+                "Start order approval use case must not be null");
     }
 
     @PostMapping
@@ -160,6 +167,17 @@ public final class OrderController {
     ) {
         SubmitOrderResult result = submitOrderUseCase.submit(
                 OrderWebMapper.toCommand(orderId, request));
+
+        return ResponseEntity.ok(OrderWebMapper.toResponse(result));
+    }
+    @PostMapping("/{orderId}/approval")
+    public ResponseEntity<StartOrderApprovalResponse> startApproval(
+            @PathVariable UUID orderId,
+            @Valid @RequestBody StartOrderApprovalRequest request
+    ) {
+        StartOrderApprovalResult result =
+                startApprovalUseCase.startApproval(
+                        OrderWebMapper.toCommand(orderId, request));
 
         return ResponseEntity.ok(OrderWebMapper.toResponse(result));
     }

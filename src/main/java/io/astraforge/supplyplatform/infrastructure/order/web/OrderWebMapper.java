@@ -10,6 +10,8 @@ import io.astraforge.supplyplatform.application.order.usecase.RemoveOrderItemCom
 import io.astraforge.supplyplatform.application.order.usecase.RemoveOrderItemResult;
 import io.astraforge.supplyplatform.application.order.usecase.SubmitOrderCommand;
 import io.astraforge.supplyplatform.application.order.usecase.SubmitOrderResult;
+import io.astraforge.supplyplatform.application.order.usecase.StartOrderApprovalCommand;
+import io.astraforge.supplyplatform.application.order.usecase.StartOrderApprovalResult;
 import io.astraforge.supplyplatform.application.order.usecase.UpdateOrderItemQuantityCommand;
 import io.astraforge.supplyplatform.application.order.usecase.UpdateOrderItemQuantityResult;
 
@@ -94,6 +96,16 @@ final class OrderWebMapper {
                 request.correlationId());
     }
 
+    static StartOrderApprovalCommand toCommand(
+            UUID orderId,
+            StartOrderApprovalRequest request
+    ) {
+        return new StartOrderApprovalCommand(
+                orderId,
+                request.startedBy(),
+                request.correlationId());
+    }
+
     static CreateOrderResponse toResponse(CreateOrderResult result) {
         return new CreateOrderResponse(
                 result.orderId(),
@@ -159,5 +171,14 @@ final class OrderWebMapper {
                 result.currency(),
                 result.version(),
                 result.submittedAt());
+    }
+    static StartOrderApprovalResponse toResponse(
+            StartOrderApprovalResult result
+    ) {
+        return new StartOrderApprovalResponse(
+                result.orderId(),
+                result.status(),
+                result.version(),
+                result.startedAt());
     }
 }
