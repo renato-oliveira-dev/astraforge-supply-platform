@@ -28,7 +28,9 @@ class ArchitectureBoundaryTest {
                         "..configuration..",
                         "..infrastructure..")
                 .allowEmptyShould(true)
-                .because("the domain must remain independent from application and infrastructure concerns");
+                .because(
+                        "the domain must remain independent from "
+                                + "application and infrastructure concerns");
 
         rule.check(productionClasses);
     }
@@ -40,9 +42,29 @@ class ArchitectureBoundaryTest {
                 .resideInAPackage("..application..")
                 .should()
                 .dependOnClassesThat()
-                .resideInAnyPackage("..configuration..", "..infrastructure..")
+                .resideInAnyPackage(
+                        "..configuration..",
+                        "..infrastructure..")
                 .allowEmptyShould(true)
-                .because("application use cases must depend on ports rather than infrastructure adapters");
+                .because(
+                        "application use cases must depend on ports rather "
+                                + "than infrastructure adapters");
+
+        rule.check(productionClasses);
+    }
+
+    @Test
+    void testConfigurationShouldNotBeReferencedByBusinessLayers() {
+        ArchRule rule = noClasses()
+                .that()
+                .resideInAnyPackage("..domain..", "..application..")
+                .should()
+                .dependOnClassesThat()
+                .resideInAPackage("..configuration..")
+                .allowEmptyShould(true)
+                .because(
+                        "Spring composition belongs exclusively to the "
+                                + "outer configuration layer");
 
         rule.check(productionClasses);
     }

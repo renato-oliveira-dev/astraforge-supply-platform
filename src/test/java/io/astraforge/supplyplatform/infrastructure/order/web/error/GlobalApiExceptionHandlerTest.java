@@ -65,7 +65,7 @@ class GlobalApiExceptionHandlerTest {
 
         assertThat(response.getStatusCode())
                 .as("business validation HTTP status")
-                .isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+                .isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT);
         assertThat(response.getBody().message())
                 .as("business validation message")
                 .isEqualTo("Quantity must be greater than zero");
@@ -86,7 +86,7 @@ class GlobalApiExceptionHandlerTest {
 
         assertThat(response.getStatusCode())
                 .as("domain state violation HTTP status")
-                .isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+                .isEqualTo(HttpStatus.UNPROCESSABLE_CONTENT);
         assertThat(response.getBody().message())
                 .as("domain state violation message")
                 .isEqualTo(

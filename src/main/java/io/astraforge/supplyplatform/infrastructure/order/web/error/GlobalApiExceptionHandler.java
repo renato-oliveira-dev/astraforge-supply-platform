@@ -54,7 +54,7 @@ public final class GlobalApiExceptionHandler {
             HttpServletRequest request
     ) {
         return response(
-                HttpStatus.UNPROCESSABLE_ENTITY,
+                HttpStatus.UNPROCESSABLE_CONTENT,
                 exception.getMessage(),
                 request,
                 List.of());
