@@ -96,6 +96,31 @@ class CorrelationIdFilterTest {
     }
 
     @Test
+    void testFilterShouldClearMdcWhenChainFails() {
+        CorrelationIdFilter filter =
+                new CorrelationIdFilter(() -> GENERATED_ID);
+        AtomicReference<String> capturedMdc = new AtomicReference<>();
+        FilterChain failingChain = (request, response) -> {
+            capturedMdc.set(MDC.get(CorrelationIdFilter.MDC_KEY));
+            throw new java.io.IOException("Simulated downstream failure");
+        };
+
+        assertThatThrownBy(() -> filter.doFilter(
+                new MockHttpServletRequest(),
+                new MockHttpServletResponse(),
+                failingChain))
+                .as("downstream filter chain failure")
+                .isInstanceOf(java.io.IOException.class)
+                .hasMessage("Simulated downstream failure");
+        assertThat(capturedMdc.get())
+                .as("correlation MDC value during failed request")
+                .isEqualTo(GENERATED_ID.toString());
+        assertThat(MDC.get(CorrelationIdFilter.MDC_KEY))
+                .as("correlation MDC value after failed request")
+                .isNull();
+    }
+
+    @Test
     void testConstructorShouldRejectNullSupplier() {
         assertThatThrownBy(() -> new CorrelationIdFilter(null))
                 .as("null correlation UUID supplier")

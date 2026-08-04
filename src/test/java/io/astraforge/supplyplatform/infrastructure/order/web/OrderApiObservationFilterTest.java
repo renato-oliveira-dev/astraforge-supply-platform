@@ -79,6 +79,75 @@ class OrderApiObservationFilterTest {
     }
 
     @Test
+    void testFilterShouldRecordServerErrorAndHeaderCorrelation()
+            throws Exception {
+        SimpleMeterRegistry registry = new SimpleMeterRegistry();
+        OrderApiObservationFilter filter =
+                new OrderApiObservationFilter(registry);
+        MockHttpServletRequest request =
+                new MockHttpServletRequest(
+                        "delete",
+                        "/api/v1/orders/10000000-0000-0000-0000-000000000001");
+        request.addHeader(
+                CorrelationIdFilter.HEADER_NAME,
+                " correlation-header-001 ");
+        MockHttpServletResponse response =
+                new MockHttpServletResponse();
+
+        filter.doFilter(
+                request,
+                response,
+                serverErrorChain());
+
+        assertThat(registry.get(
+                        OrderApiObservationFilter.REQUEST_TIMER)
+                .tag("method", "DELETE")
+                .tag("outcome", "SERVER_ERROR")
+                .timer()
+                .count())
+                .as("server error timer count")
+                .isEqualTo(1L);
+        assertThat(registry.get(
+                        OrderApiObservationFilter.ERROR_COUNTER)
+                .tag("method", "DELETE")
+                .tag("outcome", "SERVER_ERROR")
+                .counter()
+                .count())
+                .as("server error counter value")
+                .isEqualTo(1.0);
+    }
+
+    @Test
+    void testFilterShouldRecordRedirectionWithoutErrorCounter()
+            throws Exception {
+        SimpleMeterRegistry registry = new SimpleMeterRegistry();
+        OrderApiObservationFilter filter =
+                new OrderApiObservationFilter(registry);
+        MockHttpServletRequest request = orderRequest("GET");
+        MockHttpServletResponse response =
+                new MockHttpServletResponse();
+
+        filter.doFilter(
+                request,
+                response,
+                redirectionChain());
+
+        assertThat(registry.get(
+                        OrderApiObservationFilter.REQUEST_TIMER)
+                .tag("method", "GET")
+                .tag("outcome", "REDIRECTION")
+                .timer()
+                .count())
+                .as("redirection timer count")
+                .isEqualTo(1L);
+        assertThat(registry.find(
+                        OrderApiObservationFilter.ERROR_COUNTER)
+                .counter())
+                .as("redirection error counter")
+                .isNull();
+    }
+
+    @Test
     void testFilterShouldIgnoreNonOrderEndpoint() throws Exception {
         SimpleMeterRegistry registry = new SimpleMeterRegistry();
         OrderApiObservationFilter filter =
@@ -134,6 +203,22 @@ class OrderApiObservationFilterTest {
             MockHttpServletResponse httpResponse =
                     (MockHttpServletResponse) response;
             httpResponse.setStatus(200);
+        };
+    }
+
+    private static FilterChain redirectionChain() {
+        return (request, response) -> {
+            MockHttpServletResponse httpResponse =
+                    (MockHttpServletResponse) response;
+            httpResponse.setStatus(302);
+        };
+    }
+
+    private static FilterChain serverErrorChain() {
+        return (request, response) -> {
+            MockHttpServletResponse httpResponse =
+                    (MockHttpServletResponse) response;
+            httpResponse.setStatus(503);
         };
     }
 
