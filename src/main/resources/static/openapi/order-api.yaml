@@ -1,0 +1,764 @@
+openapi: 3.1.0
+info:
+  title: AstraForge Supply Platform - Order API
+  version: 1.0.0
+  description: >
+    API for the complete order lifecycle, including item maintenance,
+    pricing, approval, inventory reservation, processing, fulfillment,
+    cancellation, and query operations.
+  contact:
+    name: AstraForge Engineering
+  license:
+    name: Proprietary
+servers:
+  - url: /
+    description: Current environment
+tags:
+  - name: Orders
+    description: Order creation and item maintenance
+  - name: Queries
+    description: Order detail and paginated search
+  - name: Approval
+    description: Approval workflow operations
+  - name: Inventory
+    description: Inventory reservation workflow
+  - name: Processing
+    description: Order processing lifecycle
+  - name: Fulfillment
+    description: Fulfillment lifecycle
+  - name: Cancellation
+    description: Order cancellation
+paths:
+  /api/v1/orders:
+    post:
+      tags: [Orders]
+      operationId: createOrder
+      summary: Create an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Order created
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrderResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+    get:
+      tags: [Queries]
+      operationId: listOrders
+      summary: List orders with optional filters
+      parameters:
+        - in: query
+          name: customerId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/OrderStatus'
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - in: query
+          name: size
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Paginated orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderPageResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /api/v1/orders/{orderId}:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    get:
+      tags: [Queries]
+      operationId: getOrderDetails
+      summary: Get complete order details
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDetailsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/orders/{orderId}/items:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Orders]
+      operationId: addOrderItem
+      summary: Add an item to a draft order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddOrderItemRequest'
+      responses:
+        '201':
+          description: Item added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddOrderItemResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/items/{orderItemId}/quantity:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+      - $ref: '#/components/parameters/OrderItemId'
+    patch:
+      tags: [Orders]
+      operationId: updateOrderItemQuantity
+      summary: Update an order item quantity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderItemQuantityRequest'
+      responses:
+        '200':
+          description: Quantity updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateOrderItemQuantityResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/items/{orderItemId}:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+      - $ref: '#/components/parameters/OrderItemId'
+    delete:
+      tags: [Orders]
+      operationId: removeOrderItem
+      summary: Remove an item from a draft order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoveOrderItemRequest'
+      responses:
+        '200':
+          description: Item removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemoveOrderItemResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/items/{orderItemId}/pricing:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+      - $ref: '#/components/parameters/OrderItemId'
+    patch:
+      tags: [Orders]
+      operationId: applyOrderItemPricing
+      summary: Apply pricing to an order item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyOrderItemPricingRequest'
+      responses:
+        '200':
+          description: Pricing applied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplyOrderItemPricingResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/submission:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Orders]
+      operationId: submitOrder
+      summary: Submit a fully priced order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorRequest'
+      responses:
+        '200':
+          description: Order submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmitOrderResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/approval:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Approval]
+      operationId: startOrderApproval
+      summary: Start approval workflow
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorRequest'
+      responses:
+        '200':
+          description: Approval workflow started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowTransitionResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/approval-decisions/approval:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Approval]
+      operationId: approveOrder
+      summary: Approve an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecisionRequest'
+      responses:
+        '200':
+          description: Order approved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApprovalDecisionResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/approval-decisions/rejection:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Approval]
+      operationId: rejectOrder
+      summary: Reject an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentDecisionRequest'
+      responses:
+        '200':
+          description: Order rejected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApprovalDecisionResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/approval-decisions/review-request:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Approval]
+      operationId: requestOrderReview
+      summary: Request order revision
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentDecisionRequest'
+      responses:
+        '200':
+          description: Review requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApprovalDecisionResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/revision/reopening:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Approval]
+      operationId: reopenOrderForRevision
+      summary: Reopen a review-requested order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorRequest'
+      responses:
+        '200':
+          description: Order reopened
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowTransitionResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/cancellation:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Cancellation]
+      operationId: cancelOrder
+      summary: Cancel an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReasonRequest'
+      responses:
+        '200':
+          description: Order cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelOrderResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/processing/start:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Processing]
+      operationId: startOrderProcessing
+      summary: Start processing an approved order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorRequest'
+      responses:
+        '200':
+          description: Processing started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorTransitionResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/inventory-reservations:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Inventory]
+      operationId: requestInventoryReservation
+      summary: Request inventory reservation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorRequest'
+      responses:
+        '200':
+          description: Reservation requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryRequestResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/inventory-reservations/confirmation:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Inventory]
+      operationId: confirmInventoryReservation
+      summary: Confirm inventory reservation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorRequest'
+      responses:
+        '200':
+          description: Reservation confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryOutcomeResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/inventory-reservations/failure:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Inventory]
+      operationId: failInventoryReservation
+      summary: Record inventory reservation failure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReasonRequest'
+      responses:
+        '200':
+          description: Failure recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryOutcomeResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/inventory-reservations/retry:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Inventory]
+      operationId: retryInventoryReservation
+      summary: Retry a failed reservation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorRequest'
+      responses:
+        '200':
+          description: Reservation retry requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorTransitionResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/fulfillment/preparation:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Fulfillment]
+      operationId: prepareOrderForFulfillment
+      summary: Prepare a reserved order for fulfillment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorRequest'
+      responses:
+        '200':
+          description: Order prepared
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FulfillmentPreparationResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/fulfillment/start:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Fulfillment]
+      operationId: startOrderFulfillment
+      summary: Start fulfillment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorRequest'
+      responses:
+        '200':
+          description: Fulfillment started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActorTransitionResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+  /api/v1/orders/{orderId}/fulfillment/completion:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [Fulfillment]
+      operationId: completeOrderFulfillment
+      summary: Complete fulfillment and close the order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorRequest'
+      responses:
+        '200':
+          description: Order completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FulfillmentCompletionResponse'
+        '422':
+          $ref: '#/components/responses/UnprocessableContent'
+components:
+  parameters:
+    OrderId:
+      in: path
+      name: orderId
+      required: true
+      schema:
+        type: string
+        format: uuid
+    OrderItemId:
+      in: path
+      name: orderItemId
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    BadRequest:
+      description: Invalid HTTP request or Bean Validation failure
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+    NotFound:
+      description: Order or item not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+    UnprocessableContent:
+      description: Domain validation or lifecycle state violation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+  schemas:
+    OrderStatus:
+      type: string
+      enum:
+        - DRAFT
+        - SUBMITTED
+        - PENDING_APPROVAL
+        - APPROVED
+        - REJECTED
+        - REVIEW_REQUESTED
+        - PROCESSING
+        - INVENTORY_PENDING
+        - INVENTORY_RESERVED
+        - INVENTORY_FAILED
+        - READY_FOR_FULFILLMENT
+        - FULFILLMENT_IN_PROGRESS
+        - COMPLETED
+        - CANCELLED
+    CreateOrderRequest:
+      type: object
+      required: [customerId, createdBy, correlationId]
+      properties:
+        customerId: {type: string, format: uuid}
+        createdBy: {type: string, format: uuid}
+        correlationId: {type: string, minLength: 1, maxLength: 100}
+    CreateOrderResponse:
+      type: object
+      required: [orderId, status, version, createdAt]
+      properties:
+        orderId: {type: string, format: uuid}
+        status: {$ref: '#/components/schemas/OrderStatus'}
+        version: {type: integer, format: int64, minimum: 0}
+        createdAt: {type: string, format: date-time}
+    AddOrderItemRequest:
+      type: object
+      required: [productId, sku, productName, unitOfMeasure, quantity, addedBy, correlationId]
+      properties:
+        productId: {type: string, format: uuid}
+        sku: {type: string, maxLength: 100}
+        productName: {type: string, maxLength: 255}
+        unitOfMeasure: {type: string, maxLength: 30}
+        quantity: {type: number, minimum: 0.001, multipleOf: 0.001}
+        addedBy: {type: string, format: uuid}
+        correlationId: {type: string, maxLength: 100}
+    AddOrderItemResponse:
+      type: object
+      additionalProperties: true
+    UpdateOrderItemQuantityRequest:
+      type: object
+      required: [quantity, changedBy, correlationId]
+      properties:
+        quantity: {type: number, minimum: 0.001, multipleOf: 0.001}
+        changedBy: {type: string, format: uuid}
+        correlationId: {type: string, maxLength: 100}
+    UpdateOrderItemQuantityResponse:
+      type: object
+      additionalProperties: true
+    RemoveOrderItemRequest:
+      type: object
+      required: [removedBy, correlationId]
+      properties:
+        removedBy: {type: string, format: uuid}
+        correlationId: {type: string, maxLength: 100}
+    RemoveOrderItemResponse:
+      type: object
+      additionalProperties: true
+    ApplyOrderItemPricingRequest:
+      type: object
+      required: [unitPrice, currency, discountPercentage, taxPercentage, pricedBy, correlationId]
+      properties:
+        unitPrice: {type: number, minimum: 0, multipleOf: 0.01}
+        currency: {type: string, pattern: '^[A-Z]{3}$', example: BRL}
+        discountPercentage: {type: number, minimum: 0, maximum: 100}
+        taxPercentage: {type: number, minimum: 0, maximum: 100}
+        pricedBy: {type: string, format: uuid}
+        correlationId: {type: string, maxLength: 100}
+    ApplyOrderItemPricingResponse:
+      type: object
+      additionalProperties: true
+    ActorRequest:
+      type: object
+      required: [correlationId]
+      properties:
+        submittedBy: {type: string, format: uuid}
+        startedBy: {type: string, format: uuid}
+        requestedBy: {type: string, format: uuid}
+        recordedBy: {type: string, format: uuid}
+        preparedBy: {type: string, format: uuid}
+        completedBy: {type: string, format: uuid}
+        reopenedBy: {type: string, format: uuid}
+        correlationId: {type: string, maxLength: 100}
+    DecisionRequest:
+      type: object
+      required: [decidedBy, correlationId]
+      properties:
+        decidedBy: {type: string, format: uuid}
+        correlationId: {type: string, maxLength: 100}
+    CommentDecisionRequest:
+      allOf:
+        - $ref: '#/components/schemas/DecisionRequest'
+        - type: object
+          required: [comment]
+          properties:
+            comment: {type: string, maxLength: 500}
+    ReasonRequest:
+      type: object
+      required: [reason, correlationId]
+      properties:
+        reason: {type: string, maxLength: 500}
+        cancelledBy: {type: string, format: uuid}
+        recordedBy: {type: string, format: uuid}
+        correlationId: {type: string, maxLength: 100}
+    SubmitOrderResponse:
+      type: object
+      additionalProperties: true
+    WorkflowTransitionResponse:
+      type: object
+      additionalProperties: true
+    ActorTransitionResponse:
+      type: object
+      additionalProperties: true
+    ApprovalDecisionResponse:
+      type: object
+      additionalProperties: true
+    CancelOrderResponse:
+      type: object
+      additionalProperties: true
+    InventoryRequestResponse:
+      type: object
+      additionalProperties: true
+    InventoryOutcomeResponse:
+      type: object
+      additionalProperties: true
+    FulfillmentPreparationResponse:
+      type: object
+      additionalProperties: true
+    FulfillmentCompletionResponse:
+      type: object
+      additionalProperties: true
+    OrderItemDetailsResponse:
+      type: object
+      additionalProperties: true
+    OrderDetailsResponse:
+      type: object
+      additionalProperties: true
+    OrderSummaryResponse:
+      type: object
+      additionalProperties: true
+    OrderPageResponse:
+      type: object
+      required: [content, page, size, totalElements, totalPages]
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderSummaryResponse'
+        page: {type: integer, minimum: 0}
+        size: {type: integer, minimum: 1}
+        totalElements: {type: integer, format: int64, minimum: 0}
+        totalPages: {type: integer, minimum: 0}
+    ApiFieldError:
+      type: object
+      required: [field, message]
+      properties:
+        field: {type: string}
+        message: {type: string}
+    ApiErrorResponse:
+      type: object
+      required: [timestamp, status, error, message, path, correlationId, fieldErrors]
+      properties:
+        timestamp: {type: string, format: date-time}
+        status: {type: integer, minimum: 400, maximum: 599}
+        error: {type: string}
+        message: {type: string}
+        path: {type: string}
+        correlationId: {type: string}
+        fieldErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiFieldError'

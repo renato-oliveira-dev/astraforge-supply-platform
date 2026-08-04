@@ -22,3 +22,14 @@ management:
       enabled: true
     readinessstate:
       enabled: true
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    url: /openapi/order-api.yaml
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
