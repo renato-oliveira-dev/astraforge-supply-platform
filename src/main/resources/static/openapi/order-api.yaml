@@ -606,7 +606,7 @@ components:
       properties:
         customerId: {type: string, format: uuid}
         createdBy: {type: string, format: uuid}
-        correlationId: {type: string, minLength: 1, maxLength: 100}
+        correlationId: {type: string, minLength: 1, maxLength: 100, pattern: '^[^\\x00-\\x1F\\x7F]+$'}
     CreateOrderResponse:
       type: object
       required: [orderId, status, version, createdAt]
@@ -625,7 +625,7 @@ components:
         unitOfMeasure: {type: string, maxLength: 30}
         quantity: {type: number, minimum: 0.001, multipleOf: 0.001}
         addedBy: {type: string, format: uuid}
-        correlationId: {type: string, maxLength: 100}
+        correlationId: {type: string, minLength: 1, maxLength: 100, pattern: '^[^\\x00-\\x1F\\x7F]+$'}
     AddOrderItemResponse:
       type: object
       additionalProperties: true
@@ -635,7 +635,7 @@ components:
       properties:
         quantity: {type: number, minimum: 0.001, multipleOf: 0.001}
         changedBy: {type: string, format: uuid}
-        correlationId: {type: string, maxLength: 100}
+        correlationId: {type: string, minLength: 1, maxLength: 100, pattern: '^[^\\x00-\\x1F\\x7F]+$'}
     UpdateOrderItemQuantityResponse:
       type: object
       additionalProperties: true
@@ -644,7 +644,7 @@ components:
       required: [removedBy, correlationId]
       properties:
         removedBy: {type: string, format: uuid}
-        correlationId: {type: string, maxLength: 100}
+        correlationId: {type: string, minLength: 1, maxLength: 100, pattern: '^[^\\x00-\\x1F\\x7F]+$'}
     RemoveOrderItemResponse:
       type: object
       additionalProperties: true
@@ -657,7 +657,7 @@ components:
         discountPercentage: {type: number, minimum: 0, maximum: 100}
         taxPercentage: {type: number, minimum: 0, maximum: 100}
         pricedBy: {type: string, format: uuid}
-        correlationId: {type: string, maxLength: 100}
+        correlationId: {type: string, minLength: 1, maxLength: 100, pattern: '^[^\\x00-\\x1F\\x7F]+$'}
     ApplyOrderItemPricingResponse:
       type: object
       additionalProperties: true
@@ -672,13 +672,13 @@ components:
         preparedBy: {type: string, format: uuid}
         completedBy: {type: string, format: uuid}
         reopenedBy: {type: string, format: uuid}
-        correlationId: {type: string, maxLength: 100}
+        correlationId: {type: string, minLength: 1, maxLength: 100, pattern: '^[^\\x00-\\x1F\\x7F]+$'}
     DecisionRequest:
       type: object
       required: [decidedBy, correlationId]
       properties:
         decidedBy: {type: string, format: uuid}
-        correlationId: {type: string, maxLength: 100}
+        correlationId: {type: string, minLength: 1, maxLength: 100, pattern: '^[^\\x00-\\x1F\\x7F]+$'}
     CommentDecisionRequest:
       allOf:
         - $ref: '#/components/schemas/DecisionRequest'
@@ -693,7 +693,7 @@ components:
         reason: {type: string, maxLength: 500}
         cancelledBy: {type: string, format: uuid}
         recordedBy: {type: string, format: uuid}
-        correlationId: {type: string, maxLength: 100}
+        correlationId: {type: string, minLength: 1, maxLength: 100, pattern: '^[^\\x00-\\x1F\\x7F]+$'}
     SubmitOrderResponse:
       type: object
       additionalProperties: true

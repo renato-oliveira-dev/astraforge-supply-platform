@@ -1,5 +1,7 @@
 package io.astraforge.supplyplatform.infrastructure.order.web;
 
+import io.astraforge.supplyplatform.domain.order.exception.DomainValidationException;
+import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +23,6 @@ public final class CorrelationIdFilter extends OncePerRequestFilter
     public static final String REQUEST_ATTRIBUTE =
             CorrelationIdFilter.class.getName() + ".correlationId";
 
-    private static final int MAX_CORRELATION_ID_LENGTH = 100;
 
     private final Supplier<UUID> uuidSupplier;
 
@@ -61,17 +62,18 @@ public final class CorrelationIdFilter extends OncePerRequestFilter
     }
 
     private String resolveCorrelationId(String headerValue) {
-        if (headerValue == null || headerValue.isBlank()) {
-            UUID generatedValue = Objects.requireNonNull(
-                    uuidSupplier.get(),
-                    "UUID supplier must not return null");
-            return generatedValue.toString();
+        if (headerValue != null && !headerValue.isBlank()) {
+            try {
+                return new CorrelationId(headerValue).value();
+            } catch (DomainValidationException exception) {
+                // Invalid external identifiers are replaced instead of
+                // propagating unsafe values to headers, logs, or MDC.
+            }
         }
 
-        String normalized = headerValue.trim();
-        if (normalized.length() > MAX_CORRELATION_ID_LENGTH) {
-            return normalized.substring(0, MAX_CORRELATION_ID_LENGTH);
-        }
-        return normalized;
+        UUID generatedValue = Objects.requireNonNull(
+                uuidSupplier.get(),
+                "UUID supplier must not return null");
+        return generatedValue.toString();
     }
 }

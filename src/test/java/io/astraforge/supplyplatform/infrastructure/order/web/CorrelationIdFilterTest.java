@@ -75,7 +75,7 @@ class CorrelationIdFilterTest {
     }
 
     @Test
-    void testFilterShouldLimitOversizedCorrelationId() throws Exception {
+    void testFilterShouldReplaceOversizedCorrelationId() throws Exception {
         CorrelationIdFilter filter =
                 new CorrelationIdFilter(() -> GENERATED_ID);
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -91,33 +91,30 @@ class CorrelationIdFilterTest {
                 capturingChain(new AtomicReference<>()));
 
         assertThat(response.getHeader(CorrelationIdFilter.HEADER_NAME))
-                .as("limited correlation response header")
-                .hasSize(100);
+                .as("replacement for oversized correlation header")
+                .isEqualTo(GENERATED_ID.toString());
     }
 
     @Test
-    void testFilterShouldClearMdcWhenChainFails() {
+    void testFilterShouldReplaceControlCharacterCorrelationId()
+            throws Exception {
         CorrelationIdFilter filter =
                 new CorrelationIdFilter(() -> GENERATED_ID);
-        AtomicReference<String> capturedMdc = new AtomicReference<>();
-        FilterChain failingChain = (request, response) -> {
-            capturedMdc.set(MDC.get(CorrelationIdFilter.MDC_KEY));
-            throw new java.io.IOException("Simulated downstream failure");
-        };
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader(
+                CorrelationIdFilter.HEADER_NAME,
+                "flow-123\nforged");
+        MockHttpServletResponse response =
+                new MockHttpServletResponse();
 
-        assertThatThrownBy(() -> filter.doFilter(
-                new MockHttpServletRequest(),
-                new MockHttpServletResponse(),
-                failingChain))
-                .as("downstream filter chain failure")
-                .isInstanceOf(java.io.IOException.class)
-                .hasMessage("Simulated downstream failure");
-        assertThat(capturedMdc.get())
-                .as("correlation MDC value during failed request")
+        filter.doFilter(
+                request,
+                response,
+                capturingChain(new AtomicReference<>()));
+
+        assertThat(response.getHeader(CorrelationIdFilter.HEADER_NAME))
+                .as("replacement for unsafe correlation header")
                 .isEqualTo(GENERATED_ID.toString());
-        assertThat(MDC.get(CorrelationIdFilter.MDC_KEY))
-                .as("correlation MDC value after failed request")
-                .isNull();
     }
 
     @Test

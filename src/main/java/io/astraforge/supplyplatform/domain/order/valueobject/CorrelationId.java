@@ -13,7 +13,12 @@ public record CorrelationId(String value) {
 
         value = value.trim();
         if (value.length() > MAX_LENGTH) {
-            throw new DomainValidationException("Correlation ID must not exceed 100 characters");
+            throw new DomainValidationException(
+                    "Correlation ID must not exceed 100 characters");
+        }
+        if (value.chars().anyMatch(Character::isISOControl)) {
+            throw new DomainValidationException(
+                    "Correlation ID must not contain control characters");
         }
     }
 }

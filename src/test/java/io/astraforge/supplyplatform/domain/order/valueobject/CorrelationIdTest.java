@@ -17,6 +17,25 @@ class CorrelationIdTest {
                 .isEqualTo("flow-123");
     }
 
+
+    @Test
+    void testCreateShouldRejectOversizedValue() {
+        assertThatThrownBy(() -> new CorrelationId("x".repeat(101)))
+                .as("oversized correlation identifier")
+                .isInstanceOf(DomainValidationException.class)
+                .hasMessage(
+                        "Correlation ID must not exceed 100 characters");
+    }
+
+    @Test
+    void testCreateShouldRejectControlCharacters() {
+        assertThatThrownBy(() -> new CorrelationId("flow-123\nforged"))
+                .as("correlation identifier with control characters")
+                .isInstanceOf(DomainValidationException.class)
+                .hasMessage(
+                        "Correlation ID must not contain control characters");
+    }
+
     @Test
     void testCreateShouldRejectBlankValue() {
         assertThatThrownBy(() -> new CorrelationId(" "))
