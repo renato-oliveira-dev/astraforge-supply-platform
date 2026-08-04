@@ -4,6 +4,7 @@ import io.astraforge.supplyplatform.application.order.exception.OrderNotFoundExc
 import io.astraforge.supplyplatform.domain.order.exception.DomainValidationException;
 import io.astraforge.supplyplatform.domain.order.exception.OrderProcessingNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderId;
+import io.astraforge.supplyplatform.infrastructure.order.web.CorrelationIdFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,8 @@ class GlobalApiExceptionHandlerTest {
             Instant.parse("2026-08-03T22:40:00Z");
     private static final String PATH =
             "/api/v1/orders/" + ORDER_ID;
+    private static final String CORRELATION_ID =
+            "correlation-error-001";
 
     @Test
     void testHandleNotFoundShouldReturnStandardizedResponse() {
@@ -50,6 +53,7 @@ class GlobalApiExceptionHandlerTest {
                         "Not Found",
                         "Order not found: " + ORDER_ID,
                         PATH,
+                        CORRELATION_ID,
                         java.util.List.of()));
     }
 
@@ -131,6 +135,9 @@ class GlobalApiExceptionHandlerTest {
     private static HttpServletRequest request() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURI()).thenReturn(PATH);
+        when(request.getAttribute(
+                CorrelationIdFilter.REQUEST_ATTRIBUTE))
+                .thenReturn(CORRELATION_ID);
         return request;
     }
 }

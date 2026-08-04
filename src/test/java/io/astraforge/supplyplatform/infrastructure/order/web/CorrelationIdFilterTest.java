@@ -44,6 +44,10 @@ class CorrelationIdFilterTest {
         assertThat(response.getHeader(CorrelationIdFilter.HEADER_NAME))
                 .as("correlation response header")
                 .isEqualTo("correlation-client-001");
+        assertThat(request.getAttribute(
+                CorrelationIdFilter.REQUEST_ATTRIBUTE))
+                .as("correlation request attribute")
+                .isEqualTo("correlation-client-001");
         assertThat(capturedMdc.get())
                 .as("correlation value available during request")
                 .isEqualTo("correlation-client-001");

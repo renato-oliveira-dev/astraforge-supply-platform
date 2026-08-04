@@ -3,6 +3,7 @@ package io.astraforge.supplyplatform.infrastructure.order.web.error;
 import io.astraforge.supplyplatform.application.order.exception.OrderNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.DomainStateException;
 import io.astraforge.supplyplatform.domain.order.exception.DomainValidationException;
+import io.astraforge.supplyplatform.infrastructure.order.web.CorrelationIdFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -119,9 +120,29 @@ public final class GlobalApiExceptionHandler {
                 status.getReasonPhrase(),
                 safeMessage(message),
                 request.getRequestURI(),
+                resolveCorrelationId(request),
                 fieldErrors);
 
         return ResponseEntity.status(status).body(body);
+    }
+
+    private static String resolveCorrelationId(
+            HttpServletRequest request
+    ) {
+        Object requestAttribute = request.getAttribute(
+                CorrelationIdFilter.REQUEST_ATTRIBUTE);
+        if (requestAttribute instanceof String correlationId
+                && !correlationId.isBlank()) {
+            return correlationId.trim();
+        }
+
+        String requestHeader = request.getHeader(
+                CorrelationIdFilter.HEADER_NAME);
+        if (requestHeader != null && !requestHeader.isBlank()) {
+            return requestHeader.trim();
+        }
+
+        return "unavailable";
     }
 
     private static ApiFieldError toFieldError(FieldError fieldError) {

@@ -27,6 +27,7 @@ class ApiErrorResponseTest {
                 "Bad Request",
                 "Invalid request",
                 "/api/v1/orders",
+                "correlation-error-001",
                 mutableErrors);
         mutableErrors.clear();
 
@@ -49,6 +50,7 @@ class ApiErrorResponseTest {
                 "OK",
                 "Invalid request",
                 "/api/v1/orders",
+                "correlation-error-001",
                 List.of()))
                 .as("successful status in API error response")
                 .isInstanceOf(IllegalArgumentException.class)

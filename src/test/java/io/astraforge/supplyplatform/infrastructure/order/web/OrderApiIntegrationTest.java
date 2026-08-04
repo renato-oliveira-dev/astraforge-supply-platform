@@ -75,6 +75,7 @@ class OrderApiIntegrationTest {
         validator.afterPropertiesSet();
 
         mockMvc = standaloneSetup(commandController, queryController)
+                .addFilters(new CorrelationIdFilter())
                 .setControllerAdvice(new GlobalApiExceptionHandler(
                         Clock.fixed(NOW, ZoneOffset.UTC)))
                 .setValidator(validator)
@@ -132,6 +133,7 @@ class OrderApiIntegrationTest {
                         .value("Invalid request"))
                 .andExpect(jsonPath("$.path")
                         .value("/api/v1/orders"))
+                .andExpect(jsonPath("$.correlationId").isNotEmpty())
                 .andExpect(jsonPath("$.fieldErrors.length()")
                         .value(3))
                 .andExpect(jsonPath("$.fieldErrors[0].field")
@@ -158,6 +160,7 @@ class OrderApiIntegrationTest {
                         .value("Order not found: " + ORDER_ID))
                 .andExpect(jsonPath("$.path")
                         .value("/api/v1/orders/" + ORDER_ID))
+                .andExpect(jsonPath("$.correlationId").isNotEmpty())
                 .andExpect(jsonPath("$.fieldErrors.length()")
                         .value(0));
     }

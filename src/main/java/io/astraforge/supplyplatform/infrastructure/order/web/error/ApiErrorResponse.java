@@ -10,6 +10,7 @@ public record ApiErrorResponse(
         String error,
         String message,
         String path,
+        String correlationId,
         List<ApiFieldError> fieldErrors
 ) {
 
@@ -22,6 +23,9 @@ public record ApiErrorResponse(
         error = normalizeRequired(error, "Error");
         message = normalizeRequired(message, "Message");
         path = normalizeRequired(path, "Path");
+        correlationId = normalizeRequired(
+                correlationId,
+                "Correlation ID");
         fieldErrors = List.copyOf(
                 Objects.requireNonNull(
                         fieldErrors,

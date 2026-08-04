@@ -16,6 +16,8 @@ public final class CorrelationIdFilter extends OncePerRequestFilter {
 
     public static final String HEADER_NAME = "X-Correlation-Id";
     public static final String MDC_KEY = "correlationId";
+    public static final String REQUEST_ATTRIBUTE =
+            CorrelationIdFilter.class.getName() + ".correlationId";
 
     private static final int MAX_CORRELATION_ID_LENGTH = 100;
 
@@ -40,6 +42,7 @@ public final class CorrelationIdFilter extends OncePerRequestFilter {
         String correlationId = resolveCorrelationId(
                 request.getHeader(HEADER_NAME));
 
+        request.setAttribute(REQUEST_ATTRIBUTE, correlationId);
         response.setHeader(HEADER_NAME, correlationId);
         MDC.put(MDC_KEY, correlationId);
 
