@@ -1,7 +1,7 @@
 package io.astraforge.supplyplatform.domain.order.exception;
 
 public final class OrderFulfillmentNotAllowedException
-        extends IllegalStateException {
+        extends DomainStateException {
 
     private static final long serialVersionUID = 1L;
 

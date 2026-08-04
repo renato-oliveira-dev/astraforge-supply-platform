@@ -1,6 +1,7 @@
 package io.astraforge.supplyplatform.infrastructure.order.web.error;
 
 import io.astraforge.supplyplatform.application.order.exception.OrderNotFoundException;
+import io.astraforge.supplyplatform.domain.order.exception.DomainStateException;
 import io.astraforge.supplyplatform.domain.order.exception.DomainValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -45,6 +46,7 @@ public final class GlobalApiExceptionHandler {
 
     @ExceptionHandler({
             DomainValidationException.class,
+            DomainStateException.class,
             IllegalArgumentException.class
     })
     public ResponseEntity<ApiErrorResponse> handleBusinessValidation(

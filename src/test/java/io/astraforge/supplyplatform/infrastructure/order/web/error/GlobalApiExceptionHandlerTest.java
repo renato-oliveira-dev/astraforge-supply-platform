@@ -2,6 +2,7 @@ package io.astraforge.supplyplatform.infrastructure.order.web.error;
 
 import io.astraforge.supplyplatform.application.order.exception.OrderNotFoundException;
 import io.astraforge.supplyplatform.domain.order.exception.DomainValidationException;
+import io.astraforge.supplyplatform.domain.order.exception.OrderProcessingNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.valueobject.OrderId;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
@@ -70,6 +71,28 @@ class GlobalApiExceptionHandlerTest {
                 .isEqualTo("Quantity must be greater than zero");
         assertThat(response.getBody().hasFieldErrors())
                 .as("business validation field error state")
+                .isFalse();
+    }
+
+    @Test
+    void testHandleStateViolationShouldReturnUnprocessableEntity() {
+        GlobalApiExceptionHandler handler = handler();
+
+        ResponseEntity<ApiErrorResponse> response =
+                handler.handleBusinessValidation(
+                        new OrderProcessingNotAllowedException(
+                                "Only an APPROVED order can start processing"),
+                        request());
+
+        assertThat(response.getStatusCode())
+                .as("domain state violation HTTP status")
+                .isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        assertThat(response.getBody().message())
+                .as("domain state violation message")
+                .isEqualTo(
+                        "Only an APPROVED order can start processing");
+        assertThat(response.getBody().hasFieldErrors())
+                .as("domain state violation field error state")
                 .isFalse();
     }
 
