@@ -95,18 +95,14 @@ class InventoryReservationOutcomeControllerTest {
     void testConstructorShouldRejectNullDependencies() {
         Fixture fixture = new Fixture();
 
-        assertThatThrownBy(() ->
-                new InventoryReservationOutcomeController(
-                        null,
-                        fixture.failUseCase()))
+        var sonarArgument1Value2 = fixture.failUseCase();
+        assertThatThrownBy(() -> new InventoryReservationOutcomeController(null, sonarArgument1Value2))
                 .as("null confirm inventory use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage(
                         "Confirm inventory reservation use case must not be null");
-        assertThatThrownBy(() ->
-                new InventoryReservationOutcomeController(
-                        fixture.confirmUseCase(),
-                        null))
+        var sonarArgument2Value1 = fixture.confirmUseCase();
+        assertThatThrownBy(() -> new InventoryReservationOutcomeController(sonarArgument2Value1, null))
                 .as("null fail inventory use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage(

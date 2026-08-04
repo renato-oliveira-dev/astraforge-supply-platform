@@ -32,7 +32,8 @@ class QuantityTest {
 
     @Test
     void testCreateShouldRejectUnsupportedPrecision() {
-        assertThatThrownBy(() -> new Quantity(new BigDecimal("1.0001")))
+        var sonarArgument1Value1 = new BigDecimal("1.0001");
+        assertThatThrownBy(() -> new Quantity(sonarArgument1Value1))
                 .as("quantity scale must remain explicit")
                 .isInstanceOf(ArithmeticException.class);
     }

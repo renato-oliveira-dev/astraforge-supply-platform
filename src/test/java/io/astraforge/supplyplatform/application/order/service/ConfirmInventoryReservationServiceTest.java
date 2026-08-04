@@ -7,7 +7,6 @@ import io.astraforge.supplyplatform.domain.order.aggregate.Order;
 import io.astraforge.supplyplatform.domain.order.aggregate.OrderStatus;
 import io.astraforge.supplyplatform.domain.order.exception.OrderInventoryResultNotAllowedException;
 import io.astraforge.supplyplatform.domain.order.valueobject.CorrelationId;
-import io.astraforge.supplyplatform.domain.order.valueobject.OrderId;
 import io.astraforge.supplyplatform.domain.order.valueobject.UserId;
 import org.junit.jupiter.api.Test;
 
@@ -65,7 +64,8 @@ class ConfirmInventoryReservationServiceTest {
                         new ApprovalDecisionTestFixture.InMemoryOrderRepository(),
                         fixedClock());
 
-        assertThatThrownBy(() -> service.confirm(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.confirm(sonarArgument1Value1))
                 .as("inventory confirmation for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -81,7 +81,8 @@ class ConfirmInventoryReservationServiceTest {
                         repository,
                         fixedClock());
 
-        assertThatThrownBy(() -> service.confirm(command()))
+        var sonarArgument2Value1 = command();
+        assertThatThrownBy(() -> service.confirm(sonarArgument2Value1))
                 .as("inventory confirmation requires pending status")
                 .isInstanceOf(
                         OrderInventoryResultNotAllowedException.class)

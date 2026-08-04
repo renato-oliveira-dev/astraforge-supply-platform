@@ -78,7 +78,8 @@ class CompleteOrderFulfillmentServiceTest {
                         new ApprovalDecisionTestFixture.InMemoryOrderRepository(),
                         fixedClock());
 
-        assertThatThrownBy(() -> service.complete(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.complete(sonarArgument1Value1))
                 .as("completion for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -93,7 +94,8 @@ class CompleteOrderFulfillmentServiceTest {
                         repository,
                         fixedClock());
 
-        assertThatThrownBy(() -> service.complete(command()))
+        var sonarArgument2Value1 = command();
+        assertThatThrownBy(() -> service.complete(sonarArgument2Value1))
                 .as("completion requires fulfillment in progress")
                 .isInstanceOf(OrderCompletionNotAllowedException.class)
                 .hasMessage(
@@ -110,7 +112,8 @@ class CompleteOrderFulfillmentServiceTest {
                         fixedClock());
         service.complete(command());
 
-        assertThatThrownBy(() -> service.complete(command()))
+        var sonarArgument3Value1 = command();
+        assertThatThrownBy(() -> service.complete(sonarArgument3Value1))
                 .as("order cannot be completed twice")
                 .isInstanceOf(OrderCompletionNotAllowedException.class)
                 .hasMessage(

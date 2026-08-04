@@ -42,11 +42,11 @@ public record OrderDetailsResult(
                 Objects.requireNonNull(
                         items,
                         "Order items must not be null"));
-        subtotal = requireOptional(subtotal, "Subtotal");
-        discount = requireOptional(discount, "Discount");
-        tax = requireOptional(tax, "Tax");
-        total = requireOptional(total, "Total");
-        currency = requireOptional(currency, "Currency");
+        requireOptional(subtotal, "Subtotal");
+        requireOptional(discount, "Discount");
+        requireOptional(tax, "Tax");
+        requireOptional(total, "Total");
+        requireOptional(currency, "Currency");
     }
 
     private static <T> Optional<T> requireOptional(

@@ -2,6 +2,7 @@ package io.astraforge.supplyplatform.application.order.usecase;
 
 import io.astraforge.supplyplatform.domain.order.aggregate.OrderStatus;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,8 +16,12 @@ public record ListOrdersQuery(
     private static final int MAX_PAGE_SIZE = 100;
 
     public ListOrdersQuery {
-        customerId = requireOptional(customerId, "Customer ID filter");
-        status = requireOptional(status, "Status filter");
+        Objects.requireNonNull(
+                customerId,
+                "Customer ID filter must not be null");
+        Objects.requireNonNull(
+                status,
+                "Status filter must not be null");
         if (page < 0) {
             throw new IllegalArgumentException(
                     "Page index must not be negative");
@@ -27,14 +32,4 @@ public record ListOrdersQuery(
         }
     }
 
-    private static <T> Optional<T> requireOptional(
-            Optional<T> value,
-            String fieldName
-    ) {
-        if (value == null) {
-            throw new NullPointerException(
-                    fieldName + " must not be null");
-        }
-        return value;
-    }
 }

@@ -74,7 +74,8 @@ class RequestInventoryReservationServiceTest {
                         new ApprovalDecisionTestFixture.InMemoryOrderRepository(),
                         fixedClock());
 
-        assertThatThrownBy(() -> service.requestReservation(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.requestReservation(sonarArgument1Value1))
                 .as("inventory reservation for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -89,7 +90,8 @@ class RequestInventoryReservationServiceTest {
                         repository,
                         fixedClock());
 
-        assertThatThrownBy(() -> service.requestReservation(command()))
+        var sonarArgument2Value1 = command();
+        assertThatThrownBy(() -> service.requestReservation(sonarArgument2Value1))
                 .as("inventory reservation requires processing status")
                 .isInstanceOf(OrderProcessingNotAllowedException.class)
                 .hasMessage(
@@ -106,7 +108,8 @@ class RequestInventoryReservationServiceTest {
                         fixedClock());
         service.requestReservation(command());
 
-        assertThatThrownBy(() -> service.requestReservation(command()))
+        var sonarArgument3Value1 = command();
+        assertThatThrownBy(() -> service.requestReservation(sonarArgument3Value1))
                 .as("inventory reservation cannot be requested twice")
                 .isInstanceOf(OrderProcessingNotAllowedException.class)
                 .hasMessage(

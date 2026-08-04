@@ -62,6 +62,7 @@ class OrderModuleConfigurationTest {
                     .isNotNull();
             assertThat(useCaseTypes())
                     .as("configured order use case types")
+                    .isNotEmpty()
                     .allSatisfy(type -> assertThat(context.getBean(type))
                             .as("configured use case " + type.getSimpleName())
                             .isNotNull());

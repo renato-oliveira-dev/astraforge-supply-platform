@@ -1,7 +1,5 @@
 package io.astraforge.supplyplatform.infrastructure.order.web.error;
 
-import java.util.Objects;
-
 public record ApiFieldError(
         String field,
         String message

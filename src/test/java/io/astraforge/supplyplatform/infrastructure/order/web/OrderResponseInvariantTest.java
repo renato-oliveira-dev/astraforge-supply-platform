@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Currency;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,7 +41,8 @@ class OrderResponseInvariantTest {
         assertThat(response.content())
                 .as("defensively copied order page content")
                 .hasSize(1);
-        assertThatThrownBy(() -> response.content().clear())
+        var sonarTarget1 = response.content();
+        assertThatThrownBy(sonarTarget1::clear)
                 .as("immutable order page content")
                 .isInstanceOf(UnsupportedOperationException.class);
     }
@@ -73,21 +73,26 @@ class OrderResponseInvariantTest {
         assertThat(response.items())
                 .as("defensively copied order detail items")
                 .hasSize(1);
-        assertThatThrownBy(() -> response.items().clear())
+        var sonarTarget2 = response.items();
+        assertThatThrownBy(sonarTarget2::clear)
                 .as("immutable order detail items")
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test
     void testOrderSummaryShouldRequireTotalAndCurrencyTogether() {
+        Optional<BigDecimal> sonarArgument3Value6 =
+                Optional.of(new BigDecimal("100.00"));
+        Optional<Currency> sonarArgument3Value7 = Optional.empty();
+
         assertThatThrownBy(() -> new OrderSummaryResponse(
                 ORDER_ID,
                 CUSTOMER_ID,
                 OrderStatus.DRAFT,
                 1,
                 false,
-                Optional.of(new BigDecimal("100.00")),
-                Optional.empty(),
+                sonarArgument3Value6,
+                sonarArgument3Value7,
                 1,
                 NOW,
                 NOW))
@@ -114,16 +119,8 @@ class OrderResponseInvariantTest {
 
     @Test
     void testCompletionResponseShouldRejectEmptyOrder() {
-        assertThatThrownBy(() ->
-                new CompleteOrderFulfillmentResponse(
-                        ORDER_ID,
-                        OrderStatus.COMPLETED,
-                        USER_ID,
-                        NOW,
-                        0,
-                        new BigDecimal("100.00"),
-                        BRL,
-                        1))
+        var sonarArgument4Value6 = new BigDecimal("100.00");
+        assertThatThrownBy(() -> new CompleteOrderFulfillmentResponse(ORDER_ID, OrderStatus.COMPLETED, USER_ID, NOW, 0, sonarArgument4Value6, BRL, 1))
                 .as("completion response item count")
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Item count must be greater than zero");

@@ -190,13 +190,9 @@ class OrderTest {
         Order order = createOrderWithoutPendingEvents();
         addItem(order, ITEM_ID, PRODUCT_ID);
 
-        assertThatThrownBy(() -> order.addItem(
-                ITEM_ID,
-                productSnapshot(SECOND_PRODUCT_ID, "SKU-002"),
-                quantity("1.000"),
-                USER_ID,
-                CHANGED_AT,
-                CORRELATION_ID))
+        var sonarArgument1Value2 = productSnapshot(SECOND_PRODUCT_ID, "SKU-002");
+        var sonarArgument1Value3 = quantity("1.000");
+        assertThatThrownBy(() -> order.addItem(ITEM_ID, sonarArgument1Value2, sonarArgument1Value3, USER_ID, CHANGED_AT, CORRELATION_ID))
                 .as("duplicate order item identifier")
                 .isInstanceOf(DuplicateOrderItemException.class)
                 .hasMessage("Order item ID already exists in the order");
@@ -207,13 +203,9 @@ class OrderTest {
         Order order = createOrderWithoutPendingEvents();
         addItem(order, ITEM_ID, PRODUCT_ID);
 
-        assertThatThrownBy(() -> order.addItem(
-                SECOND_ITEM_ID,
-                productSnapshot(PRODUCT_ID, "SKU-001"),
-                quantity("1.000"),
-                USER_ID,
-                CHANGED_AT,
-                CORRELATION_ID))
+        var sonarArgument2Value2 = productSnapshot(PRODUCT_ID, "SKU-001");
+        var sonarArgument2Value3 = quantity("1.000");
+        assertThatThrownBy(() -> order.addItem(SECOND_ITEM_ID, sonarArgument2Value2, sonarArgument2Value3, USER_ID, CHANGED_AT, CORRELATION_ID))
                 .as("duplicate product in the order")
                 .isInstanceOf(DuplicateProductException.class)
                 .hasMessage("Product already exists in the order");
@@ -303,12 +295,8 @@ class OrderTest {
     void testItemOperationsShouldRejectUnknownItem() {
         Order order = createOrderWithoutPendingEvents();
 
-        assertThatThrownBy(() -> order.updateItemQuantity(
-                ITEM_ID,
-                quantity("3.000"),
-                USER_ID,
-                CHANGED_AT,
-                CORRELATION_ID))
+        var sonarArgument3Value2 = quantity("3.000");
+        assertThatThrownBy(() -> order.updateItemQuantity(ITEM_ID, sonarArgument3Value2, USER_ID, CHANGED_AT, CORRELATION_ID))
                 .as("quantity change for an unknown order item")
                 .isInstanceOf(OrderItemNotFoundException.class)
                 .hasMessage("Order item was not found in the order");
@@ -466,15 +454,12 @@ class OrderTest {
                 CHANGED_AT.plusSeconds(2),
                 CORRELATION_ID);
 
-        assertThatThrownBy(() -> order.applyItemPricing(
-                SECOND_ITEM_ID,
-                new ItemPricing(
-                        new Money(new BigDecimal("12.00"), Currency.getInstance("USD")),
-                        percentage("0.0000"),
-                        percentage("0.0000")),
-                USER_ID,
-                CHANGED_AT.plusSeconds(3),
-                CORRELATION_ID))
+        var sonarArgument4Value2 = new ItemPricing(
+                new Money(new BigDecimal("12.00"), Currency.getInstance("USD")),
+                percentage("0.0000"),
+                percentage("0.0000"));
+        var sonarArgument4Value4 = CHANGED_AT.plusSeconds(3);
+        assertThatThrownBy(() -> order.applyItemPricing(SECOND_ITEM_ID, sonarArgument4Value2, USER_ID, sonarArgument4Value4, CORRELATION_ID))
                 .as("all priced order items require the same currency")
                 .isInstanceOf(OrderCurrencyMismatchException.class)
                 .hasMessage("All order items must use the same currency");
@@ -573,10 +558,8 @@ class OrderTest {
                 Instant.parse("2026-07-30T20:20:00Z"),
                 CORRELATION_ID);
 
-        assertThatThrownBy(() -> order.submit(
-                USER_ID,
-                Instant.parse("2026-07-30T20:25:00Z"),
-                CORRELATION_ID))
+        var sonarArgument5Value2 = Instant.parse("2026-07-30T20:25:00Z");
+        assertThatThrownBy(() -> order.submit(USER_ID, sonarArgument5Value2, CORRELATION_ID))
                 .as("order cannot be submitted twice")
                 .isInstanceOf(OrderSubmissionNotAllowedException.class)
                 .hasMessage("Only a DRAFT order can be submitted");
@@ -590,12 +573,9 @@ class OrderTest {
                 Instant.parse("2026-07-30T20:20:00Z"),
                 CORRELATION_ID);
 
-        assertThatThrownBy(() -> order.updateItemQuantity(
-                ITEM_ID,
-                quantity("3.000"),
-                USER_ID,
-                Instant.parse("2026-07-30T20:25:00Z"),
-                CORRELATION_ID))
+        var sonarArgument6Value2 = quantity("3.000");
+        var sonarArgument6Value4 = Instant.parse("2026-07-30T20:25:00Z");
+        assertThatThrownBy(() -> order.updateItemQuantity(ITEM_ID, sonarArgument6Value2, USER_ID, sonarArgument6Value4, CORRELATION_ID))
                 .as("submitted order items are immutable")
                 .isInstanceOf(
                         io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableException.class)
@@ -720,10 +700,8 @@ class OrderTest {
     void testApprovalShouldRejectInvalidSourceStatus() {
         Order draftOrder = createPricedOrder();
 
-        assertThatThrownBy(() -> draftOrder.startApproval(
-                APPROVER_ID,
-                Instant.parse("2026-07-30T20:25:00Z"),
-                CORRELATION_ID))
+        var sonarArgument7Value2 = Instant.parse("2026-07-30T20:25:00Z");
+        assertThatThrownBy(() -> draftOrder.startApproval(APPROVER_ID, sonarArgument7Value2, CORRELATION_ID))
                 .as("approval cannot start from draft")
                 .isInstanceOf(OrderApprovalNotAllowedException.class)
                 .hasMessage("Only a SUBMITTED order can start approval");
@@ -733,10 +711,8 @@ class OrderTest {
     void testDecisionShouldRejectOrderOutsidePendingApproval() {
         Order submittedOrder = createSubmittedOrder();
 
-        assertThatThrownBy(() -> submittedOrder.approve(
-                APPROVER_ID,
-                Instant.parse("2026-07-30T20:30:00Z"),
-                CORRELATION_ID))
+        var sonarArgument8Value2 = Instant.parse("2026-07-30T20:30:00Z");
+        assertThatThrownBy(() -> submittedOrder.approve(APPROVER_ID, sonarArgument8Value2, CORRELATION_ID))
                 .as("approval decision requires pending approval status")
                 .isInstanceOf(OrderApprovalNotAllowedException.class)
                 .hasMessage(
@@ -820,10 +796,8 @@ class OrderTest {
     void testReopenForRevisionShouldRejectInvalidSourceStatus() {
         Order order = createSubmittedOrder();
 
-        assertThatThrownBy(() -> order.reopenForRevision(
-                USER_ID,
-                Instant.parse("2026-07-30T20:35:00Z"),
-                CORRELATION_ID))
+        var sonarArgument9Value2 = Instant.parse("2026-07-30T20:35:00Z");
+        assertThatThrownBy(() -> order.reopenForRevision(USER_ID, sonarArgument9Value2, CORRELATION_ID))
                 .as("only review-requested orders can be reopened")
                 .isInstanceOf(OrderRevisionNotAllowedException.class)
                 .hasMessage(
@@ -892,11 +866,9 @@ class OrderTest {
                 Instant.parse("2026-07-30T20:30:00Z"),
                 CORRELATION_ID);
 
-        assertThatThrownBy(() -> order.cancel(
-                new CancellationReason("Requester asked to cancel."),
-                USER_ID,
-                Instant.parse("2026-07-30T21:00:00Z"),
-                CORRELATION_ID))
+        var sonarArgument10Value1 = new CancellationReason("Requester asked to cancel.");
+        var sonarArgument10Value3 = Instant.parse("2026-07-30T21:00:00Z");
+        assertThatThrownBy(() -> order.cancel(sonarArgument10Value1, USER_ID, sonarArgument10Value3, CORRELATION_ID))
                 .as("rejected order cancellation")
                 .isInstanceOf(OrderCancellationNotAllowedException.class)
                 .hasMessage("Order cannot be cancelled from status REJECTED");
@@ -911,11 +883,9 @@ class OrderTest {
                 Instant.parse("2026-07-30T21:00:00Z"),
                 CORRELATION_ID);
 
-        assertThatThrownBy(() -> order.cancel(
-                new CancellationReason("Second cancellation attempt."),
-                USER_ID,
-                Instant.parse("2026-07-30T21:01:00Z"),
-                CORRELATION_ID))
+        var sonarArgument11Value1 = new CancellationReason("Second cancellation attempt.");
+        var sonarArgument11Value3 = Instant.parse("2026-07-30T21:01:00Z");
+        assertThatThrownBy(() -> order.cancel(sonarArgument11Value1, USER_ID, sonarArgument11Value3, CORRELATION_ID))
                 .as("order cannot be cancelled twice")
                 .isInstanceOf(OrderCancellationNotAllowedException.class)
                 .hasMessage("Order cannot be cancelled from status CANCELLED");
@@ -930,22 +900,17 @@ class OrderTest {
                 Instant.parse("2026-07-30T21:00:00Z"),
                 CORRELATION_ID);
 
-        assertThatThrownBy(() -> order.updateItemQuantity(
-                ITEM_ID,
-                quantity("3.000"),
-                USER_ID,
-                Instant.parse("2026-07-30T21:05:00Z"),
-                CORRELATION_ID))
+        var sonarArgument12Value2 = quantity("3.000");
+        var sonarArgument12Value4 = Instant.parse("2026-07-30T21:05:00Z");
+        assertThatThrownBy(() -> order.updateItemQuantity(ITEM_ID, sonarArgument12Value2, USER_ID, sonarArgument12Value4, CORRELATION_ID))
                 .as("cancelled order items are immutable")
                 .isInstanceOf(
                         io.astraforge.supplyplatform.domain.order.exception.OrderNotEditableException.class)
                 .hasMessage(
                         "Order items can be changed only while the order is in DRAFT status");
 
-        assertThatThrownBy(() -> order.submit(
-                USER_ID,
-                Instant.parse("2026-07-30T21:10:00Z"),
-                CORRELATION_ID))
+        var sonarArgument13Value2 = Instant.parse("2026-07-30T21:10:00Z");
+        assertThatThrownBy(() -> order.submit(USER_ID, sonarArgument13Value2, CORRELATION_ID))
                 .as("cancelled order cannot be submitted")
                 .isInstanceOf(OrderSubmissionNotAllowedException.class)
                 .hasMessage("Only a DRAFT order can be submitted");
@@ -1019,10 +984,8 @@ class OrderTest {
     void testStartProcessingShouldRejectNonApprovedOrder() {
         Order order = createSubmittedOrder();
 
-        assertThatThrownBy(() -> order.startProcessing(
-                APPROVER_ID,
-                Instant.parse("2026-07-30T21:10:00Z"),
-                CORRELATION_ID))
+        var sonarArgument14Value2 = Instant.parse("2026-07-30T21:10:00Z");
+        assertThatThrownBy(() -> order.startProcessing(APPROVER_ID, sonarArgument14Value2, CORRELATION_ID))
                 .as("processing requires an approved order")
                 .isInstanceOf(OrderProcessingNotAllowedException.class)
                 .hasMessage("Only an APPROVED order can start processing");
@@ -1032,10 +995,8 @@ class OrderTest {
     void testInventoryReservationRequestShouldRejectNonProcessingOrder() {
         Order order = createApprovedOrder();
 
-        assertThatThrownBy(() -> order.requestInventoryReservation(
-                APPROVER_ID,
-                Instant.parse("2026-07-30T21:15:00Z"),
-                CORRELATION_ID))
+        var sonarArgument15Value2 = Instant.parse("2026-07-30T21:15:00Z");
+        assertThatThrownBy(() -> order.requestInventoryReservation(APPROVER_ID, sonarArgument15Value2, CORRELATION_ID))
                 .as("inventory reservation requires processing status")
                 .isInstanceOf(OrderProcessingNotAllowedException.class)
                 .hasMessage(
@@ -1046,11 +1007,9 @@ class OrderTest {
     void testProcessingOrderShouldNotAllowCancellation() {
         Order order = createProcessingOrder();
 
-        assertThatThrownBy(() -> order.cancel(
-                new CancellationReason("Late cancellation attempt."),
-                USER_ID,
-                Instant.parse("2026-07-30T21:20:00Z"),
-                CORRELATION_ID))
+        var sonarArgument16Value1 = new CancellationReason("Late cancellation attempt.");
+        var sonarArgument16Value3 = Instant.parse("2026-07-30T21:20:00Z");
+        assertThatThrownBy(() -> order.cancel(sonarArgument16Value1, USER_ID, sonarArgument16Value3, CORRELATION_ID))
                 .as("processing order cancellation")
                 .isInstanceOf(OrderCancellationNotAllowedException.class)
                 .hasMessage("Order cannot be cancelled from status PROCESSING");
@@ -1127,10 +1086,8 @@ class OrderTest {
     void testInventoryResultShouldRejectOrderOutsidePendingStatus() {
         Order order = createProcessingOrder();
 
-        assertThatThrownBy(() -> order.confirmInventoryReservation(
-                APPROVER_ID,
-                Instant.parse("2026-07-30T21:20:00Z"),
-                CORRELATION_ID))
+        var sonarArgument17Value2 = Instant.parse("2026-07-30T21:20:00Z");
+        assertThatThrownBy(() -> order.confirmInventoryReservation(APPROVER_ID, sonarArgument17Value2, CORRELATION_ID))
                 .as("inventory result requires pending inventory status")
                 .isInstanceOf(OrderInventoryResultNotAllowedException.class)
                 .hasMessage(
@@ -1145,11 +1102,9 @@ class OrderTest {
                 Instant.parse("2026-07-30T21:20:00Z"),
                 CORRELATION_ID);
 
-        assertThatThrownBy(() -> order.failInventoryReservation(
-                new InventoryFailureReason("Late conflicting result."),
-                APPROVER_ID,
-                Instant.parse("2026-07-30T21:21:00Z"),
-                CORRELATION_ID))
+        var sonarArgument18Value1 = new InventoryFailureReason("Late conflicting result.");
+        var sonarArgument18Value3 = Instant.parse("2026-07-30T21:21:00Z");
+        assertThatThrownBy(() -> order.failInventoryReservation(sonarArgument18Value1, APPROVER_ID, sonarArgument18Value3, CORRELATION_ID))
                 .as("inventory outcome can be recorded only once")
                 .isInstanceOf(OrderInventoryResultNotAllowedException.class)
                 .hasMessage(
@@ -1227,10 +1182,8 @@ class OrderTest {
     void testPrepareForFulfillmentShouldRejectInventoryPendingOrder() {
         Order order = createInventoryPendingOrder();
 
-        assertThatThrownBy(() -> order.prepareForFulfillment(
-                APPROVER_ID,
-                Instant.parse("2026-07-30T21:25:00Z"),
-                CORRELATION_ID))
+        var sonarArgument19Value2 = Instant.parse("2026-07-30T21:25:00Z");
+        assertThatThrownBy(() -> order.prepareForFulfillment(APPROVER_ID, sonarArgument19Value2, CORRELATION_ID))
                 .as("fulfillment preparation requires reserved inventory")
                 .isInstanceOf(OrderFulfillmentNotAllowedException.class)
                 .hasMessage(
@@ -1241,10 +1194,8 @@ class OrderTest {
     void testStartFulfillmentShouldRejectInventoryReservedOrder() {
         Order order = createInventoryReservedOrder();
 
-        assertThatThrownBy(() -> order.startFulfillment(
-                APPROVER_ID,
-                Instant.parse("2026-07-30T21:30:00Z"),
-                CORRELATION_ID))
+        var sonarArgument20Value2 = Instant.parse("2026-07-30T21:30:00Z");
+        assertThatThrownBy(() -> order.startFulfillment(APPROVER_ID, sonarArgument20Value2, CORRELATION_ID))
                 .as("fulfillment start requires ready status")
                 .isInstanceOf(OrderFulfillmentNotAllowedException.class)
                 .hasMessage(
@@ -1255,11 +1206,9 @@ class OrderTest {
     void testFulfillmentInProgressOrderShouldRejectCancellation() {
         Order order = createFulfillmentInProgressOrder();
 
-        assertThatThrownBy(() -> order.cancel(
-                new CancellationReason("Late cancellation request."),
-                USER_ID,
-                Instant.parse("2026-07-30T21:35:00Z"),
-                CORRELATION_ID))
+        var sonarArgument21Value1 = new CancellationReason("Late cancellation request.");
+        var sonarArgument21Value3 = Instant.parse("2026-07-30T21:35:00Z");
+        assertThatThrownBy(() -> order.cancel(sonarArgument21Value1, USER_ID, sonarArgument21Value3, CORRELATION_ID))
                 .as("fulfillment in progress order cancellation")
                 .isInstanceOf(OrderCancellationNotAllowedException.class)
                 .hasMessage(
@@ -1309,10 +1258,8 @@ class OrderTest {
     void testCompleteFulfillmentShouldRejectReadyOrder() {
         Order order = createReadyForFulfillmentOrder();
 
-        assertThatThrownBy(() -> order.completeFulfillment(
-                APPROVER_ID,
-                Instant.parse("2026-07-30T21:35:00Z"),
-                CORRELATION_ID))
+        var sonarArgument22Value2 = Instant.parse("2026-07-30T21:35:00Z");
+        assertThatThrownBy(() -> order.completeFulfillment(APPROVER_ID, sonarArgument22Value2, CORRELATION_ID))
                 .as("completion requires fulfillment in progress")
                 .isInstanceOf(OrderCompletionNotAllowedException.class)
                 .hasMessage(
@@ -1323,10 +1270,8 @@ class OrderTest {
     void testCompleteFulfillmentShouldRejectSecondCompletion() {
         Order order = createCompletedOrder();
 
-        assertThatThrownBy(() -> order.completeFulfillment(
-                APPROVER_ID,
-                Instant.parse("2026-07-30T21:40:00Z"),
-                CORRELATION_ID))
+        var sonarArgument23Value2 = Instant.parse("2026-07-30T21:40:00Z");
+        assertThatThrownBy(() -> order.completeFulfillment(APPROVER_ID, sonarArgument23Value2, CORRELATION_ID))
                 .as("completed order cannot be completed again")
                 .isInstanceOf(OrderCompletionNotAllowedException.class)
                 .hasMessage(
@@ -1337,11 +1282,9 @@ class OrderTest {
     void testCompletedOrderShouldRejectCancellation() {
         Order order = createCompletedOrder();
 
-        assertThatThrownBy(() -> order.cancel(
-                new CancellationReason("Late cancellation request."),
-                USER_ID,
-                Instant.parse("2026-07-30T21:40:00Z"),
-                CORRELATION_ID))
+        var sonarArgument24Value1 = new CancellationReason("Late cancellation request.");
+        var sonarArgument24Value3 = Instant.parse("2026-07-30T21:40:00Z");
+        assertThatThrownBy(() -> order.cancel(sonarArgument24Value1, USER_ID, sonarArgument24Value3, CORRELATION_ID))
                 .as("completed order cancellation")
                 .isInstanceOf(OrderCancellationNotAllowedException.class)
                 .hasMessage("Order cannot be cancelled from status COMPLETED");
@@ -1418,10 +1361,8 @@ class OrderTest {
     void testRetryInventoryReservationShouldRejectNonFailedOrder() {
         Order order = createInventoryPendingOrder();
 
-        assertThatThrownBy(() -> order.retryInventoryReservation(
-                APPROVER_ID,
-                Instant.parse("2026-07-30T21:25:00Z"),
-                CORRELATION_ID))
+        var sonarArgument25Value2 = Instant.parse("2026-07-30T21:25:00Z");
+        assertThatThrownBy(() -> order.retryInventoryReservation(APPROVER_ID, sonarArgument25Value2, CORRELATION_ID))
                 .as("inventory retry requires failed inventory status")
                 .isInstanceOf(OrderInventoryRetryNotAllowedException.class)
                 .hasMessage(

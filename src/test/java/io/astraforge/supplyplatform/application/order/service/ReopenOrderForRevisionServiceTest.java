@@ -76,7 +76,8 @@ class ReopenOrderForRevisionServiceTest {
                         new ApprovalDecisionTestFixture.InMemoryOrderRepository(),
                         fixedClock());
 
-        assertThatThrownBy(() -> service.reopen(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.reopen(sonarArgument1Value1))
                 .as("revision reopening for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -92,7 +93,8 @@ class ReopenOrderForRevisionServiceTest {
                         repository,
                         fixedClock());
 
-        assertThatThrownBy(() -> service.reopen(command()))
+        var sonarArgument2Value1 = command();
+        assertThatThrownBy(() -> service.reopen(sonarArgument2Value1))
                 .as("revision reopening requires review-requested status")
                 .isInstanceOf(OrderRevisionNotAllowedException.class)
                 .hasMessage(

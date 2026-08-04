@@ -37,13 +37,16 @@ class ApiErrorResponseTest {
         assertThat(response.hasFieldErrors())
                 .as("field error state")
                 .isTrue();
-        assertThatThrownBy(() -> response.fieldErrors().clear())
+        var sonarTarget1 = response.fieldErrors();
+        assertThatThrownBy(sonarTarget1::clear)
                 .as("immutable field errors")
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test
     void testConstructorShouldRejectSuccessfulHttpStatus() {
+        List<ApiFieldError> sonarArgument2Value7 = List.of();
+
         assertThatThrownBy(() -> new ApiErrorResponse(
                 NOW,
                 200,
@@ -51,7 +54,7 @@ class ApiErrorResponseTest {
                 "Invalid request",
                 "/api/v1/orders",
                 "correlation-error-001",
-                List.of()))
+                sonarArgument2Value7))
                 .as("successful status in API error response")
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(

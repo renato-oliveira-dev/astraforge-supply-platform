@@ -31,15 +31,15 @@ public record OrderItemDetailsResponse(
                 unitOfMeasure,
                 "Unit of measure");
         Objects.requireNonNull(quantity, "Quantity must not be null");
-        unitPrice = requireOptional(unitPrice, "Unit price");
-        discountPercentage = requireOptional(
+        requireOptional(unitPrice, "Unit price");
+        requireOptional(
                 discountPercentage,
                 "Discount percentage");
-        taxPercentage = requireOptional(
+        requireOptional(
                 taxPercentage,
                 "Tax percentage");
-        total = requireOptional(total, "Item total");
-        currency = requireOptional(currency, "Currency");
+        requireOptional(total, "Item total");
+        requireOptional(currency, "Currency");
     }
 
     public boolean priced() {

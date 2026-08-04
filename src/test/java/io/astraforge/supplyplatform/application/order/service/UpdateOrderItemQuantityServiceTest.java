@@ -103,8 +103,8 @@ class UpdateOrderItemQuantityServiceTest {
                         new InMemoryOrderRepository(),
                         fixedClock());
 
-        assertThatThrownBy(() -> service.updateQuantity(
-                command(ITEM_ID, "5.000")))
+        var sonarArgument1Value1 = command(ITEM_ID, "5.000");
+        assertThatThrownBy(() -> service.updateQuantity(sonarArgument1Value1))
                 .as("quantity update for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -117,8 +117,8 @@ class UpdateOrderItemQuantityServiceTest {
                         repositoryWithItem(),
                         fixedClock());
 
-        assertThatThrownBy(() -> service.updateQuantity(
-                command(UNKNOWN_ITEM_ID, "5.000")))
+        var sonarArgument2Value1 = command(UNKNOWN_ITEM_ID, "5.000");
+        assertThatThrownBy(() -> service.updateQuantity(sonarArgument2Value1))
                 .as("quantity update for unknown item")
                 .isInstanceOf(OrderItemNotFoundException.class)
                 .hasMessage("Order item was not found in the order");

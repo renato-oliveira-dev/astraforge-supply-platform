@@ -87,7 +87,8 @@ class RemoveOrderItemServiceTest {
                 new InMemoryOrderRepository(),
                 fixedClock());
 
-        assertThatThrownBy(() -> service.removeItem(command(ITEM_ID)))
+        var sonarArgument1Value1 = command(ITEM_ID);
+        assertThatThrownBy(() -> service.removeItem(sonarArgument1Value1))
                 .as("item removal for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -99,8 +100,8 @@ class RemoveOrderItemServiceTest {
                 repositoryWithItem(),
                 fixedClock());
 
-        assertThatThrownBy(() -> service.removeItem(
-                command(UNKNOWN_ITEM_ID)))
+        var sonarArgument2Value1 = command(UNKNOWN_ITEM_ID);
+        assertThatThrownBy(() -> service.removeItem(sonarArgument2Value1))
                 .as("unknown order item removal")
                 .isInstanceOf(OrderItemNotFoundException.class)
                 .hasMessage("Order item was not found in the order");

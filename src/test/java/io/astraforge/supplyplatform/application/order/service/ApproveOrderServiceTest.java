@@ -1,16 +1,14 @@
 package io.astraforge.supplyplatform.application.order.service;
 
 import io.astraforge.supplyplatform.application.order.exception.OrderNotFoundException;
-import io.astraforge.supplyplatform.application.order.usecase.ApproveOrderCommand;
 import io.astraforge.supplyplatform.application.order.usecase.ApprovalDecisionResult;
+import io.astraforge.supplyplatform.application.order.usecase.ApproveOrderCommand;
 import io.astraforge.supplyplatform.domain.order.aggregate.OrderStatus;
 import io.astraforge.supplyplatform.domain.order.exception.OrderApprovalNotAllowedException;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.ZoneOffset;
-import java.util.Optional;
-import java.util.UUID;
 
 import static io.astraforge.supplyplatform.application.order.service.ApprovalDecisionTestFixture.APPROVER_ID;
 import static io.astraforge.supplyplatform.application.order.service.ApprovalDecisionTestFixture.DECIDED_AT;
@@ -42,7 +40,7 @@ class ApproveOrderServiceTest {
                 .isEqualTo(DECIDED_AT);
         assertThat(result.comment())
                 .as("approval comment")
-                .isEqualTo(Optional.empty());
+                .isEmpty();
         assertThat(result.version())
                 .as("approved order version")
                 .isEqualTo(5L);
@@ -54,7 +52,8 @@ class ApproveOrderServiceTest {
                 new ApprovalDecisionTestFixture.InMemoryOrderRepository(),
                 Clock.fixed(DECIDED_AT, ZoneOffset.UTC));
 
-        assertThatThrownBy(() -> service.approve(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.approve(sonarArgument1Value1))
                 .as("approval for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -69,7 +68,8 @@ class ApproveOrderServiceTest {
                 Clock.fixed(DECIDED_AT, ZoneOffset.UTC));
         service.approve(command());
 
-        assertThatThrownBy(() -> service.approve(command()))
+        var sonarArgument2Value1 = command();
+        assertThatThrownBy(() -> service.approve(sonarArgument2Value1))
                 .as("order cannot be approved twice")
                 .isInstanceOf(OrderApprovalNotAllowedException.class)
                 .hasMessage(

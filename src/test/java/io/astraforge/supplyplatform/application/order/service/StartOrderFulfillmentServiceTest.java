@@ -62,7 +62,8 @@ class StartOrderFulfillmentServiceTest {
                         repository,
                         fixedClock());
 
-        assertThatThrownBy(() -> service.start(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.start(sonarArgument1Value1))
                 .as("fulfillment start requires ready status")
                 .isInstanceOf(OrderFulfillmentNotAllowedException.class)
                 .hasMessage(

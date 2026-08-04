@@ -21,7 +21,7 @@ public record ApprovalDecisionResponse(
         Objects.requireNonNull(status, "Order status must not be null");
         Objects.requireNonNull(decidedBy, "Decided by must not be null");
         Objects.requireNonNull(decidedAt, "Decided at must not be null");
-        comment = Objects.requireNonNull(
+        Objects.requireNonNull(
                 comment,
                 "Decision comment must not be null");
         if (version <= 0) {

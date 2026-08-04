@@ -74,7 +74,8 @@ class RetryInventoryReservationServiceTest {
                         new ApprovalDecisionTestFixture.InMemoryOrderRepository(),
                         fixedClock());
 
-        assertThatThrownBy(() -> service.retry(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.retry(sonarArgument1Value1))
                 .as("inventory retry for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -90,7 +91,8 @@ class RetryInventoryReservationServiceTest {
                         repository,
                         fixedClock());
 
-        assertThatThrownBy(() -> service.retry(command()))
+        var sonarArgument2Value1 = command();
+        assertThatThrownBy(() -> service.retry(sonarArgument2Value1))
                 .as("inventory retry requires failed status")
                 .isInstanceOf(
                         OrderInventoryRetryNotAllowedException.class)

@@ -130,10 +130,10 @@ class CorrelationIdFilterTest {
         CorrelationIdFilter filter =
                 new CorrelationIdFilter(() -> null);
 
-        assertThatThrownBy(() -> filter.doFilter(
-                new MockHttpServletRequest(),
-                new MockHttpServletResponse(),
-                mock(FilterChain.class)))
+        var sonarArgument1Value1 = new MockHttpServletRequest();
+        var sonarArgument1Value2 = new MockHttpServletResponse();
+        var sonarArgument1Value3 = mock(FilterChain.class);
+        assertThatThrownBy(() -> filter.doFilter(sonarArgument1Value1, sonarArgument1Value2, sonarArgument1Value3))
                 .as("null generated correlation UUID")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("UUID supplier must not return null");

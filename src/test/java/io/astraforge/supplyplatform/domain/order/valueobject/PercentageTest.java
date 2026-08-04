@@ -21,7 +21,8 @@ class PercentageTest {
 
     @Test
     void testCreateShouldRejectValueAboveOneHundred() {
-        assertThatThrownBy(() -> new Percentage(new BigDecimal("100.0001")))
+        var sonarArgument1Value1 = new BigDecimal("100.0001");
+        assertThatThrownBy(() -> new Percentage(sonarArgument1Value1))
                 .as("percentage upper boundary")
                 .isInstanceOf(DomainValidationException.class)
                 .hasMessage("Percentage must be between 0 and 100");

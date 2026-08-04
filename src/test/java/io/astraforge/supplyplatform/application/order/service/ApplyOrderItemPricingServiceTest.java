@@ -126,8 +126,8 @@ class ApplyOrderItemPricingServiceTest {
                         new InMemoryOrderRepository(),
                         fixedClock());
 
-        assertThatThrownBy(() -> service.applyPricing(
-                command(ITEM_ID, BRL)))
+        var sonarArgument1Value1 = command(ITEM_ID, BRL);
+        assertThatThrownBy(() -> service.applyPricing(sonarArgument1Value1))
                 .as("pricing for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -140,8 +140,8 @@ class ApplyOrderItemPricingServiceTest {
                         repositoryWithOneItem(),
                         fixedClock());
 
-        assertThatThrownBy(() -> service.applyPricing(
-                command(UNKNOWN_ITEM_ID, BRL)))
+        var sonarArgument2Value1 = command(UNKNOWN_ITEM_ID, BRL);
+        assertThatThrownBy(() -> service.applyPricing(sonarArgument2Value1))
                 .as("pricing for unknown order item")
                 .isInstanceOf(OrderItemNotFoundException.class)
                 .hasMessage("Order item was not found in the order");
@@ -164,8 +164,8 @@ class ApplyOrderItemPricingServiceTest {
                         repository,
                         fixedClock());
 
-        assertThatThrownBy(() -> service.applyPricing(
-                command(SECOND_ITEM_ID, USD)))
+        var sonarArgument3Value1 = command(SECOND_ITEM_ID, USD);
+        assertThatThrownBy(() -> service.applyPricing(sonarArgument3Value1))
                 .as("mixed currencies in one order")
                 .isInstanceOf(OrderCurrencyMismatchException.class)
                 .hasMessage(

@@ -114,16 +114,14 @@ class OrderQueryControllerTest {
     void testConstructorShouldRejectNullDependencies() {
         Fixture fixture = new Fixture();
 
-        assertThatThrownBy(() -> new OrderQueryController(
-                null,
-                fixture.listUseCase()))
+        var sonarArgument1Value2 = fixture.listUseCase();
+        assertThatThrownBy(() -> new OrderQueryController(null, sonarArgument1Value2))
                 .as("null get order details use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage(
                         "Get order details use case must not be null");
-        assertThatThrownBy(() -> new OrderQueryController(
-                fixture.detailsUseCase(),
-                null))
+        var sonarArgument2Value1 = fixture.detailsUseCase();
+        assertThatThrownBy(() -> new OrderQueryController(sonarArgument2Value1, null))
                 .as("null list orders use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("List orders use case must not be null");

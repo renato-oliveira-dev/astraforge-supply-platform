@@ -129,8 +129,8 @@ class GetOrderDetailsServiceTest {
                 new GetOrderDetailsService(
                         new InMemoryOrderRepository());
 
-        assertThatThrownBy(() -> service.getDetails(
-                new GetOrderDetailsQuery(ORDER_ID)))
+        var sonarArgument1Value1 = new GetOrderDetailsQuery(ORDER_ID);
+        assertThatThrownBy(() -> service.getDetails(sonarArgument1Value1))
                 .as("details query for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);

@@ -128,26 +128,23 @@ class OrderFulfillmentControllerTest {
     void testConstructorShouldRejectNullDependencies() {
         Fixture fixture = new Fixture();
 
-        assertThatThrownBy(() -> new OrderFulfillmentController(
-                null,
-                fixture.startUseCase(),
-                fixture.completeUseCase()))
+        var sonarArgument1Value2 = fixture.startUseCase();
+        var sonarArgument1Value3 = fixture.completeUseCase();
+        assertThatThrownBy(() -> new OrderFulfillmentController(null, sonarArgument1Value2, sonarArgument1Value3))
                 .as("null prepare fulfillment use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage(
                         "Prepare order for fulfillment use case must not be null");
-        assertThatThrownBy(() -> new OrderFulfillmentController(
-                fixture.prepareUseCase(),
-                null,
-                fixture.completeUseCase()))
+        var sonarArgument2Value1 = fixture.prepareUseCase();
+        var sonarArgument2Value3 = fixture.completeUseCase();
+        assertThatThrownBy(() -> new OrderFulfillmentController(sonarArgument2Value1, null, sonarArgument2Value3))
                 .as("null start fulfillment use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage(
                         "Start order fulfillment use case must not be null");
-        assertThatThrownBy(() -> new OrderFulfillmentController(
-                fixture.prepareUseCase(),
-                fixture.startUseCase(),
-                null))
+        var sonarArgument3Value1 = fixture.prepareUseCase();
+        var sonarArgument3Value2 = fixture.startUseCase();
+        assertThatThrownBy(() -> new OrderFulfillmentController(sonarArgument3Value1, sonarArgument3Value2, null))
                 .as("null complete fulfillment use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage(

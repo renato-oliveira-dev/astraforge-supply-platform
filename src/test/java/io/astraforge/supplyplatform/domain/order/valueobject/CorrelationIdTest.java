@@ -20,7 +20,8 @@ class CorrelationIdTest {
 
     @Test
     void testCreateShouldRejectOversizedValue() {
-        assertThatThrownBy(() -> new CorrelationId("x".repeat(101)))
+        var sonarArgument1Value1 = "x".repeat(101);
+        assertThatThrownBy(() -> new CorrelationId(sonarArgument1Value1))
                 .as("oversized correlation identifier")
                 .isInstanceOf(DomainValidationException.class)
                 .hasMessage(

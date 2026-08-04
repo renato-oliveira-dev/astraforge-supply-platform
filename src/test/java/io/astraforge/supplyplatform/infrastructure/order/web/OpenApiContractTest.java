@@ -34,6 +34,7 @@ class OpenApiContractTest {
                 .contains("openapi: 3.1.0");
         assertThat(expectedPaths)
                 .as("documented order API paths")
+                .isNotEmpty()
                 .allSatisfy(path -> assertThat(contract)
                         .as("documented path " + path)
                         .contains("  " + path));

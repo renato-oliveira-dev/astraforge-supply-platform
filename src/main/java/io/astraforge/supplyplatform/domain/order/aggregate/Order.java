@@ -63,6 +63,19 @@ import java.util.UUID;
 
 public final class Order {
 
+    private static final String CORRELATION_ID_REQUIRED =
+            "Correlation ID must not be null";
+    private static final String ORDER_ITEM_ID_REQUIRED =
+            "Order item ID must not be null";
+    private static final String REQUESTED_BY_REQUIRED =
+            "Requested by must not be null";
+    private static final String REQUESTED_AT_REQUIRED =
+            "Requested at must not be null";
+    private static final String STARTED_BY_REQUIRED =
+            "Started by must not be null";
+    private static final String STARTED_AT_REQUIRED =
+            "Started at must not be null";
+
     private static final long INITIAL_VERSION = 0L;
     private static final EnumSet<OrderStatus> CANCELLABLE_STATUSES = EnumSet.of(
             OrderStatus.DRAFT,
@@ -138,7 +151,7 @@ public final class Order {
         Objects.requireNonNull(customerReference, "Customer reference must not be null");
         Objects.requireNonNull(createdBy, "Created by must not be null");
         Objects.requireNonNull(createdAt, "Created at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         return new Order(id, customerReference, createdBy, createdAt, correlationId);
     }
 
@@ -151,12 +164,12 @@ public final class Order {
             CorrelationId correlationId
     ) {
         requireEditable();
-        Objects.requireNonNull(orderItemId, "Order item ID must not be null");
+        Objects.requireNonNull(orderItemId, ORDER_ITEM_ID_REQUIRED);
         Objects.requireNonNull(productSnapshot, "Product snapshot must not be null");
         Objects.requireNonNull(quantity, "Quantity must not be null");
         Objects.requireNonNull(addedBy, "Added by must not be null");
         Objects.requireNonNull(addedAt, "Added at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requireUniqueItemId(orderItemId);
         requireUniqueProduct(productSnapshot);
 
@@ -183,11 +196,11 @@ public final class Order {
             CorrelationId correlationId
     ) {
         requireEditable();
-        Objects.requireNonNull(orderItemId, "Order item ID must not be null");
+        Objects.requireNonNull(orderItemId, ORDER_ITEM_ID_REQUIRED);
         Objects.requireNonNull(newQuantity, "New quantity must not be null");
         Objects.requireNonNull(changedBy, "Changed by must not be null");
         Objects.requireNonNull(changedAt, "Changed at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
 
         OrderItem item = findItem(orderItemId);
         if (item.quantity().equals(newQuantity)) {
@@ -228,11 +241,11 @@ public final class Order {
             CorrelationId correlationId
     ) {
         requireEditable();
-        Objects.requireNonNull(orderItemId, "Order item ID must not be null");
+        Objects.requireNonNull(orderItemId, ORDER_ITEM_ID_REQUIRED);
         Objects.requireNonNull(pricing, "Item pricing must not be null");
         Objects.requireNonNull(pricedBy, "Priced by must not be null");
         Objects.requireNonNull(pricedAt, "Priced at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
 
         OrderItem item = findItem(orderItemId);
         requireCompatibleCurrency(pricing);
@@ -286,7 +299,7 @@ public final class Order {
     ) {
         Objects.requireNonNull(submittedBy, "Submitted by must not be null");
         Objects.requireNonNull(submittedAt, "Submitted at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requireDraftForSubmission();
         requireSubmissionReady();
 
@@ -313,9 +326,9 @@ public final class Order {
             Instant startedAt,
             CorrelationId correlationId
     ) {
-        Objects.requireNonNull(startedBy, "Started by must not be null");
-        Objects.requireNonNull(startedAt, "Started at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(startedBy, STARTED_BY_REQUIRED);
+        Objects.requireNonNull(startedAt, STARTED_AT_REQUIRED);
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requireStatus(
                 OrderStatus.SUBMITTED,
                 "Only a SUBMITTED order can start approval");
@@ -338,7 +351,7 @@ public final class Order {
     ) {
         Objects.requireNonNull(approvedBy, "Approved by must not be null");
         Objects.requireNonNull(approvedAt, "Approved at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requirePendingApproval();
 
         OrderTotals orderTotals = totals();
@@ -364,7 +377,7 @@ public final class Order {
         Objects.requireNonNull(comment, "Rejection comment must not be null");
         Objects.requireNonNull(rejectedBy, "Rejected by must not be null");
         Objects.requireNonNull(rejectedAt, "Rejected at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requirePendingApproval();
 
         status = OrderStatus.REJECTED;
@@ -387,9 +400,9 @@ public final class Order {
             CorrelationId correlationId
     ) {
         Objects.requireNonNull(comment, "Review comment must not be null");
-        Objects.requireNonNull(requestedBy, "Requested by must not be null");
-        Objects.requireNonNull(requestedAt, "Requested at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(requestedBy, REQUESTED_BY_REQUIRED);
+        Objects.requireNonNull(requestedAt, REQUESTED_AT_REQUIRED);
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requirePendingApproval();
 
         status = OrderStatus.REVIEW_REQUESTED;
@@ -413,7 +426,7 @@ public final class Order {
     ) {
         Objects.requireNonNull(reopenedBy, "Reopened by must not be null");
         Objects.requireNonNull(reopenedAt, "Reopened at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requireReviewRequested();
 
         ApprovalComment requestedChanges = decisionComment;
@@ -440,7 +453,7 @@ public final class Order {
         Objects.requireNonNull(reason, "Cancellation reason must not be null");
         Objects.requireNonNull(cancelledBy, "Cancelled by must not be null");
         Objects.requireNonNull(cancelledAt, "Cancelled at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requireCancellable();
 
         OrderStatus previousStatus = status;
@@ -466,9 +479,9 @@ public final class Order {
             Instant startedAt,
             CorrelationId correlationId
     ) {
-        Objects.requireNonNull(startedBy, "Started by must not be null");
-        Objects.requireNonNull(startedAt, "Started at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(startedBy, STARTED_BY_REQUIRED);
+        Objects.requireNonNull(startedAt, STARTED_AT_REQUIRED);
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requireProcessingStatus(
                 OrderStatus.APPROVED,
                 "Only an APPROVED order can start processing");
@@ -491,9 +504,9 @@ public final class Order {
             Instant requestedAt,
             CorrelationId correlationId
     ) {
-        Objects.requireNonNull(requestedBy, "Requested by must not be null");
-        Objects.requireNonNull(requestedAt, "Requested at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(requestedBy, REQUESTED_BY_REQUIRED);
+        Objects.requireNonNull(requestedAt, REQUESTED_AT_REQUIRED);
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requireProcessingStatus(
                 OrderStatus.PROCESSING,
                 "Only a PROCESSING order can request inventory reservation");
@@ -520,7 +533,7 @@ public final class Order {
     ) {
         Objects.requireNonNull(recordedBy, "Recorded by must not be null");
         Objects.requireNonNull(recordedAt, "Recorded at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requireInventoryPending();
 
         status = OrderStatus.INVENTORY_RESERVED;
@@ -547,7 +560,7 @@ public final class Order {
         Objects.requireNonNull(reason, "Inventory failure reason must not be null");
         Objects.requireNonNull(recordedBy, "Recorded by must not be null");
         Objects.requireNonNull(recordedAt, "Recorded at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requireInventoryPending();
 
         status = OrderStatus.INVENTORY_FAILED;
@@ -572,9 +585,9 @@ public final class Order {
             Instant requestedAt,
             CorrelationId correlationId
     ) {
-        Objects.requireNonNull(requestedBy, "Requested by must not be null");
-        Objects.requireNonNull(requestedAt, "Requested at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(requestedBy, REQUESTED_BY_REQUIRED);
+        Objects.requireNonNull(requestedAt, REQUESTED_AT_REQUIRED);
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requireInventoryFailed();
 
         InventoryFailureReason previousFailureReason = inventoryFailureReason;
@@ -602,7 +615,7 @@ public final class Order {
     ) {
         Objects.requireNonNull(preparedBy, "Prepared by must not be null");
         Objects.requireNonNull(preparedAt, "Prepared at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requireFulfillmentStatus(
                 OrderStatus.INVENTORY_RESERVED,
                 "Only an INVENTORY_RESERVED order can be prepared for fulfillment");
@@ -626,9 +639,9 @@ public final class Order {
             Instant startedAt,
             CorrelationId correlationId
     ) {
-        Objects.requireNonNull(startedBy, "Started by must not be null");
-        Objects.requireNonNull(startedAt, "Started at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(startedBy, STARTED_BY_REQUIRED);
+        Objects.requireNonNull(startedAt, STARTED_AT_REQUIRED);
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requireFulfillmentStatus(
                 OrderStatus.READY_FOR_FULFILLMENT,
                 "Only a READY_FOR_FULFILLMENT order can start fulfillment");
@@ -654,7 +667,7 @@ public final class Order {
     ) {
         Objects.requireNonNull(completedBy, "Completed by must not be null");
         Objects.requireNonNull(completedAt, "Completed at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
         requireCompletionAllowed();
 
         OrderTotals orderTotals = totals();
@@ -680,10 +693,10 @@ public final class Order {
             CorrelationId correlationId
     ) {
         requireEditable();
-        Objects.requireNonNull(orderItemId, "Order item ID must not be null");
+        Objects.requireNonNull(orderItemId, ORDER_ITEM_ID_REQUIRED);
         Objects.requireNonNull(removedBy, "Removed by must not be null");
         Objects.requireNonNull(removedAt, "Removed at must not be null");
-        Objects.requireNonNull(correlationId, "Correlation ID must not be null");
+        Objects.requireNonNull(correlationId, CORRELATION_ID_REQUIRED);
 
         OrderItem item = findItem(orderItemId);
         items.remove(item);

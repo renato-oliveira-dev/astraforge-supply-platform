@@ -103,7 +103,8 @@ class CreateOrderServiceTest {
                         COLLIDING_ORDER_ID),
                 fixedClock());
 
-        assertThatThrownBy(() -> service.create(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.create(sonarArgument1Value1))
                 .as("identifier collision retry limit")
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage(

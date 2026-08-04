@@ -101,7 +101,8 @@ class AddOrderItemServiceTest {
                 generator(List.of(ITEM_ID)),
                 fixedClock());
 
-        assertThatThrownBy(() -> service.addItem(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.addItem(sonarArgument1Value1))
                 .as("unknown order item addition")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -117,7 +118,8 @@ class AddOrderItemServiceTest {
                 fixedClock());
         service.addItem(command());
 
-        assertThatThrownBy(() -> service.addItem(command()))
+        var sonarArgument2Value1 = command();
+        assertThatThrownBy(() -> service.addItem(sonarArgument2Value1))
                 .as("same product cannot be added twice")
                 .isInstanceOf(DuplicateProductException.class)
                 .hasMessage("Product already exists in the order");

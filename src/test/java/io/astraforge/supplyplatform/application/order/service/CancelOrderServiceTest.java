@@ -78,7 +78,8 @@ class CancelOrderServiceTest {
                 new InMemoryOrderRepository(),
                 fixedClock());
 
-        assertThatThrownBy(() -> service.cancel(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.cancel(sonarArgument1Value1))
                 .as("cancellation for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -92,7 +93,8 @@ class CancelOrderServiceTest {
                 fixedClock());
         service.cancel(command());
 
-        assertThatThrownBy(() -> service.cancel(command()))
+        var sonarArgument2Value1 = command();
+        assertThatThrownBy(() -> service.cancel(sonarArgument2Value1))
                 .as("order cannot be cancelled twice")
                 .isInstanceOf(OrderCancellationNotAllowedException.class)
                 .hasMessage(

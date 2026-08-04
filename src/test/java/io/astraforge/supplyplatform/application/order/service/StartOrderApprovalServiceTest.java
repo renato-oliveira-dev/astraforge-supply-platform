@@ -93,7 +93,8 @@ class StartOrderApprovalServiceTest {
                         new InMemoryOrderRepository(),
                         fixedClock());
 
-        assertThatThrownBy(() -> service.startApproval(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.startApproval(sonarArgument1Value1))
                 .as("approval start for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -106,7 +107,8 @@ class StartOrderApprovalServiceTest {
                         repositoryWithDraftOrder(),
                         fixedClock());
 
-        assertThatThrownBy(() -> service.startApproval(command()))
+        var sonarArgument2Value1 = command();
+        assertThatThrownBy(() -> service.startApproval(sonarArgument2Value1))
                 .as("approval start requires submitted order")
                 .isInstanceOf(OrderApprovalNotAllowedException.class)
                 .hasMessage(
@@ -123,7 +125,8 @@ class StartOrderApprovalServiceTest {
                         fixedClock());
         service.startApproval(command());
 
-        assertThatThrownBy(() -> service.startApproval(command()))
+        var sonarArgument3Value1 = command();
+        assertThatThrownBy(() -> service.startApproval(sonarArgument3Value1))
                 .as("approval cannot be started twice")
                 .isInstanceOf(OrderApprovalNotAllowedException.class)
                 .hasMessage(

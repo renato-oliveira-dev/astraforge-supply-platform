@@ -97,7 +97,8 @@ class SubmitOrderServiceTest {
                 new InMemoryOrderRepository(),
                 fixedClock());
 
-        assertThatThrownBy(() -> service.submit(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.submit(sonarArgument1Value1))
                 .as("submission for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -109,7 +110,8 @@ class SubmitOrderServiceTest {
                 repositoryWithUnpricedOrder(),
                 fixedClock());
 
-        assertThatThrownBy(() -> service.submit(command()))
+        var sonarArgument2Value1 = command();
+        assertThatThrownBy(() -> service.submit(sonarArgument2Value1))
                 .as("submission requires complete pricing")
                 .isInstanceOf(OrderSubmissionNotAllowedException.class)
                 .hasMessage(
@@ -125,7 +127,8 @@ class SubmitOrderServiceTest {
                 fixedClock());
         service.submit(command());
 
-        assertThatThrownBy(() -> service.submit(command()))
+        var sonarArgument3Value1 = command();
+        assertThatThrownBy(() -> service.submit(sonarArgument3Value1))
                 .as("order cannot be submitted twice")
                 .isInstanceOf(OrderSubmissionNotAllowedException.class)
                 .hasMessage("Only a DRAFT order can be submitted");

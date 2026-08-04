@@ -123,24 +123,21 @@ class ApprovalDecisionControllerTest {
     void testConstructorShouldRejectNullDependencies() {
         Fixture fixture = new Fixture();
 
-        assertThatThrownBy(() -> new ApprovalDecisionController(
-                null,
-                fixture.rejectUseCase(),
-                fixture.reviewUseCase()))
+        var sonarArgument1Value2 = fixture.rejectUseCase();
+        var sonarArgument1Value3 = fixture.reviewUseCase();
+        assertThatThrownBy(() -> new ApprovalDecisionController(null, sonarArgument1Value2, sonarArgument1Value3))
                 .as("null approve order use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Approve order use case must not be null");
-        assertThatThrownBy(() -> new ApprovalDecisionController(
-                fixture.approveUseCase(),
-                null,
-                fixture.reviewUseCase()))
+        var sonarArgument2Value1 = fixture.approveUseCase();
+        var sonarArgument2Value3 = fixture.reviewUseCase();
+        assertThatThrownBy(() -> new ApprovalDecisionController(sonarArgument2Value1, null, sonarArgument2Value3))
                 .as("null reject order use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Reject order use case must not be null");
-        assertThatThrownBy(() -> new ApprovalDecisionController(
-                fixture.approveUseCase(),
-                fixture.rejectUseCase(),
-                null))
+        var sonarArgument3Value1 = fixture.approveUseCase();
+        var sonarArgument3Value2 = fixture.rejectUseCase();
+        assertThatThrownBy(() -> new ApprovalDecisionController(sonarArgument3Value1, sonarArgument3Value2, null))
                 .as("null request review use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage(

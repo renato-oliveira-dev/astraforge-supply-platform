@@ -301,47 +301,47 @@ class OrderControllerTest {
     void testConstructorShouldRejectNullDependencies() {
         ControllerFixture fixture = new ControllerFixture();
 
-        assertThatThrownBy(() -> fixture.builder()
-                .withoutCreateUseCase()
-                .build())
+        var sonarTarget1 = fixture.builder()
+                .withoutCreateUseCase();
+        assertThatThrownBy(sonarTarget1::build)
                 .as("null create order use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Create order use case must not be null");
-        assertThatThrownBy(() -> fixture.builder()
-                .withoutAddItemUseCase()
-                .build())
+        var sonarTarget2 = fixture.builder()
+                .withoutAddItemUseCase();
+        assertThatThrownBy(sonarTarget2::build)
                 .as("null add order item use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Add order item use case must not be null");
-        assertThatThrownBy(() -> fixture.builder()
-                .withoutUpdateQuantityUseCase()
-                .build())
+        var sonarTarget3 = fixture.builder()
+                .withoutUpdateQuantityUseCase();
+        assertThatThrownBy(sonarTarget3::build)
                 .as("null update quantity use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage(
                         "Update order item quantity use case must not be null");
-        assertThatThrownBy(() -> fixture.builder()
-                .withoutRemoveItemUseCase()
-                .build())
+        var sonarTarget4 = fixture.builder()
+                .withoutRemoveItemUseCase();
+        assertThatThrownBy(sonarTarget4::build)
                 .as("null remove item use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Remove order item use case must not be null");
-        assertThatThrownBy(() -> fixture.builder()
-                .withoutApplyPricingUseCase()
-                .build())
+        var sonarTarget5 = fixture.builder()
+                .withoutApplyPricingUseCase();
+        assertThatThrownBy(sonarTarget5::build)
                 .as("null apply pricing use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage(
                         "Apply order item pricing use case must not be null");
-        assertThatThrownBy(() -> fixture.builder()
-                .withoutSubmitOrderUseCase()
-                .build())
+        var sonarTarget6 = fixture.builder()
+                .withoutSubmitOrderUseCase();
+        assertThatThrownBy(sonarTarget6::build)
                 .as("null submit order use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("Submit order use case must not be null");
-        assertThatThrownBy(() -> fixture.builder()
-                .withoutStartApprovalUseCase()
-                .build())
+        var sonarTarget7 = fixture.builder()
+                .withoutStartApprovalUseCase();
+        assertThatThrownBy(sonarTarget7::build)
                 .as("null start approval use case")
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage(

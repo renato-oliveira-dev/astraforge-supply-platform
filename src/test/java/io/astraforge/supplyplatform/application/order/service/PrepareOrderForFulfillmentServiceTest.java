@@ -65,7 +65,8 @@ class PrepareOrderForFulfillmentServiceTest {
                         new ApprovalDecisionTestFixture.InMemoryOrderRepository(),
                         fixedClock());
 
-        assertThatThrownBy(() -> service.prepare(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.prepare(sonarArgument1Value1))
                 .as("fulfillment preparation for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -80,7 +81,8 @@ class PrepareOrderForFulfillmentServiceTest {
                         repository,
                         fixedClock());
 
-        assertThatThrownBy(() -> service.prepare(command()))
+        var sonarArgument2Value1 = command();
+        assertThatThrownBy(() -> service.prepare(sonarArgument2Value1))
                 .as("fulfillment preparation requires reserved inventory")
                 .isInstanceOf(OrderFulfillmentNotAllowedException.class)
                 .hasMessage(

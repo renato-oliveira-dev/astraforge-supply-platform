@@ -101,9 +101,13 @@ class ListOrdersServiceTest {
 
     @Test
     void testQueryShouldRejectInvalidPageSize() {
+        Optional<UUID> sonarArgument1Value1 = Optional.empty();
+        Optional<OrderStatus> sonarArgument1Value2 =
+                Optional.empty();
+
         assertThatThrownBy(() -> new ListOrdersQuery(
-                Optional.empty(),
-                Optional.empty(),
+                sonarArgument1Value1,
+                sonarArgument1Value2,
                 0,
                 101))
                 .as("list orders maximum page size")
@@ -113,14 +117,18 @@ class ListOrdersServiceTest {
 
     @Test
     void testSummaryShouldRequireTotalAndCurrencyTogether() {
+        Optional<BigDecimal> sonarArgument2Value6 =
+                Optional.of(new BigDecimal("100.00"));
+        Optional<Currency> sonarArgument2Value7 = Optional.empty();
+
         assertThatThrownBy(() -> new OrderSummaryResult(
                 ORDER_ID,
                 CUSTOMER_ID,
                 OrderStatus.DRAFT,
                 1,
                 false,
-                Optional.of(new BigDecimal("100.00")),
-                Optional.empty(),
+                sonarArgument2Value6,
+                sonarArgument2Value7,
                 1,
                 CREATED_AT,
                 UPDATED_AT))

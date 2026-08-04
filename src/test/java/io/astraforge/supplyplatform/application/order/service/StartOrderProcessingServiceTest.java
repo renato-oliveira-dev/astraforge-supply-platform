@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
-import java.util.UUID;
 
 import static io.astraforge.supplyplatform.application.order.service.ApprovalDecisionTestFixture.APPROVER_ID;
 import static io.astraforge.supplyplatform.application.order.service.ApprovalDecisionTestFixture.ORDER_ID;
@@ -70,7 +69,8 @@ class StartOrderProcessingServiceTest {
                         new ApprovalDecisionTestFixture.InMemoryOrderRepository(),
                         fixedClock());
 
-        assertThatThrownBy(() -> service.startProcessing(command()))
+        var sonarArgument1Value1 = command();
+        assertThatThrownBy(() -> service.startProcessing(sonarArgument1Value1))
                 .as("processing start for unknown order")
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessage("Order not found: " + ORDER_ID);
@@ -86,7 +86,8 @@ class StartOrderProcessingServiceTest {
                         repository,
                         fixedClock());
 
-        assertThatThrownBy(() -> service.startProcessing(command()))
+        var sonarArgument2Value1 = command();
+        assertThatThrownBy(() -> service.startProcessing(sonarArgument2Value1))
                 .as("processing start requires approved order")
                 .isInstanceOf(OrderProcessingNotAllowedException.class)
                 .hasMessage(
@@ -103,7 +104,8 @@ class StartOrderProcessingServiceTest {
                         fixedClock());
         service.startProcessing(command());
 
-        assertThatThrownBy(() -> service.startProcessing(command()))
+        var sonarArgument3Value1 = command();
+        assertThatThrownBy(() -> service.startProcessing(sonarArgument3Value1))
                 .as("processing cannot be started twice")
                 .isInstanceOf(OrderProcessingNotAllowedException.class)
                 .hasMessage(

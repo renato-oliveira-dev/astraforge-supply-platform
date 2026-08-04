@@ -30,10 +30,10 @@ public record OrderSummaryResponse(
             throw new IllegalArgumentException(
                     "Item count must not be negative");
         }
-        total = Objects.requireNonNull(
+        Objects.requireNonNull(
                 total,
                 "Order total must not be null");
-        currency = Objects.requireNonNull(
+        Objects.requireNonNull(
                 currency,
                 "Order currency must not be null");
         if (version < 0) {

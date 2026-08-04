@@ -25,7 +25,7 @@ public record InventoryReservationOutcomeResponse(
         Objects.requireNonNull(
                 recordedAt,
                 "Recorded at must not be null");
-        failureReason = Objects.requireNonNull(
+        Objects.requireNonNull(
                 failureReason,
                 "Failure reason must not be null");
         if (version <= 0) {
